@@ -1,6 +1,6 @@
 <?php
 
-jTplConfig::$localizedMessages =array(
+\Jelix\Castor\Config::$localizedMessages =array(
     'file.directory.notexists'=>'The directory (%s) doesn\'t exist',
     'file.directory.notwritable'=>'Impossible to write into the file %s, verify that rights are enabled',
     'file.write.error'=>'A problem has occured during the writing of the file %s by using the temporary file %s',

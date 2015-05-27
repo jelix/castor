@@ -1,22 +1,19 @@
 <?php
 /**
-* @package     jelix
-* @subpackage  jtpl
 * @author      Laurent Jouanneau
 * @contributor Loic Mathaud (standalone version), Dominique Papin, DSDenes, Christophe Thiriot, Julien Issler, Brice Tence
-* @copyright   2005-2014 Laurent Jouanneau
+* @copyright   2005-2015 Laurent Jouanneau
 * @copyright   2006 Loic Mathaud, 2007 Dominique Papin, 2009 DSDenes, 2010 Christophe Thiriot
 * @copyright   2010 Julien Issler, 2010 Brice Tence
 * @link        http://www.jelix.org
 * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
 */
 
+namespace Jelix\Castor;
 /**
  * This is the compiler of templates: it converts a template into a php file.
- * @package     jelix
- * @subpackage  jtpl
  */
-abstract class jTplCompilerAbstract {
+abstract class CompilerCore {
 
     protected $_literals;
 

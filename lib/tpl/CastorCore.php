@@ -1,20 +1,17 @@
 <?php
 /**
-* @package     jelix
-* @subpackage  jtpl
 * @author      Laurent Jouanneau
 * @contributor Dominique Papin
-* @copyright   2005-2014 Laurent Jouanneau, 2007 Dominique Papin
+* @copyright   2005-2015 Laurent Jouanneau, 2007 Dominique Papin
 * @link        http://www.jelix.org
 * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
 */
+namespace Jelix\Castor;
 
 /**
- * template engine
- * @package     jelix
- * @subpackage  jtpl
+ * base class of the template engine
  */
-abstract class jTplAbstract {
+abstract class CastorCore {
 
     /**
      * all assigned template variables. 

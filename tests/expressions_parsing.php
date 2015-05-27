@@ -1,7 +1,5 @@
 <?php
 /**
-* @package     testapp
-* @subpackage  jelix_tests module
 * @author      Laurent Jouanneau
 * @copyright   2007-2008 Laurent Jouanneau
 * @link        http://www.jelix.org
@@ -10,7 +8,7 @@
 
 define('TEST_JTPL_COMPILER_ASSIGN',1);
 
-class testJtplCompiler extends jTplCompiler {
+class testJtplCompiler extends \Jelix\Castor\Compiler {
 
     public function setUserPlugins($userModifiers, $userFunctions) {
         $this->_modifier = array_merge($this->_modifier, $userModifiers);

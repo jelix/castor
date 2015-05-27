@@ -4,6 +4,7 @@
     <testsuite name="Jelix Core">
       <file>compiler.php</file>
       <file>expressions_parsing.php</file>
+      <file>engine.php</file>
     </testsuite>
   </testsuites>
 </phpunit>

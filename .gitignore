@@ -4,3 +4,5 @@ TAGS
 .komodotools
 vendor/
 composer.lock
+tests/temp/*
+!tests/temp/.dummy

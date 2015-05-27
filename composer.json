@@ -9,6 +9,9 @@
         {
             "name": "Laurent Jouanneau",
             "email": "laurent@jelix.org"
+        },
+        {
+            "name": "Loic Mathaud"
         }
     ],
     "require": {
@@ -23,6 +26,9 @@
     "replace": {
     },
     "autoload": {
+        "psr-4" : {
+            "Jelix\\Castor\\" : "lib/tpl/"
+        }
     },
     "minimum-stability": "dev"
 }
