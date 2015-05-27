@@ -2,12 +2,12 @@
 error_reporting(E_ALL);
 include '../vendor/autoload.php';
 
-\Jelix\Castor\Config::$cachePath = realpath(__DIR__.'/temp/') . '/';
-\Jelix\Castor\Config::$localizedMessagesPath = realpath(__DIR__.'/../lib/tpl/locales/') . '/';
-\Jelix\Castor\Config::$templatePath = __DIR__.'/';
-\Jelix\Castor\Config::addPluginsRepository(realpath(__DIR__.'/../lib/plugins/'));
 
-$tpl = new \Jelix\Castor\Castor();
+$cachePath = realpath(__DIR__.'/temp/') . '/';
+$templatePath = __DIR__.'/';
+$config = new \Jelix\Castor\Config($cachePath, $templatePath);
+
+$tpl = new \Jelix\Castor\Castor($config);
 
 $countries = array('France', 'Italie', 'Espagne', 'Belgique');
 $tpl->assign('countries', $countries);

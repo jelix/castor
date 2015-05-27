@@ -11,14 +11,17 @@ namespace Jelix\Castor;
 
 class Compiler extends CompilerCore {
 
-    private $_locales;
+    /**
+     * @var Config
+     */
+    protected $config;
+
     /**
      * Initialize some properties
      */
-    function __construct () {
+    function __construct (Config $config) {
         parent::__construct();
-        require_once(Config::$localizedMessagesPath.Config::$lang.'.php');
-        $this->_locales = Config::$localizedMessages;
+        $this->config = $config;
     }
 
     /**
@@ -32,7 +35,7 @@ class Compiler extends CompilerCore {
                              $userModifiers = array(), $userFunctions = array()) {
         $this->_sourceFile = $tplFile;
         $this->outputType = $outputtype;
-        $cachefile = Config::$cachePath .dirname($tplName).'/'.$this->outputType.($trusted?'_t':'').'_'. basename($tplName);
+        $cachefile = $this->config->cachePath .dirname($tplName).'/'.$this->outputType.($trusted?'_t':'').'_'. basename($tplName);
         $this->trusted = $trusted;
         $md5 = md5($tplFile.'_'.$this->outputType.($this->trusted?'_t':''));
 
@@ -49,11 +52,11 @@ class Compiler extends CompilerCore {
         $_dirname = dirname($cachefile).'/';
 
         if (!is_dir($_dirname)) {
-            umask(jTplConfig::$umask);
-            mkdir($_dirname, jTplConfig::$chmodDir, true);
+            umask($this->config->umask);
+            mkdir($_dirname, $this->config->chmodDir, true);
         }
         else if (!@is_writable($_dirname)) {
-            throw new \Exception (sprintf($this->_locales['file.directory.notwritable'], $cachefile, $_dirname));
+            throw new \Exception (sprintf($this->config->getMessage('file.directory.notwritable'), $cachefile, $_dirname));
         }
 
         // write to tmp file, then rename it to avoid
@@ -63,7 +66,7 @@ class Compiler extends CompilerCore {
         if (!($fd = @fopen($_tmp_file, 'wb'))) {
             $_tmp_file = $_dirname . '/' . uniqid('wrt');
             if (!($fd = @fopen($_tmp_file, 'wb'))) {
-                throw new \Exception(sprintf($this->_locales['file.write.error'], $cachefile, $_tmp_file));
+                throw new \Exception(sprintf($this->config->getMessage('file.write.error'), $cachefile, $_tmp_file));
             }
         }
 
@@ -77,7 +80,7 @@ class Compiler extends CompilerCore {
         }
 
         @rename($_tmp_file, $cachefile);
-        @chmod($cachefile, Config::$chmodFile);
+        @chmod($cachefile, $this->config->chmodFile);
     }
     
     protected function getCompiledLocaleRetriever($locale) {
@@ -87,8 +90,8 @@ class Compiler extends CompilerCore {
     protected function _getPlugin ($type, $name) {
         $foundPath = '';
 
-        if (isset(Config::$pluginPathList[$this->outputType])) {
-            foreach (Config::$pluginPathList[$this->outputType] as $path) {
+        if (isset($this->config->pluginPathList[$this->outputType])) {
+            foreach ($this->config->pluginPathList[$this->outputType] as $path) {
                 $foundPath = $path.$type.'.'.$name.'.php';
 
                 if (file_exists($foundPath)) {
@@ -96,8 +99,8 @@ class Compiler extends CompilerCore {
                 }
             }
         }
-        if (isset(Config::$pluginPathList['common'])) {
-            foreach (Config::$pluginPathList['common'] as $path) {
+        if (isset($this->config->pluginPathList['common'])) {
+            foreach ($this->config->pluginPathList['common'] as $path) {
                 $foundPath = $path.$type.'.'.$name.'.php';
                 if (file_exists($foundPath)) {
                     return array($foundPath, 'jtpl_'.$type.'_common_'.$name);
@@ -108,14 +111,14 @@ class Compiler extends CompilerCore {
     }
 
     public function doError0 ($err) {
-        throw new \Exception(sprintf($this->_locales[$err], $this->_sourceFile));
+        throw new \Exception(sprintf($this->config->getMessage($err), $this->_sourceFile));
     }
 
     public function doError1 ($err, $arg) {
-        throw new \Exception(sprintf($this->_locales[$err], $arg, $this->_sourceFile));
+        throw new \Exception(sprintf($this->config->getMessage($err), $arg, $this->_sourceFile));
     }
 
     public function doError2 ($err, $arg1, $arg2) {
-        throw new \Exception(sprintf($this->_locales[$err], $arg1, $arg2, $this->_sourceFile));
+        throw new \Exception(sprintf($this->config->getMessage($err), $arg1, $arg2, $this->_sourceFile));
     }
 }

@@ -32,6 +32,16 @@ function testjtplcontentUserFunction($t,$a,$b) {
 
 class jtplCompilerTest extends PHPUnit_Framework_TestCase {
 
+    protected static $castorConfig;
+
+    function setUp() {
+        $cachePath = realpath(__DIR__.'/temp/') . '/';
+        $templatePath = __DIR__.'/';
+        
+        self::$castorConfig = new \Jelix\Castor\Config($cachePath, $templatePath);
+        self::$castorConfig->setLang('fr');
+    }
+
     protected $content = array(
 0=>array(
         '',
@@ -183,7 +193,7 @@ function toto() {
     );
 
     function testCompileContent() {
-        $compil = new testJtplContentCompiler();
+        $compil = new testJtplContentCompiler(self::$castorConfig);
         $compil->outputType = 'html';
         $compil->trusted = true;
         $compil->setUserPlugins(array(), array('bla'=>'testjtplcontentUserFunction'));
@@ -214,7 +224,7 @@ function toto() {
     );
     
     function testCompileContentUntrusted() {
-        $compil = new testJtplContentCompiler();
+        $compil = new testJtplContentCompiler(self::$castorConfig);
         $compil->outputType = 'html';
         $compil->trusted = false;
         $compil->setUserPlugins(array(), array('bla'=>'testjtplcontentUserFunction'));
@@ -232,7 +242,7 @@ function toto() {
 );
 
     function testCompilePlugins() {
-        $compil = new testJtplContentCompiler();
+        $compil = new testJtplContentCompiler(self::$castorConfig);
         $compil->outputType = 'html';
         $compil->trusted = true;
 
@@ -255,7 +265,7 @@ function toto() {
     function testCompileErrors() {
 
         foreach($this->tplerrors as $k=>$t){
-            $compil = new testJtplContentCompiler();
+            $compil = new testJtplContentCompiler(self::$castorConfig);
             $compil->outputType = 'html';
             $compil->trusted = true;
             $ok = true;
@@ -278,7 +288,7 @@ function toto() {
     function testCompileErrorsUntrusted() {
 
         foreach($this->tplerrors2 as $k=>$t){
-            $compil = new testJtplContentCompiler();
+            $compil = new testJtplContentCompiler(self::$castorConfig);
             $compil->outputType = 'html';
             $compil->trusted = false;
             $ok = true;

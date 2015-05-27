@@ -27,8 +27,8 @@
     },
     "autoload": {
         "psr-4" : {
-            "Jelix\\Castor\\" : "lib/tpl/"
+            "Jelix\\Castor\\" : "lib/Castor/"
         }
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "stable"
 }

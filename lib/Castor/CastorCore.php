@@ -252,7 +252,7 @@ abstract class CastorCore {
         $content = '';
         ob_start ();
         try{
-            $cachePath = $this->loadCompiler();
+            $cachePath = $this->getCachePath().'virtual/';
 
             $previousTpl = $this->_templateName;
             $md = 'virtual_'.md5($tpl).($trusted?'_t':'');
@@ -266,7 +266,7 @@ abstract class CastorCore {
             $mustCompile = $this->compilationNeeded($cachePath);
 
             if ($mustCompile && !function_exists('template_'.$md)) {
-                $compiler = new jTplCompiler();
+                $compiler = $this->getCompiler();
                 $compiler->outputType = $outputtype;
                 $compiler->trusted = $trusted;
                 $compiler->compileString($tpl, $cachePath, $this->userModifiers, $this->userFunctions, $md);
@@ -288,7 +288,9 @@ abstract class CastorCore {
         return $content;
     }
 
-    abstract protected function loadCompiler();
+    abstract protected function getCachePath();
+
+    abstract protected function getCompiler();
     
     abstract protected function compilationNeeded($cacheFile);
 

@@ -51,6 +51,15 @@ function testjtplcontentUserModifier($s){}
 
 class jtplCompilerExpressionTest extends PHPUnit_Framework_TestCase {
 
+    protected static $castorConfig;
+
+    function setUp() {
+        $cachePath = realpath(__DIR__.'/temp/') . '/';
+        $templatePath = __DIR__.'/';
+        self::$castorConfig = new \Jelix\Castor\Config($cachePath, $templatePath);
+        self::$castorConfig->setLang('fr');
+    }
+
     protected $varexpr = array(
         'a'=>'a',
         '"aaa"'=>'"aaa"',
@@ -106,7 +115,7 @@ class jtplCompilerExpressionTest extends PHPUnit_Framework_TestCase {
 
 
     function testVarExprTrustedMode() {
-        $compil = new testJtplCompiler();
+        $compil = new testJtplCompiler(self::$castorConfig);
         $compil->trusted = true;
         foreach($this->varexpr as $k=>$t){
             try{
@@ -127,7 +136,7 @@ class jtplCompilerExpressionTest extends PHPUnit_Framework_TestCase {
     }
 
     function testVarExprUnTrustedMode() {
-        $compil = new testJtplCompiler();
+        $compil = new testJtplCompiler(self::$castorConfig);
         $compil->trusted = false;
         foreach($this->varexpr as $k=>$t){
             try{
@@ -194,7 +203,7 @@ class jtplCompilerExpressionTest extends PHPUnit_Framework_TestCase {
     );
 
     function testBadVarExprTrustedMode() {
-        $compil = new testJtplCompiler();
+        $compil = new testJtplCompiler(self::$castorConfig);
         $compil->trusted = true;
         foreach($this->badvarexpr as $k=>$t){
             try{
@@ -215,7 +224,7 @@ class jtplCompilerExpressionTest extends PHPUnit_Framework_TestCase {
     }
 
     function testBadVarExprUnTrustedMode() {
-        $compil = new testJtplCompiler();
+        $compil = new testJtplCompiler(self::$castorConfig);
         $compil->trusted = false;
         foreach($this->badvarexpr as $k=>$t){
             try{
@@ -242,7 +251,7 @@ class jtplCompilerExpressionTest extends PHPUnit_Framework_TestCase {
 
 
     function testVarTag() {
-        $compil = new testJtplCompiler();
+        $compil = new testJtplCompiler(self::$castorConfig);
         $compil->trusted = true;
         $compil->setUserPlugins(array('bla'=>'testjtplcontentUserModifier'),array());
 
@@ -272,7 +281,7 @@ class jtplCompilerExpressionTest extends PHPUnit_Framework_TestCase {
 
 
     function testAssign() {
-        $compil = new testJtplCompiler();
+        $compil = new testJtplCompiler(self::$castorConfig);
         $compil->trusted = true;
 
         foreach($this->varAssign as $k=>$t){

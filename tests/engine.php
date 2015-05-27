@@ -8,13 +8,14 @@
 
 
 class CastorTest extends PHPUnit_Framework_TestCase {
-    
+
+    protected static $castorConfig;
+
     function setUp() {
-        \Jelix\Castor\Config::$cachePath = realpath(__DIR__.'/temp/') . '/';
-        $this->clearDir(\Jelix\Castor\Config::$cachePath);
-        \Jelix\Castor\Config::$localizedMessagesPath = realpath(__DIR__.'/../lib/tpl/locales/') . '/';
-        \Jelix\Castor\Config::$templatePath = __DIR__.'/';
-        \Jelix\Castor\Config::addPluginsRepository(realpath(__DIR__.'/../lib/plugins/'));
+        $cachePath = realpath(__DIR__.'/temp/') . '/';
+        $templatePath = __DIR__.'/';
+        self::$castorConfig = new \Jelix\Castor\Config($cachePath, $templatePath);        
+        $this->clearDir($cachePath);
     }
 
     protected function clearDir($path) {
@@ -31,7 +32,7 @@ class CastorTest extends PHPUnit_Framework_TestCase {
     }
 
     function testCountries() {
-        $tpl = new \Jelix\Castor\Castor();
+        $tpl = new \Jelix\Castor\Castor(self::$castorConfig);
         
         $tpl->assign('countries', array());
         $tpl->assign('titre', 'This is a test !');
