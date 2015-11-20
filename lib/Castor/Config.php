@@ -2,16 +2,17 @@
 /**
 * @author      Loic Mathaud
 * @contributor Laurent Jouanneau
+*
 * @copyright   2006 Loic Mathaud
 * @copyright   2006-2015 Laurent Jouanneau
+*
 * @link        http://www.jelix.org
 * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
 */
-
 namespace Jelix\Castor;
 
-class Config {
-
+class Config
+{
     /**
      * the path of the directory which contains the
      * templates. The path should have a / at the end.
@@ -20,22 +21,22 @@ class Config {
 
     /**
      * boolean which indicates if the templates
-     * should be compiled at each call or not
+     * should be compiled at each call or not.
      */
     public $compilationForce = false;
 
     /**
-     * the lang activated in the templates
+     * the lang activated in the templates.
      */
     protected $lang = 'en';
 
     /**
-     * the charset used in the templates
+     * the charset used in the templates.
      */
     public $charset = 'UTF-8';
 
     /**
-     * the function which allow to retrieve the locales used in your templates
+     * the function which allow to retrieve the locales used in your templates.
      */
     public $localesGetter = null;
 
@@ -51,17 +52,17 @@ class Config {
     protected $localizedMessagesPath = '';
 
     /**
-     * umask for directories created in the cache directory
+     * umask for directories created in the cache directory.
      */
     public $umask = 0000;
 
     /**
-     * permissions for directories created in the cache directory
+     * permissions for directories created in the cache directory.
      */
     public $chmodDir = 0755;
 
     /**
-     * permissions for cache files
+     * permissions for cache files.
      */
     public $chmodFile = 0644;
 
@@ -75,7 +76,8 @@ class Config {
      */
     public $pluginPathList = array();
 
-    public function __construct($cachePath, $tplPath = '') {
+    public function __construct($cachePath, $tplPath = '')
+    {
         $this->cachePath = $cachePath;
         $this->templatePath = $tplPath;
         $this->addPluginsRepository(realpath(__DIR__.'/../plugins/'));
@@ -83,45 +85,53 @@ class Config {
         $this->setLang($this->lang);
     }
 
-    public function setLang($lang) {
+    public function setLang($lang)
+    {
         $this->lang = $lang;
         if (!isset($this->localizedMessages[$lang])) {
             $this->localizedMessages[$lang] = array();
         }
         if (file_exists($this->localizedMessagesPath.$lang.'.php')) {
-            $messages = include($this->localizedMessagesPath.$lang.'.php');
+            $messages = include $this->localizedMessagesPath.$lang.'.php';
             $this->localizedMessages[$lang] = array_merge($this->localizedMessages[$lang], $messages);
-        }
-        else {
+        } else {
             throw new \Exception('No lang file for Castor configuration');
         }
     }
 
-    public function getLang() {
+    public function getLang()
+    {
         return $this->lang;
     }
 
-    public function getMessage($key) {
+    public function getMessage($key)
+    {
         if (isset($this->localizedMessages[$this->lang][$key])) {
             return $this->localizedMessages[$this->lang][$key];
         }
+
         return $key;
     }
 
-    public function setLocalizedMessagesPath($path) {
+    public function setLocalizedMessagesPath($path)
+    {
         $this->localizedMessagesPath = rtrim($path, '/').'/';
         $this->setLang($this->lang);
     }
 
-    public function addPluginsRepository ($path) {
-        if (trim($path) == '') return;
+    public function addPluginsRepository($path)
+    {
+        if (trim($path) == '') {
+            return;
+        }
 
         if (!file_exists($path)) {
             throw new \Exception('The given path, '.$path.' doesn\'t exists');
         }
 
-        if (substr($path,-1) != '/')
+        if (substr($path, -1) != '/') {
             $path .= '/';
+        }
 
         if ($handle = opendir($path)) {
             while (false !== ($f = readdir($handle))) {

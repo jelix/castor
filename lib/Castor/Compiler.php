@@ -2,42 +2,48 @@
 /**
 * @author      Loic Mathaud
 * @contributor Laurent Jouanneau
+*
 * @copyright   2006 Loic Mathaud
 * @copyright   2006-2015 Laurent Jouanneau
+*
 * @link        http://www.jelix.org
 * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
 */
 namespace Jelix\Castor;
 
-class Compiler extends CompilerCore {
-
+class Compiler extends CompilerCore
+{
     /**
      * @var Config
      */
     protected $config;
 
     /**
-     * Initialize some properties
+     * Initialize some properties.
      */
-    function __construct (Config $config) {
+    public function __construct(Config $config)
+    {
         parent::__construct();
         $this->config = $config;
     }
 
     /**
-     * Launch the compilation of a template
+     * Launch the compilation of a template.
      *
      * Store the result (a php content) into a cache file inside the cache directory
+     *
      * @param string $tplfile the file name that contains the template
-     * @return boolean true if ok
+     *
+     * @return bool true if ok
      */
-    public function compile ($tplName, $tplFile, $outputtype, $trusted,
-                             $userModifiers = array(), $userFunctions = array()) {
+    public function compile($tplName, $tplFile, $outputtype, $trusted,
+                             $userModifiers = array(), $userFunctions = array())
+    {
         $this->_sourceFile = $tplFile;
         $this->outputType = $outputtype;
-        $cachefile = $this->config->cachePath .dirname($tplName).'/'.$this->outputType.($trusted?'_t':'').'_'. basename($tplName);
+        $cachefile = $this->config->cachePath.dirname($tplName).'/'.$this->outputType.($trusted ? '_t' : '').'_'.basename($tplName);
         $this->trusted = $trusted;
-        $md5 = md5($tplFile.'_'.$this->outputType.($this->trusted?'_t':''));
+        $md5 = md5($tplFile.'_'.$this->outputType.($this->trusted ? '_t' : ''));
 
         if (!file_exists($this->_sourceFile)) {
             $this->doError0('errors.tpl.not.found');
@@ -45,18 +51,19 @@ class Compiler extends CompilerCore {
 
         $this->compileString(file_get_contents($this->_sourceFile), $cachefile,
             $userModifiers, $userFunctions, $md5);
+
         return true;
     }
 
-    protected function _saveCompiledString($cachefile, $result) {
+    protected function _saveCompiledString($cachefile, $result)
+    {
         $_dirname = dirname($cachefile).'/';
 
         if (!is_dir($_dirname)) {
             umask($this->config->umask);
             mkdir($_dirname, $this->config->chmodDir, true);
-        }
-        else if (!@is_writable($_dirname)) {
-            throw new \Exception (sprintf($this->config->getMessage('file.directory.notwritable'), $cachefile, $_dirname));
+        } elseif (!@is_writable($_dirname)) {
+            throw new \Exception(sprintf($this->config->getMessage('file.directory.notwritable'), $cachefile, $_dirname));
         }
 
         // write to tmp file, then rename it to avoid
@@ -64,7 +71,7 @@ class Compiler extends CompilerCore {
         $_tmp_file = tempnam($_dirname, 'wrt');
 
         if (!($fd = @fopen($_tmp_file, 'wb'))) {
-            $_tmp_file = $_dirname . '/' . uniqid('wrt');
+            $_tmp_file = $_dirname.'/'.uniqid('wrt');
             if (!($fd = @fopen($_tmp_file, 'wb'))) {
                 throw new \Exception(sprintf($this->config->getMessage('file.write.error'), $cachefile, $_tmp_file));
             }
@@ -75,19 +82,21 @@ class Compiler extends CompilerCore {
 
         // Delete the file if it already exists (this is needed on Win,
         // because it cannot overwrite files with rename()
-        if (substr(PHP_OS,0,3) == 'WIN' && file_exists($cachefile)) {
+        if (substr(PHP_OS, 0, 3) == 'WIN' && file_exists($cachefile)) {
             @unlink($cachefile);
         }
 
         @rename($_tmp_file, $cachefile);
         @chmod($cachefile, $this->config->chmodFile);
     }
-    
-    protected function getCompiledLocaleRetriever($locale) {
+
+    protected function getCompiledLocaleRetriever($locale)
+    {
         return '$t->getLocaleString(\''.$locale.'\')';
     }
-    
-    protected function _getPlugin ($type, $name) {
+
+    protected function _getPlugin($type, $name)
+    {
         $foundPath = '';
 
         if (isset($this->config->pluginPathList[$this->outputType])) {
@@ -107,18 +116,22 @@ class Compiler extends CompilerCore {
                 }
             }
         }
+
         return false;
     }
 
-    public function doError0 ($err) {
+    public function doError0($err)
+    {
         throw new \Exception(sprintf($this->config->getMessage($err), $this->_sourceFile));
     }
 
-    public function doError1 ($err, $arg) {
+    public function doError1($err, $arg)
+    {
         throw new \Exception(sprintf($this->config->getMessage($err), $arg, $this->_sourceFile));
     }
 
-    public function doError2 ($err, $arg1, $arg2) {
+    public function doError2($err, $arg1, $arg2)
+    {
         throw new \Exception(sprintf($this->config->getMessage($err), $arg1, $arg2, $this->_sourceFile));
     }
 }
