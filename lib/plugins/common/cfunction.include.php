@@ -1,8 +1,6 @@
 <?php
 /**
  * Plugin from smarty project and adapted for jtpl
- * @package    jelix
- * @subpackage jtpl_plugin
  * @copyright  2001-2003 ispi of Lincoln, Inc.
  * @contributor Brice Tence
  * @link http://smarty.php.net/

@@ -1,8 +1,7 @@
 <?php
 /**
  * Plugin to display count of a DbResultSet Object (how many records)
- * @package    jelix
- * @subpackage jtpl_plugin
+ *
  * @author     Dandelionmood
  * @copyright  2007 Dandelionmood
  * @link http://jelix.org/

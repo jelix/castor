@@ -1,7 +1,5 @@
 <?php
 /**
- * @package     jelix
- * @subpackage  jtpl_plugin
  * @author      Olivier Demah
  * @contributor Steven Jehannet
  * @copyright   2009 Olivier Demah, 2010 Steven Jehannet

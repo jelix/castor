@@ -1,9 +1,7 @@
 <?php
 /**
  * Compress JS in templates
- * @package    jelix
- * @subpackage jtpl_block
- * @version    1
+ *
  * @author      Hadrien Lanneau <contact at hadrien dot eu>
  * @copyright  2008 Hadrien.eu
  */

@@ -1,7 +1,5 @@
 <?php
 /**
- * @package     jelix
- * @subpackage  jtpl_plugin
  * @author      Julien Issler
  * @copyright   2009 Julien Issler
  * @link        http://jelix.org/

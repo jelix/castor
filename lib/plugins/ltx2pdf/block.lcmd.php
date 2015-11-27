@@ -1,7 +1,6 @@
 <?php
 /**
-* @package    jelix
-* @subpackage jtpl_plugin
+*
 * @author     Aubanel Monnier
 * @copyright  2007 Aubanel Monnier
 * @link        http://www.jelix.org

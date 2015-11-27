@@ -1,8 +1,6 @@
 <?php
 /**
  * display a constant
- * @package    jelix
- * @subpackage jtpl_plugin
  * @author      Laurent Jouanneau
  * @copyright  2008 Laurent Jouanneau
  * @link http://jelix.org/

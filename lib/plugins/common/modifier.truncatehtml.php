@@ -1,7 +1,5 @@
 <?php
 /**
- * @package    jelix
- * @subpackage jtpl_plugin
  * @author		Didier Huguet
  * @copyright 2008 Didier Huguet
  * @link http://snipplr.com/view.php?codeview&id=3618

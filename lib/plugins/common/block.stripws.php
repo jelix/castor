@@ -1,7 +1,5 @@
 <?php
 /**
-* @package     jelix
-* @subpackage  plugin
 * @author      Hugues Magnier
 * @copyright   2007 Hugues Magnier
 * @link        http://www.jelix.org

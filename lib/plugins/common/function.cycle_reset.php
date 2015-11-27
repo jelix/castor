@@ -1,7 +1,5 @@
 <?php
 /**
- * @package     jelix
- * @subpackage  jtpl_plugin
  * @author      Philippe Schelté (dubphil)
  * @copyright   2008 Philippe Schelté
  * @link        http://jelix.org/

@@ -1,7 +1,5 @@
 <?php
 /**
- * @package     jelix
- * @subpackage  jtpl_plugin
  * @author      Lepeltier kévin
  * @contributor Dominique Papin
  * @copyright   2008 Lepeltier kévin

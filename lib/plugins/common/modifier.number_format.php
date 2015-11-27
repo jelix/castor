@@ -1,8 +1,7 @@
 <?php
 /**
  * jTpl plugin that wraps PHP number_format function
- * @package    jelix
- * @subpackage jtpl_plugin
+ *
  * @author     Julien Issler
  * @contributor Mickael Fradin, Laurent Jouanneau
  * @copyright  2008-2010 Julien Issler, 2009 Mickael Fradin, 2015 Laurent Jouanneau

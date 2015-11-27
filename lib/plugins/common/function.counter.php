@@ -1,7 +1,5 @@
 <?php
 /**
- * @package     jelix
- * @subpackage  jtpl_plugin
  * @author      Thibault Piront (nuKs)
  * @copyright   2007 Thibault Piront
  * @link        http://jelix.org/

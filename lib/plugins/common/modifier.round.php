@@ -1,7 +1,6 @@
 <?php
 /**
- * @package    jelix
- * @subpackage jtpl_plugin
+ * 
  * @author     Vincent Viaud
  * @copyright 2010 Vincent Viaud
  * @licence    GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
