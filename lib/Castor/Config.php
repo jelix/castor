@@ -81,7 +81,7 @@ class Config
         $this->cachePath = $cachePath;
         $this->templatePath = $tplPath;
         $this->addPluginsRepository(realpath(__DIR__.'/../plugins/'));
-        $this->localizedMessagesPath = realpath(__DIR__.'/locales/').'/';
+        $this->localizedMessagesPath = realpath(__DIR__.'/locales/').'/%LANG%.php';
         $this->setLang($this->lang);
     }
 
@@ -89,13 +89,7 @@ class Config
     {
         $this->lang = $lang;
         if (!isset($this->localizedMessages[$lang])) {
-            $this->localizedMessages[$lang] = array();
-        }
-        if (file_exists($this->localizedMessagesPath.$lang.'.php')) {
-            $messages = include $this->localizedMessagesPath.$lang.'.php';
-            $this->localizedMessages[$lang] = array_merge($this->localizedMessages[$lang], $messages);
-        } else {
-            throw new \Exception('No lang file for Castor configuration');
+            $this->localizedMessages[$lang] = new \Jelix\SimpleLocalization\Container($this->localizedMessagesPath, $lang);
         }
     }
 
@@ -106,16 +100,22 @@ class Config
 
     public function getMessage($key)
     {
-        if (isset($this->localizedMessages[$this->lang][$key])) {
-            return $this->localizedMessages[$this->lang][$key];
+        if (isset($this->localizedMessages[$this->lang])) {
+            try {
+                $str = $this->localizedMessages[$this->lang]->get($key);
+            } catch( \Jelix\SimpleLocalization\Exception $e) {
+                $str = $key;
+            }
+        } else {
+            $str = $key;
         }
 
-        return $key;
+        return $str;
     }
 
     public function setLocalizedMessagesPath($path)
     {
-        $this->localizedMessagesPath = rtrim($path, '/').'/';
+        $this->localizedMessagesPath = rtrim($path, '/').'/%LANG%.php';
         $this->setLang($this->lang);
     }
 
