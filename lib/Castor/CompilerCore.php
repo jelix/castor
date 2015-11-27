@@ -286,6 +286,9 @@ abstract class CompilerCore
                 require_once $path[0];
                 $fct = $path[1];
                 $res = $fct($this, $targs);
+            } elseif ($path = $this->_getPlugin('modifier2', $m[1])) {
+                $res = $path[1].'($t, '.implode(',', $targs).')';
+                $this->_pluginPath[$path[0]] = true;
             } elseif ($path = $this->_getPlugin('modifier', $m[1])) {
                 $res = $path[1].'('.implode(',', $targs).')';
                 $this->_pluginPath[$path[0]] = true;

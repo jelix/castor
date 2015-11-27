@@ -21,13 +21,15 @@
  * {$mytext|truncate:45:'...'}
  * {$mytext|truncate:60:'...':true}
  * </pre>
+ *
+ * @param \Jelix\Castor\CastorCore $tpl The template
  * @param string $string the string to truncate
  * @param integer $length the number of char to keep
  * @param string $etc the string to append to the truncated string
  * @param boolean $break_words false if the last word shouldn't be cut
  * @return string
  */
-function jtpl_modifier_common_truncate($string, $length = 80, $etc = '...',
+function jtpl_modifier2_common_truncate(\Jelix\Castor\CastorCore $tpl, $string, $length = 80, $etc = '...',
                                                                   $break_words = false)
 {
     if (function_exists ('mb_strlen')) {
@@ -46,7 +48,7 @@ function jtpl_modifier_common_truncate($string, $length = 80, $etc = '...',
 
     if($length == 0)
         return '';
-    $charset = jTpl::getEncoding();
+    $charset = $tpl->getEncoding();
 
     if($f_strlen ($string,$charset) > $length) {
         $length -= $f_strlen($etc,$charset);

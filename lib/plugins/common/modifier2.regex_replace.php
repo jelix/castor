@@ -14,17 +14,18 @@
  * You should provide two arguments, like the first both of preg_replace
  * {$mystring|regex_replace:'/(\w+) (\d+), (\d+)/i':'${1}1,$3'}
  *
+ * @param \Jelix\Castor\CastorCore $tpl The template
  * @param string $string
  * @param string|array $search
  * @param string|array $replace
  * @return string
  */
-function jtpl_modifier_common_regex_replace($string, $search, $replace)
+function jtpl_modifier2_common_regex_replace(\Jelix\Castor\CastorCore $tpl, $string, $search, $replace)
 {
     if (preg_match('!\W(\w+)$!s', $search, $match) &&
             (strpos($match[1], 'e') !== false)) {
         /* remove eval-modifier from $search */
-        $search = substr($search, 0, -iconv_strlen($match[1], jTpl::getEncoding())) .
+        $search = substr($search, 0, -iconv_strlen($match[1], $tpl->getEncoding())) .
             str_replace('e', '', $match[1]);
     }
     return preg_replace($search, $replace, $string);

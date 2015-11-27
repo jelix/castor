@@ -9,6 +9,9 @@
 
 /**
  * modifier plugin :  apply the implode function on the given value
+ * 
+ * @param array $arr the array of strings
+ * @param string $glue the glue
  * @return string
  */
 function jtpl_modifier_common_implode($arr, $glue = " ") {

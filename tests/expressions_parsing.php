@@ -247,6 +247,10 @@ class jtplCompilerExpressionTest extends PHPUnit_Framework_TestCase {
     protected $varTag = array(
         '$aaa|escxml' => 'htmlspecialchars($t->_vars[\'aaa\'])',
         '$aaa|bla'=>'testjtplcontentUserModifier($t->_vars[\'aaa\'])',
+        '$aaa|count_words'=>'jtpl_modifier_common_count_words($t->_vars[\'aaa\'])',
+        '$aaa|count_words|number_format:2|upper'=>'strtoupper(jtpl_modifier_common_number_format(jtpl_modifier_common_count_words($t->_vars[\'aaa\']),2))',
+        '$aaa|truncate:50|count_words|number_format:2'=>'jtpl_modifier_common_number_format(jtpl_modifier_common_count_words(jtpl_modifier2_common_truncate($t, $t->_vars[\'aaa\'],50)),2)',
+        
     );
 
 
@@ -256,12 +260,8 @@ class jtplCompilerExpressionTest extends PHPUnit_Framework_TestCase {
         $compil->setUserPlugins(array('bla'=>'testjtplcontentUserModifier'),array());
 
         foreach($this->varTag as $k=>$t){
-            try{
-                $res = $compil->testParseVariable($k);
-                $this->assertEquals($t, $res);
-            }catch(Exception $e){
-                $this->assertTrue(false, "Test '$k', Unknown Exception: ".$e->getMessage());
-            }
+            $res = $compil->testParseVariable($k);
+            $this->assertEquals($t, $res);
         }
     }
 

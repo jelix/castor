@@ -14,14 +14,16 @@
  *
  * <pre>{$mytext|count_characters}
  * {$mytext|count_characters:true}</pre>
+ *
+ * @param \Jelix\Castor\CastorCore $tpl The template
  * @param string $string
  * @param boolean $include_spaces include whitespace in the character count
  * @return integer
  */
-function jtpl_modifier_common_count_characters($string, $include_spaces = false)
+function jtpl_modifier2_common_count_characters(\Jelix\Castor\CastorCore $tpl, $string, $include_spaces = false)
 {
     if ($include_spaces)
-       return(iconv_strlen($string, jTpl::getEncoding()));
+       return(iconv_strlen($string, $tpl->getEncoding()));
 
     return preg_match_all("/[^\s]/",$string, $match);
 }

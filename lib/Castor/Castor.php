@@ -94,10 +94,8 @@ class Castor extends CastorCore
      * return the current encoding.
      *
      * @return string the charset string
-     *
-     * @since 1.0b2
      */
-    public static function getEncoding()
+    public function getEncoding()
     {
         return $this->config->charset;
     }
