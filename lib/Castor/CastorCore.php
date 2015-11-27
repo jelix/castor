@@ -382,4 +382,17 @@ abstract class CastorCore
     {
         return '';
     }
+
+    /**
+     * @return \Exception
+     */
+    public function getInternalException($messageKey, $parameters) {
+        try {
+            $msg = $this->config->getMessage($messageKey, $parameters);
+        } catch(\Jelix\SimpleLocalization\Container $e) {
+            $msg = $messageKey;
+        }
+
+        return new \Exception($msg);
+    }
 }

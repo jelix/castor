@@ -24,12 +24,12 @@
  * @params \Jelix\Castor\CastorCore $tpl
  * @params array $params
  */
-function jtpl_function_html_mailto(\Jelix\Castor\CastorCore $tpl,$params)
+function jtpl_function_html_mailto(\Jelix\Castor\CastorCore $tpl, $params)
 {
     $extra = '';
 
     if (empty($params['address'])) {
-        throw new jException("jelix~errors.tplplugin.function.argument.unknown", array('address','mailto',$tpl->_templateName));
+        throw $tpl->getInternalException("errors.tplplugin.function.argument.unknown", array('address','mailto',$tpl->_templateName));
     } else {
         $address = $params['address'];
     }
@@ -72,7 +72,7 @@ function jtpl_function_html_mailto(\Jelix\Castor\CastorCore $tpl,$params)
 
     $encode = (empty($params['encode'])) ? 'none' : $params['encode'];
     if (!in_array($encode,array('javascript','javascript_charcode','hex','none')) ) {
-        throw new jException("jelix~errors.tplplugin.function.argument.unknown", array($encode,'mailto',$tpl->_templateName));
+        throw $tpl->getInternalException("errors.tplplugin.function.argument.unknown", array($encode,'mailto',$tpl->_templateName));
     }
 
     if ($encode == 'javascript' ) {
@@ -110,7 +110,7 @@ eval(unescape(\''.$js_encode.'\')); //]]>
 
         preg_match('!^(.*)(\?.*)$!',$address,$match);
         if(!empty($match[2])) {
-            throw new jException("jelix~errors.tplplugin.function.argument.unknown", array($match[2],' ', ' ' ));
+            throw $tpl->getInternalException("errors.tplplugin.function.argument.unknown", array($match[2],' ', ' ' ));
         }
         $address_encode = '';
         for ($x=0; $x < strlen($address); $x++) {

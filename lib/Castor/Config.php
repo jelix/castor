@@ -37,6 +37,7 @@ class Config
 
     /**
      * the function which allow to retrieve the locales used in your templates.
+     * @var callable
      */
     public $localesGetter = null;
 
@@ -98,11 +99,11 @@ class Config
         return $this->lang;
     }
 
-    public function getMessage($key)
+    public function getMessage($key, $params=null)
     {
         if (isset($this->localizedMessages[$this->lang])) {
             try {
-                $str = $this->localizedMessages[$this->lang]->get($key);
+                $str = $this->localizedMessages[$this->lang]->get($key, $params);
             } catch( \Jelix\SimpleLocalization\Exception $e) {
                 $str = $key;
             }

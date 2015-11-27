@@ -30,7 +30,7 @@
  */
 function jtpl_function_common_cycle_init(\Jelix\Castor\CastorCore $tpl, $name, $values='') {
     if($name == ''){
-        throw new jException("jelix~errors.tplplugin.cfunction.bad.argument.number", array('cycle_init','1',''));
+        throw $tpl->getInternalException("errors.tplplugin.cfunction.bad.argument.number", array('cycle_init','1',''));
     }
     
     if(is_array($name)) {
@@ -39,11 +39,11 @@ function jtpl_function_common_cycle_init(\Jelix\Castor\CastorCore $tpl, $name, $
     }
     else if(strpos($name,',') === false){
         if($values == ''){
-            throw new jException("jelix~errors.tplplugin.cfunction.bad.argument.number", array('cycle_init','2',''));
+            throw $tpl->getInternalException("errors.tplplugin.cfunction.bad.argument.number", array('cycle_init','2',''));
         }
         if (!is_array($values)) {
             if(strpos($values,',') === false){
-                throw new jException("jelix~errors.tplplugin.function.invalid", array('cycle_init','',''));
+                throw $tpl->getInternalException("errors.tplplugin.function.invalid", array('cycle_init','',''));
             }
             $values = explode(',', $values);
         }
