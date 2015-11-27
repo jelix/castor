@@ -12,10 +12,10 @@
  * function plugin :  Reset a counter.
  *
  * <pre>{counter_reset 'name'}</pre>
- * @param jTpl $tpl The template
+ * @param \Jelix\Castor\CastorCore $tpl The template
  * @param string $name The name of the counter
  */
-function jtpl_function_common_counter_reset($tpl, $name = '') {
+function jtpl_function_common_counter_reset(\Jelix\Castor\CastorCore $tpl, $name = '') {
     if( empty($name) && $name !== '0' ){
         $name = 'default';
     }

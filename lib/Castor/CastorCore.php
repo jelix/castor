@@ -19,7 +19,7 @@ abstract class CastorCore
      * all assigned template variables. 
      * It have a public access only for plugins. So you musn't use directly this property
      * except from tpl plugins.
-     * See methods of jTpl to manage template variables.
+     * See methods of CastorCore to manage template variables.
      *
      * @var array
      */
@@ -358,7 +358,7 @@ abstract class CastorCore
     protected $userFunctions = array();
 
     /**
-     * register a user function. The function should accept a jTpl object
+     * register a user function. The function should accept a CastorCore object
      * as first parameter.
      *
      * @param string $name         the name of the modifier in a template

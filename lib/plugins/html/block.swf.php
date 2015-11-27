@@ -41,11 +41,11 @@
  * $params[2][xx] Parameter of the Flash Player
  * $params[3][xx] Flashvar for the Flash Player
  *
- * @param jTplCompiler $compiler the template compiler
+ * @param \Jelix\Castor\CompilerCore $compiler the template compiler
  * @param boolean $begin true if it is the begin of block, else false
  * @param array $params parameters for the url
  */
-function jtpl_block_html_swf($compiler, $begin, $params) {
+function jtpl_block_html_swf(\Jelix\Castor\CompilerCore $compiler, $begin, $params) {
 
     if($begin) {
         $sortie  = '

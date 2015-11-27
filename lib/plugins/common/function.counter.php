@@ -12,11 +12,11 @@
  * function plugin : Increment and print a counter on all calls.
  *
  * <pre>{for $i=0;$i<10;$i++}{counter 'name', true}{/for}</pre>
- * @param jTpl $tpl The template
+ * @param \Jelix\Castor\CastorCore $tpl The template
  * @param string $name The name of the counter
  * @param bool $print Print the counter or not
  */
-function jtpl_function_common_counter($tpl, $name = '', $print = true) {    
+function jtpl_function_common_counter(\Jelix\Castor\CastorCore $tpl, $name = '', $print = true) {    
     if(!isset($tpl->_privateVars['counterArray']))
         $tpl->_privateVars['counterArray'] = array( 'default' => array('type' => '0', 'start' => 1, 'incr' => 1) );
         

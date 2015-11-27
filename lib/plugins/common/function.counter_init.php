@@ -12,13 +12,13 @@
  * function plugin :  Init a counter.
  *
  * <pre>{counter_init 'name', 'type', 'start', 'incr'}</pre>
- * @param jTpl $tpl The template
+ * @param \Jelix\Castor\CastorCore $tpl The template
  * @param string $name The name of the counter
  * @param string $type The type of the counter ('0', '00', 'aa' or 'AA').
  * @param string|int $start Where the counter start. String if type == 'aa'/'AA'
  * @param int $incr How many time the counter is increased on each call
  */
-function jtpl_function_common_counter_init($tpl, $name = '', $type = '0', $start = 1, $incr = 1) {
+function jtpl_function_common_counter_init(\Jelix\Castor\CastorCore $tpl, $name = '', $type = '0', $start = 1, $incr = 1) {
     if(!isset($tpl->_privateVars['counterArray']))
         $tpl->_privateVars['counterArray'] = array( 'default' => array('type' => '0', 'start' => 1, 'incr' => 1) );
     

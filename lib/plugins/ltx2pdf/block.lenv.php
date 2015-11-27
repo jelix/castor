@@ -12,12 +12,12 @@
  * a special to insert latex content
  *
  * usage : {lenv 'latex_block_name'} ..here latex content {/lenv}
- * @param jTplCompiler $compiler the template compiler
+ * @param \Jelix\Castor\CompilerCore $compiler the template compiler
  * @param boolean $begin true if it is the begin of block, else false
  * @param array $param  1=>latex command
  * @return string the php code corresponding to the begin or end of the block
  */
-function jtpl_block_ltx2pdf_lenv($compiler, $begin, $param=array())
+function jtpl_block_ltx2pdf_lenv(\Jelix\Castor\CompilerCore $compiler, $begin, $param=array())
 {
     static $stack=array();
     if ($begin){

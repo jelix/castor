@@ -12,9 +12,9 @@
  * function plugin :  Reset all the counters.
  *
  * <pre>{counter_reset_all}</pre>
- * @param jTpl $tpl The template
+ * @param \Jelix\Castor\CastorCore $tpl The template
  */
-function jtpl_function_common_counter_reset_all($tpl) {
+function jtpl_function_common_counter_reset_all(\Jelix\Castor\CastorCore $tpl) {
     if(!isset($tpl->_privateVars['counterArray']))
         return;
     $tpl->_privateVars['counterArray'] = array( 'default' => array('type' => '0', 'start' => 1, 'incr' => 1) );

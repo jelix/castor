@@ -22,11 +22,11 @@
  * {cycle 'name'}
  * {cycle}
  * </pre>
- * @paramm jTpl $tpl
+ * @param \Jelix\Castor\CastorCore $tpl
  * @param string,array $param the name of the cycle, or the list of values
  * @return string
  */
-function jtpl_function_common_cycle($tpl, $param=''){
+function jtpl_function_common_cycle(\Jelix\Castor\CastorCore $tpl, $param=''){
     if(is_array($param)){
         static $cycle_vars;
         if(!isset($cycle_vars['values'])){

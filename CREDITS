@@ -1,12 +1,16 @@
-Credit jTpl standalone
-=======================
+Credits
+=======
 
-Developers
-------------
-
-Laurent Jouanneau : core developer
-Loic Mathaud (bballizlife) : bug fixes, standalone version of jtpl, {for}.
+Creator: Laurent Jouanneau
 
 Contributors
--------------
-Yannick Le Guédart (Torgan) : adaptation de plugins smarty pour jtpl.
+------------
+
+- Olivier Demah
+- "dsdenes"
+- Yannick Le Guédart (Torgan)
+- Loic Mathaud (bballizlife)
+- Aubanel Monnier
+- Dominique Papin
+- Brice Tencé
+- Christophe Thiriot

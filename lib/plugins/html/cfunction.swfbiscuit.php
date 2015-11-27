@@ -40,10 +40,10 @@
  * $params[2][xx] Parameter of the Flash Player
  * $params[3][xx] Flashvar for the Flash Player
  *
- * @param jTpl $tpl template engine
+ * @param \Jelix\Castor\CastorCore $tpl template engine
  * @param array $params parameters for the url
  */
-function jtpl_cfunction_html_swfbiscuit($tpl, $params) {
+function jtpl_cfunction_html_swfbiscuit(\Jelix\Castor\CastorCore $tpl, $params) {
 
     $sortie  = '
         $src = '.$params[0].';

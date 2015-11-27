@@ -21,10 +21,10 @@
  * {mailto array("address"=>"me@domain.com","cc"=>"you@domain.com,they@domain.com")}
  * {mailto array("address"=>"me@domain.com","extra"=>'class="mailto"')}
  * </pre>
- * @params jTpl $tpl
+ * @params \Jelix\Castor\CastorCore $tpl
  * @params array $params
  */
-function jtpl_function_html_mailto($tpl,$params)
+function jtpl_function_html_mailto(\Jelix\Castor\CastorCore $tpl,$params)
 {
     $extra = '';
 

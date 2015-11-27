@@ -13,11 +13,11 @@
  * compiled function plugin :  display a constant. Not available in untrusted templates
  *
  * <pre>{const 'foo'}</pre>
- * @param jTplCompiler $compiler the template compiler
+ * @param \Jelix\Castor\CompilerCore $compiler the template compiler
  * @param array $param   0=>$string the constant name
  * @return string the php code corresponding to the function content
  */
-function jtpl_cfunction_xml_const($compiler, $param=array()) {
+function jtpl_cfunction_xml_const(\Jelix\Castor\CompilerCore $compiler, $param=array()) {
     if(!$compiler->trusted) {
         $compiler->doError1('errors.tplplugin.untrusted.not.available','const');
         return '';

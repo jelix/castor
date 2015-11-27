@@ -23,12 +23,12 @@
  * {cycle_init '#eeeeee,#d0d0d0d'}
  * {cycle_init 'name','#eeeeee,#d0d0d0d'}
  * </pre>
- * @param jTpl $tpl
+ * @param \Jelix\Castor\CastorCore $tpl
  * @param string $name the name of the cycle or the list of values
  * @param string $values the list of values
  * @return 1
  */
-function jtpl_function_common_cycle_init($tpl, $name, $values='') {
+function jtpl_function_common_cycle_init(\Jelix\Castor\CastorCore $tpl, $name, $values='') {
     if($name == ''){
         throw new jException("jelix~errors.tplplugin.cfunction.bad.argument.number", array('cycle_init','1',''));
     }

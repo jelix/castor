@@ -12,14 +12,14 @@
 /**
  * gravatar plugin :  write the url corresponding to the image of the gravatar account identified by the given email address
  *
- * @param jTpl $tpl template engine
+ * @param \Jelix\Castor\CastorCore $tpl template engine
  * @param string $email account
  * @param array $params parameters for :
  *  1) the default avatar URL
  *  2) the default size of the image
  *  3) the username to be put in the "alt" attribute of the img 
  */
-function jtpl_function_html_gravatar($tpl, $email, $params=array()) {
+function jtpl_function_html_gravatar(\Jelix\Castor\CastorCore $tpl, $email, $params=array()) {
 
     // if no default url is given for the default gravatar,
     // this will display the default Gravatar Image from gravatar.com

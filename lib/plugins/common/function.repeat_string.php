@@ -13,10 +13,10 @@
  *
  * <pre>{repeat_string 'mystring'}
  * {repeat_string 'mystring',4}</pre>
- * @param jTpl $tpl The template
+ * @param \Jelix\Castor\CastorCore $tpl The template
  * @param string $string The string to repeat
  * @param int $count How many times to repeat
  */
-function jtpl_function_common_repeat_string($tpl, $string='', $count=1){
+function jtpl_function_common_repeat_string(\Jelix\Castor\CastorCore$tpl, $string='', $count=1){
     echo str_repeat($string, $count);
 }

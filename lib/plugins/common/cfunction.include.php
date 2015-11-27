@@ -14,11 +14,11 @@
  * function plugin :  include a template into another template
  *
  * <pre>{include 'myModule~foo'}</pre>
- * @param jTplCompiler $compiler the template compiler
+ * @param \Jelix\Castor\CompilerCore $compiler the template compiler
  * @param array $param   0=>$string the template selector (string)
  * @return string the php code corresponding to the function content
  */
-function jtpl_cfunction_common_include($compiler, $param=array()) {
+function jtpl_cfunction_common_include(\Jelix\Castor\CompilerCore $compiler, $param=array()) {
     if(!$compiler->trusted) {
         $compiler->doError1('errors.tplplugin.untrusted.not.available','include');
         return '';
