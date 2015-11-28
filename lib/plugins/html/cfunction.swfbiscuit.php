@@ -1,15 +1,18 @@
 <?php
+
 /**
  * @author      Lepeltier kévin
  * @contributor Dominique Papin
+ *
  * @copyright   2008 Lepeltier kévin
  * @copyright   2008 Dominique Papin
+ *
  * @link        http://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
  */
 
 /**
- * swfbiscuit plugin :  Adds html code to display a swf
+ * swfbiscuit plugin :  Adds html code to display a swf.
  *
  * Example :
  * {swfbiscuit 'promobidon.swf',
@@ -41,9 +44,9 @@
  * @param \Jelix\Castor\CastorCore $tpl template engine
  * @param array $params parameters for the url
  */
-function jtpl_cfunction_html_swfbiscuit(\Jelix\Castor\CastorCore $tpl, $params) {
-
-    $sortie  = '
+function jtpl_cfunction_html_swfbiscuit(\Jelix\Castor\CastorCore $tpl, $params)
+{
+    $sortie = '
         $src = '.$params[0].';
         $options = '.$params[1].';
         $params = '.$params[2].';
@@ -72,5 +75,6 @@ function jtpl_cfunction_html_swfbiscuit(\Jelix\Castor\CastorCore $tpl, $params) 
         echo \'" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" width="\'.$options[\'width\'].\'" height="\'.$options[\'height\'].\'"></embed>\'."\n";
         echo \'</object>\';
         ';
+
     return $sortie;
 }

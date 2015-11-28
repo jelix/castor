@@ -1,9 +1,12 @@
 <?php
+
 /**
  * @author      Lepeltier kévin
  * @contributor Dominique Papin
+ *
  * @copyright   2008 Lepeltier kévin
  * @copyright   2008 Dominique Papin
+ *
  * @link        http://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
  *
@@ -11,7 +14,7 @@
  */
 
 /**
- * swf plugin :  Adds html code to display a swf
+ * swf plugin :  Adds html code to display a swf.
  *
  * Example :
  * {swf 'promobidon.swf',
@@ -40,13 +43,13 @@
  * $params[3][xx] Flashvar for the Flash Player
  *
  * @param \Jelix\Castor\CompilerCore $compiler the template compiler
- * @param boolean $begin true if it is the begin of block, else false
+ * @param bool $begin true if it is the begin of block, else false
  * @param array $params parameters for the url
  */
-function jtpl_block_html_swf(\Jelix\Castor\CompilerCore $compiler, $begin, $params) {
-
-    if($begin) {
-        $sortie  = '
+function jtpl_block_html_swf(\Jelix\Castor\CompilerCore $compiler, $begin, $params)
+{
+    if ($begin) {
+        $sortie = '
         $src = '.$params[0].';
         $options = '.$params[1].';
         $params = '.$params[2].';
@@ -68,6 +71,7 @@ function jtpl_block_html_swf(\Jelix\Castor\CompilerCore $compiler, $begin, $para
         if( count($params) ) foreach($params as $key => $val)
             echo \'<param name="\'.$key.\'" value="\'.$val.\'" />\'."\n";
         ';
+
         return $sortie;
     } else {
         return 'echo \'</object>\';';

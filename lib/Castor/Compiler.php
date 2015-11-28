@@ -1,14 +1,16 @@
 <?php
+
 /**
-* @author      Loic Mathaud
-* @contributor Laurent Jouanneau
-*
-* @copyright   2006 Loic Mathaud
-* @copyright   2006-2015 Laurent Jouanneau
-*
-* @link        http://www.jelix.org
-* @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
-*/
+ * @author      Loic Mathaud
+ * @contributor Laurent Jouanneau
+ *
+ * @copyright   2006 Loic Mathaud
+ * @copyright   2006-2015 Laurent Jouanneau
+ *
+ * @link        http://www.jelix.org
+ * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
+ */
+
 namespace Jelix\Castor;
 
 class Compiler extends CompilerCore

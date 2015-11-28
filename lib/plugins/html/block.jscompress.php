@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Compress JS in templates
+ * Compress JS in templates.
  *
  * @author      Hadrien Lanneau <contact at hadrien dot eu>
  * @copyright  2008 Hadrien.eu
@@ -8,14 +9,15 @@
 
 /**
  * jscompress : formate a js block code by removing spaces, tabs and returns.
- * Example:  {jscompress}var foo = bar;{/jscompress}
+ * Example:  {jscompress}var foo = bar;{/jscompress}.
+ *
  * @return string
  */
-function jtpl_block_common_jscompress ( $compiler, $begin, $params = array()) {
+function jtpl_block_common_jscompress($compiler, $begin, $params = array())
+{
     if ($begin) {
-       $content = ' ob_start();';
-    }
-    else {
+        $content = ' ob_start();';
+    } else {
         $content = '
         $buffer = preg_replace(
                 array(
@@ -33,5 +35,6 @@ function jtpl_block_common_jscompress ( $compiler, $begin, $params = array()) {
         ob_end_clean();
         echo $buffer;';
     }
+
     return $content;
 }

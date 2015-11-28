@@ -1,14 +1,16 @@
 <?php
+
 /**
-* @author      Loic Mathaud
-* @contributor Laurent Jouanneau
-*
-* @copyright   2006 Loic Mathaud
-* @copyright   2006-2015 Laurent Jouanneau
-*
-* @link        http://www.jelix.org
-* @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
-*/
+ * @author      Loic Mathaud
+ * @contributor Laurent Jouanneau
+ *
+ * @copyright   2006 Loic Mathaud
+ * @copyright   2006-2015 Laurent Jouanneau
+ *
+ * @link        http://www.jelix.org
+ * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
+ */
+
 namespace Jelix\Castor;
 
 class Config
@@ -37,6 +39,7 @@ class Config
 
     /**
      * the function which allow to retrieve the locales used in your templates.
+     *
      * @var callable
      */
     public $localesGetter = null;
@@ -99,12 +102,12 @@ class Config
         return $this->lang;
     }
 
-    public function getMessage($key, $params=null)
+    public function getMessage($key, $params = null)
     {
         if (isset($this->localizedMessages[$this->lang])) {
             try {
                 $str = $this->localizedMessages[$this->lang]->get($key, $params);
-            } catch( \Jelix\SimpleLocalization\Exception $e) {
+            } catch (\Jelix\SimpleLocalization\Exception $e) {
                 $str = $key;
             }
         } else {

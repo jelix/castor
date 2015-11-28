@@ -1,13 +1,15 @@
 <?php
+
 /**
-* @author      Laurent Jouanneau
-* @contributor Dominique Papin
-*
-* @copyright   2005-2015 Laurent Jouanneau, 2007 Dominique Papin
-*
-* @link        http://www.jelix.org
-* @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
-*/
+ * @author      Laurent Jouanneau
+ * @contributor Dominique Papin
+ *
+ * @copyright   2005-2015 Laurent Jouanneau, 2007 Dominique Papin
+ *
+ * @link        http://www.jelix.org
+ * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
+ */
+
 namespace Jelix\Castor;
 
 /**
@@ -16,7 +18,7 @@ namespace Jelix\Castor;
 abstract class CastorCore
 {
     /**
-     * all assigned template variables. 
+     * all assigned template variables.
      * It have a public access only for plugins. So you musn't use directly this property
      * except from tpl plugins.
      * See methods of CastorCore to manage template variables.
@@ -173,7 +175,7 @@ abstract class CastorCore
         if (in_array($tpl, $this->processedMeta)) {
             // we want to process meta only one time, when a template is included
             // several time in an other template, or, more important, when a template
-            // is included in a recursive manner (in this case, it did cause infinite loop, see #1396). 
+            // is included in a recursive manner (in this case, it did cause infinite loop, see #1396).
             return $this->_meta;
         }
         $this->processedMeta[] = $tpl;
@@ -360,7 +362,7 @@ abstract class CastorCore
      * as first parameter.
      *
      * @param string $name         the name of the modifier in a template
-     * @param string $functionName   the corresponding PHP function
+     * @param string $functionName the corresponding PHP function
      */
     public function registerFunction($name, $functionName)
     {
@@ -380,10 +382,11 @@ abstract class CastorCore
     /**
      * @return \Exception
      */
-    public function getInternalException($messageKey, $parameters) {
+    public function getInternalException($messageKey, $parameters)
+    {
         try {
             $msg = $this->config->getMessage($messageKey, $parameters);
-        } catch(\Jelix\SimpleLocalization\Container $e) {
+        } catch (\Jelix\SimpleLocalization\Container $e) {
             $msg = $messageKey;
         }
 
