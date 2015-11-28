@@ -1,13 +1,12 @@
 <?php
 /**
- * jTpl plugin that wraps PHP number_format function
+ * Castor plugin that wraps PHP number_format function
  *
  * @author     Julien Issler
  * @contributor Mickael Fradin, Laurent Jouanneau
  * @copyright  2008-2010 Julien Issler, 2009 Mickael Fradin, 2015 Laurent Jouanneau
  * @link       http://www.jelix.org
  * @licence    GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
- * @since 1.1
  */
 
 /**

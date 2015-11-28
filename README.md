@@ -1,4 +1,4 @@
-Castor is a template engine, formerly named jTpl and used in the Jelix Framework.
+Castor is a template engine for PHP, using syntax similar to PHP.
 
 # Features
 
@@ -13,6 +13,15 @@ Castor is a template engine, formerly named jTpl and used in the Jelix Framework
 - Plugins can be specific to a content type (HTML, XML, text…), so they produced right content.
 - a system of “meta”: allow the template to expose data to PHP code. For example, a "meta"
   can be a url of a stylesheet to use with the generated content.
+
+# History
+
+Castor was formerly known as jTpl and was used in the [Jelix Framework](http://jelix.org)
+since 2006. There was a specific version, "jTpl standalone", existing for years to
+use jTpl without Jelix, but it was never released as a stable version.
+
+In 2015, jTpl was completely "extracted" from Jelix (starting to Jelix 1.7), and is now
+available as a standalone component under the name "Castor", with true stable releases. 
 
 # installation
 
@@ -52,6 +61,7 @@ $config = new \Jelix\Castor\Config($cachePath, $templatePath);
 $tpl = new \Jelix\Castor\Castor($config);
 
 // assign some values, so they will be available for the template
+
 $countries = array('France', 'Italie', 'Espagne', 'Belgique');
 $tpl->assign('countries', $countries);
 $tpl->assign('titre', 'This is a test !');
@@ -63,4 +73,4 @@ $content = $tpl->fetch('test.tpl');
 $tpl->display('test.tpl');
 ```
 
-More doc later... see [Jelix documentation to know more](http://docs.jelix.org/en/manual-1.6/templates).
+To know more, see the docs/ directory.

@@ -62,7 +62,8 @@ class Castor extends CastorCore
 
         if ($mustCompile) {
             $compiler = $this->getCompiler();
-            $compiler->compile($this->_templateName, $tpl, $outputtype, $trusted,
+            $compiler->compile($this->_templateName,
+                               $tpl, $outputtype, $trusted,
                                $this->userModifiers, $this->userFunctions);
         }
         require_once $cachefile;

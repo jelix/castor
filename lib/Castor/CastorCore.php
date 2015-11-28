@@ -69,8 +69,6 @@ abstract class CastorCore
      *
      * @param string $name  the variable name
      * @param mixed  $value the value
-     *
-     * @since jelix 1.1
      */
     public function assignByRef($name, &$value)
     {
@@ -213,8 +211,6 @@ abstract class CastorCore
      * except from tpl plugins.
      *
      * @var string
-     *
-     * @since 1.1
      */
     public $_templateName;
 
@@ -312,7 +308,11 @@ abstract class CastorCore
                 $compiler = $this->getCompiler();
                 $compiler->outputType = $outputtype;
                 $compiler->trusted = $trusted;
-                $compiler->compileString($tpl, $cachePath, $this->userModifiers, $this->userFunctions, $md);
+                $compiler->compileString($tpl,
+                                         $cachePath,
+                                         $this->userModifiers,
+                                         $this->userFunctions,
+                                         $md);
             }
             require_once $cachePath;
 
@@ -347,8 +347,6 @@ abstract class CastorCore
      *
      * @param string $name         the name of the modifier in a template
      * @param string $functionName the corresponding PHP function
-     *
-     * @since jelix 1.1
      */
     public function registerModifier($name, $functionName)
     {
@@ -358,13 +356,11 @@ abstract class CastorCore
     protected $userFunctions = array();
 
     /**
-     * register a user function. The function should accept a CastorCore object
+     * register a user function. The function should accept at least a CastorCore object
      * as first parameter.
      *
      * @param string $name         the name of the modifier in a template
-     * @param string $functionName the corresponding PHP function
-     *
-     * @since jelix 1.1
+     * @param string $functionName   the corresponding PHP function
      */
     public function registerFunction($name, $functionName)
     {
