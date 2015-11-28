@@ -22,13 +22,18 @@
         "phpunit/phpunit": "4.3.*"
     },
     "archive": {
-        "exclude": ["/tests"]
+        "exclude": ["/tests", "/docs"]
     },
     "replace": {
     },
     "autoload": {
         "psr-4" : {
             "Jelix\\Castor\\" : "lib/Castor/"
+        }
+    },
+    "extra" : {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
         }
     },
     "minimum-stability": "stable"

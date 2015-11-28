@@ -4,7 +4,6 @@ Castor is a template engine for PHP, using syntax similar to PHP.
 
 - A simple Api to inject data and to generate content
 - A language with a syntax similar to PHP, but a bit simpler to ease learning
-- Easy localization
 - Templates can be a file or a simple string
 - Efficient generator: template files are "compiled" to PHP files
 - A sandbox mode, to fetch untrusted templates (templates uploaded by a user in a CMS for example).
