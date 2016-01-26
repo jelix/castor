@@ -6,7 +6,7 @@
  *
  * @copyright   2005-2015 Laurent Jouanneau
  * @copyright   2006 Loic Mathaud, 2007 Dominique Papin, 2009 DSDenes, 2010 Christophe Thiriot
- * @copyright   2010 Julien Issler, 2010 Brice Tence
+ * @copyright   2010-2016 Julien Issler, 2010 Brice Tence
  *
  * @link        http://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
@@ -24,7 +24,7 @@ abstract class CompilerCore
     /**
      * tokens of variable type.
      */
-    protected $_vartype = array(T_CHARACTER, T_CONSTANT_ENCAPSED_STRING, T_DNUMBER,
+    protected $_vartype = array(T_CONSTANT_ENCAPSED_STRING, T_DNUMBER,
             T_ENCAPSED_AND_WHITESPACE, T_LNUMBER, T_OBJECT_OPERATOR, T_STRING,
             T_WHITESPACE, T_ARRAY, );
 
@@ -140,6 +140,9 @@ abstract class CompilerCore
      */
     public function __construct()
     {
+        if (defined('T_CHARACTER')) {
+            $this->_vartype = T_CHARACTER;
+        }
         $this->_allowedInVar = array_merge($this->_vartype, array(T_INC, T_DEC, T_DOUBLE_ARROW));
         $this->_allowedInExpr = array_merge($this->_vartype, $this->_op);
         $this->_allowedAssign = array_merge($this->_vartype, $this->_assignOp, $this->_op);
