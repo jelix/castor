@@ -4,7 +4,7 @@
  * @author      Laurent Jouanneau
  * @contributor Loic Mathaud (standalone version), Dominique Papin, DSDenes, Christophe Thiriot, Julien Issler, Brice Tence
  *
- * @copyright   2005-2015 Laurent Jouanneau
+ * @copyright   2005-2020 Laurent Jouanneau
  * @copyright   2006 Loic Mathaud, 2007 Dominique Papin, 2009 DSDenes, 2010 Christophe Thiriot
  * @copyright   2010-2016 Julien Issler, 2010 Brice Tence
  *
@@ -151,12 +151,12 @@ abstract class CompilerCore
         $this->removeASPtags = (ini_get('asp_tags') == '1');
     }
 
-    public function compileString($templatecontent, $cachefile, $userModifiers, $userFunctions, $md5, $header = '', $footer = '')
+    public function compileString($templateContent, $cacheFile, $userModifiers, $userFunctions, $md5, $header = '', $footer = '')
     {
         $this->_modifier = array_merge($this->_modifier, $userModifiers);
         $this->_userFunctions = $userFunctions;
 
-        $result = $this->compileContent($templatecontent);
+        $result = $this->compileContent($templateContent);
 
         $header = "<?php \n".$header;
         foreach ($this->_pluginPath as $path => $ok) {
@@ -168,56 +168,55 @@ abstract class CompilerCore
         $header .= 'function template_'.$md5.'($t){'."\n?>";
         $result = $header.$result."<?php \n}\n".$footer;
 
-        $this->_saveCompiledString($cachefile, $result);
+        $this->_saveCompiledString($cacheFile, $result);
 
         return true;
     }
 
-    abstract protected function _saveCompiledString($cachefile, $result);
+    abstract protected function _saveCompiledString($cacheFile, $result);
 
-    protected function compileContent($tplcontent)
+    protected function compileContent($tplContent)
     {
         $this->_metaBody = '';
         $this->_blockStack = array();
 
         // we remove all php tags
-        $tplcontent = preg_replace("!<\?((?:php|=|\s).*)\?>!s", '', $tplcontent);
+        $tplContent = preg_replace("!<\?((?:php|=|\s).*)\?>!s", '', $tplContent);
         // we remove all template comments
-        $tplcontent = preg_replace("!{\*(.*?)\*}!s", '', $tplcontent);
+        $tplContent = preg_replace("!{\*(.*?)\*}!s", '', $tplContent);
 
-        $tplcontent = preg_replace_callback("!(<\?.*\?>)!sm", function ($matches) {
+        $tplContent = preg_replace_callback("!(<\?.*\?>)!sm", function ($matches) {
             return '<?php echo \''.str_replace("'", "\\'", $matches[1]).'\'?>';
-        }, $tplcontent);
+        }, $tplContent);
 
         if ($this->removeASPtags) {
             // we remove all asp tags
-          $tplcontent = preg_replace('!<%.*%>!s', '', $tplcontent);
+          $tplContent = preg_replace('!<%.*%>!s', '', $tplContent);
         }
 
-        preg_match_all('!{literal}(.*?){/literal}!s', $tplcontent, $_match);
+        preg_match_all('!{literal}(.*?){/literal}!s', $tplContent, $_match);
 
         $this->_literals = $_match[1];
 
-        $tplcontent = preg_replace('!{literal}(.*?){/literal}!s', '{literal}', $tplcontent);
+        $tplContent = preg_replace('!{literal}(.*?){/literal}!s', '{literal}', $tplContent);
 
-        $tplcontent = preg_replace_callback("/{((.).*?)}(\n)/sm", function ($matches) {
-                list($full, , $firstcar, $lastcar) = $matches;
-                if ($firstcar == '=' || $firstcar == '$' || $firstcar == '@') {
+        $tplContent = preg_replace_callback("/{((.).*?)}(\n)/sm", function ($matches) {
+                list($full, , $firstCar, $lastcar) = $matches;
+                if ($firstCar == '=' || $firstCar == '$' || $firstCar == '@') {
                     return "$full\n";
                 } else {
                     return $full;
                 }
-            }, $tplcontent);
-        $tplcontent = preg_replace_callback('/{((.).*?)}/sm', array($this, '_callback'), $tplcontent);
+            }, $tplContent);
+        $tplContent = preg_replace_callback('/{((.).*?)}/sm', array($this, '_callback'), $tplContent);
 
-        /*$tplcontent = preg_replace('/\?>\n?<\?php/', '', $tplcontent);*/
-        $tplcontent = preg_replace('/<\?php\\s+\?>/', '', $tplcontent);
+        $tplContent = preg_replace('/<\?php\\s+\?>/', '', $tplContent);
 
         if (count($this->_blockStack)) {
             $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
         }
 
-        return $tplcontent;
+        return $tplContent;
     }
 
     /**
@@ -515,14 +514,16 @@ abstract class CompilerCore
     /**
      * sub-function which analyse an expression.
      *
-     * @param string $string            the expression
-     * @param array  $allowed           list of allowed php token
-     * @param array  $exceptchar        list of forbidden characters
-     * @param bool   $splitArgIntoArray true: split the results on coma
+     * @param  string  $string  the expression
+     * @param  array  $allowed  list of allowed php token
+     * @param  array  $exceptChar  list of forbidden characters
+     * @param  bool  $splitArgIntoArray  true: split the results on coma
+     * @param  string  $sep1
+     * @param  string  $sep2
      *
      * @return array|string
      */
-    protected function _parseFinal($string, $allowed = array(), $exceptchar = array(';'),
+    protected function _parseFinal($string, $allowed = array(), $exceptChar = array(';'),
                                     $splitArgIntoArray = false, $sep1 = ',', $sep2 = ',')
     {
         $tokens = token_get_all('<?php '.$string.'?>');
@@ -589,7 +590,7 @@ abstract class CompilerCore
                     }
                 } elseif ($inLocale && ($tok == '.' || $tok == '~')) {
                     $locale .= $tok;
-                } elseif ($inLocale || in_array($tok, $exceptchar)
+                } elseif ($inLocale || in_array($tok, $exceptChar)
                           || ($first && $tok != '!' && $tok != '(')) {
                     $this->doError2('errors.tpl.tag.character.invalid', $this->_currentTag, $tok);
                 } elseif ($tok == '(') {

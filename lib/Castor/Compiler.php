@@ -5,7 +5,7 @@
  * @contributor Laurent Jouanneau
  *
  * @copyright   2006 Loic Mathaud
- * @copyright   2006-2015 Laurent Jouanneau
+ * @copyright   2006-2020 Laurent Jouanneau
  *
  * @link        http://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
@@ -34,16 +34,16 @@ class Compiler extends CompilerCore
      *
      * Store the result (a php content) into a cache file inside the cache directory
      *
-     * @param string $tplfile the file name that contains the template
+     * @param  string  $tplFile  the file name that contains the template
      *
      * @return bool true if ok
      */
-    public function compile($tplName, $tplFile, $outputtype, $trusted,
+    public function compile($tplName, $tplFile, $outputType, $trusted,
                              $userModifiers = array(), $userFunctions = array())
     {
         $this->_sourceFile = $tplFile;
-        $this->outputType = $outputtype;
-        $cachefile = $this->config->cachePath.dirname($tplName).'/'.$this->outputType.($trusted ? '_t' : '').'_'.basename($tplName);
+        $this->outputType = $outputType;
+        $cacheFile = $this->config->cachePath.dirname($tplName).'/'.$this->outputType.($trusted ? '_t' : '').'_'.basename($tplName);
         $this->trusted = $trusted;
         $md5 = md5($tplFile.'_'.$this->outputType.($this->trusted ? '_t' : ''));
 
@@ -51,21 +51,21 @@ class Compiler extends CompilerCore
             $this->doError0('errors.tpl.not.found');
         }
 
-        $this->compileString(file_get_contents($this->_sourceFile), $cachefile,
+        $this->compileString(file_get_contents($this->_sourceFile), $cacheFile,
             $userModifiers, $userFunctions, $md5);
 
         return true;
     }
 
-    protected function _saveCompiledString($cachefile, $result)
+    protected function _saveCompiledString($cacheFile, $result)
     {
-        $_dirname = dirname($cachefile).'/';
+        $_dirname = dirname($cacheFile).'/';
 
         if (!is_dir($_dirname)) {
             umask($this->config->umask);
             mkdir($_dirname, $this->config->chmodDir, true);
         } elseif (!@is_writable($_dirname)) {
-            throw new \Exception(sprintf($this->config->getMessage('file.directory.notwritable'), $cachefile, $_dirname));
+            throw new \Exception(sprintf($this->config->getMessage('file.directory.notwritable'), $cacheFile, $_dirname));
         }
 
         // write to tmp file, then rename it to avoid
@@ -75,7 +75,7 @@ class Compiler extends CompilerCore
         if (!($fd = @fopen($_tmp_file, 'wb'))) {
             $_tmp_file = $_dirname.'/'.uniqid('wrt');
             if (!($fd = @fopen($_tmp_file, 'wb'))) {
-                throw new \Exception(sprintf($this->config->getMessage('file.write.error'), $cachefile, $_tmp_file));
+                throw new \Exception(sprintf($this->config->getMessage('file.write.error'), $cacheFile, $_tmp_file));
             }
         }
 
@@ -84,12 +84,12 @@ class Compiler extends CompilerCore
 
         // Delete the file if it already exists (this is needed on Win,
         // because it cannot overwrite files with rename()
-        if (substr(PHP_OS, 0, 3) == 'WIN' && file_exists($cachefile)) {
-            @unlink($cachefile);
+        if (substr(PHP_OS, 0, 3) == 'WIN' && file_exists($cacheFile)) {
+            @unlink($cacheFile);
         }
 
-        @rename($_tmp_file, $cachefile);
-        @chmod($cachefile, $this->config->chmodFile);
+        @rename($_tmp_file, $cacheFile);
+        @chmod($cacheFile, $this->config->chmodFile);
     }
 
     protected function getCompiledLocaleRetriever($locale)

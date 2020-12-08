@@ -146,11 +146,8 @@ abstract class CastorCore
     {
         if (isset($this->_vars[$name])) {
             return $this->_vars[$name];
-        } else {
-            $return = null;
-
-            return $return;
         }
+        return null;
     }
 
     /**
@@ -167,10 +164,10 @@ abstract class CastorCore
      * process all meta instruction of a template.
      *
      * @param string $tpl        template selector
-     * @param string $outputtype the type of output (html, text etc..)
+     * @param string $outputType the type of output (html, text etc..)
      * @param bool   $trusted    says if the template file is trusted or not
      */
-    public function meta($tpl, $outputtype = '', $trusted = true)
+    public function meta($tpl, $outputType = '', $trusted = true)
     {
         if (in_array($tpl, $this->processedMeta)) {
             // we want to process meta only one time, when a template is included
@@ -179,7 +176,7 @@ abstract class CastorCore
             return $this->_meta;
         }
         $this->processedMeta[] = $tpl;
-        $md = $this->getTemplate($tpl, $outputtype, $trusted);
+        $md = $this->getTemplate($tpl, $outputType, $trusted);
 
         $fct = 'template_meta_'.$md;
         $fct($this);
@@ -191,15 +188,15 @@ abstract class CastorCore
      * display the generated content from the given template.
      *
      * @param string $tpl        template selector
-     * @param string $outputtype the type of output (html, text etc..)
+     * @param string $outputType the type of output (html, text etc..)
      * @param bool   $trusted    says if the template file is trusted or not
      */
-    public function display($tpl, $outputtype = '', $trusted = true)
+    public function display($tpl, $outputType = '', $trusted = true)
     {
         $previousTpl = $this->_templateName;
         $this->_templateName = $tpl;
         $this->recursiveTpl[] = $tpl;
-        $md = $this->getTemplate($tpl, $outputtype, $trusted);
+        $md = $this->getTemplate($tpl, $outputType, $trusted);
 
         $fct = 'template_'.$md;
         $fct($this);
@@ -223,24 +220,24 @@ abstract class CastorCore
      * include the compiled template file and call one of the generated function.
      *
      * @param string $tpl        template selector
-     * @param string $outputtype the type of output (html, text etc..)
+     * @param string $outputType the type of output (html, text etc..)
      * @param bool   $trusted    says if the template file is trusted or not
      *
      * @return string the suffix name of the function to call
      */
-    abstract protected function getTemplate($tpl, $outputtype = '', $trusted = true);
+    abstract protected function getTemplate($tpl, $outputType = '', $trusted = true);
 
     /**
      * return the generated content from the given template.
      *
      * @param string $tpl        template selector
-     * @param string $outputtype the type of output (html, text etc..)
+     * @param string $outputType the type of output (html, text etc..)
      * @param bool   $trusted    says if the template file is trusted or not
      * @param bool   $callMeta   false if meta should not be called
      *
      * @return string the generated content
      */
-    abstract public function fetch($tpl, $outputtype = '', $trusted = true, $callMeta = true);
+    abstract public function fetch($tpl, $outputType = '', $trusted = true, $callMeta = true);
 
     protected function _fetch($tpl, $getTemplateArg, $outputtype = '', $trusted = true, $callMeta = true)
     {
@@ -280,13 +277,13 @@ abstract class CastorCore
      * Return the generated content from the given string template (virtual).
      *
      * @param string $tpl        template content
-     * @param string $outputtype the type of output (html, text etc..)
+     * @param string $outputType the type of output (html, text etc..)
      * @param bool   $trusted    says if the template file is trusted or not
      * @param bool   $callMeta   false if meta should not be called
      *
      * @return string the generated content
      */
-    public function fetchFromString($tpl, $outputtype = '', $trusted = true, $callMeta = true)
+    public function fetchFromString($tpl, $outputType = '', $trusted = true, $callMeta = true)
     {
         ob_start();
         try {
@@ -296,17 +293,17 @@ abstract class CastorCore
             $md = 'virtual_'.md5($tpl).($trusted ? '_t' : '');
             $this->_templateName = $md;
 
-            if ($outputtype == '') {
-                $outputtype = 'html';
+            if ($outputType == '') {
+                $outputType = 'html';
             }
 
-            $cachePath .= $outputtype.'_'.$this->_templateName.'.php';
+            $cachePath .= $outputType . '_' . $this->_templateName . '.php';
 
             $mustCompile = $this->compilationNeeded($cachePath);
 
             if ($mustCompile && !function_exists('template_'.$md)) {
                 $compiler = $this->getCompiler();
-                $compiler->outputType = $outputtype;
+                $compiler->outputType = $outputType;
                 $compiler->trusted = $trusted;
                 $compiler->compileString($tpl,
                                          $cachePath,

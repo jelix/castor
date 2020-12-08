@@ -33,16 +33,16 @@ class Castor extends CastorCore
      * include the compiled template file and call one of the generated function.
      *
      * @param string $tpl        template selector
-     * @param string $outputtype the type of output (html, text etc..)
+     * @param string $outputType the type of output (html, text etc..)
      * @param bool   $trusted    says if the template file is trusted or not
      *
      * @return string the suffix name of the function to call
      */
-    protected function getTemplate($tpl, $outputtype = '', $trusted = true)
+    protected function getTemplate($tpl, $outputType = '', $trusted = true)
     {
         $tpl = $this->config->templatePath.$tpl;
-        if ($outputtype == '') {
-            $outputtype = 'html';
+        if ($outputType == '') {
+            $outputType = 'html';
         }
 
         $cachefile = dirname($this->_templateName).'/';
@@ -54,7 +54,7 @@ class Castor extends CastorCore
             throw new Exception('cache path is invalid ! its value is: "'.$this->config->cachePath.'".');
         }
 
-        $cachefile = $this->config->cachePath.$cachefile.$outputtype.($trusted ? '_t' : '').'_'.basename($tpl);
+        $cachefile = $this->config->cachePath.$cachefile . $outputType . ($trusted ? '_t' : '') . '_' . basename($tpl);
 
         $mustCompile = $this->config->compilationForce || !file_exists($cachefile);
         if (!$mustCompile) {
@@ -66,17 +66,17 @@ class Castor extends CastorCore
         if ($mustCompile) {
             $compiler = $this->getCompiler();
             $compiler->compile($this->_templateName,
-                               $tpl, $outputtype, $trusted,
+                               $tpl, $outputType, $trusted,
                                $this->userModifiers, $this->userFunctions);
         }
         require_once $cachefile;
 
-        return md5($tpl.'_'.$outputtype.($trusted ? '_t' : ''));
+        return md5($tpl.'_' . $outputType . ($trusted ? '_t' : ''));
     }
 
-    public function fetch($tpl, $outputtype = '', $trusted = true, $callMeta = true)
+    public function fetch($tpl, $outputType = '', $trusted = true, $callMeta = true)
     {
-        return $this->_fetch($tpl, $tpl, $outputtype, $trusted, $callMeta);
+        return $this->_fetch($tpl, $tpl, $outputType, $trusted, $callMeta);
     }
 
     protected function getCachePath()
