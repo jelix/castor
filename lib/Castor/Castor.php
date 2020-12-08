@@ -5,7 +5,7 @@
  * @contributor Laurent Jouanneau
  *
  * @copyright   2006 Loic Mathaud
- * @copyright   2006-2015 Laurent Jouanneau
+ * @copyright   2006-2020 Laurent Jouanneau
  *
  * @link        http://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
@@ -26,14 +26,15 @@ class Castor extends CastorCore
     public function __construct(Config $config)
     {
         $this->config = $config;
+        parent::__construct();
     }
 
     /**
      * include the compiled template file and call one of the generated function.
      *
-     * @param string|jSelectorTpl $tpl        template selector
-     * @param string              $outputtype the type of output (html, text etc..)
-     * @param bool                $trusted    says if the template file is trusted or not
+     * @param string $tpl        template selector
+     * @param string $outputtype the type of output (html, text etc..)
+     * @param bool   $trusted    says if the template file is trusted or not
      *
      * @return string the suffix name of the function to call
      */

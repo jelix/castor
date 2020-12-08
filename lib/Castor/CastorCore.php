@@ -4,7 +4,7 @@
  * @author      Laurent Jouanneau
  * @contributor Dominique Papin
  *
- * @copyright   2005-2015 Laurent Jouanneau, 2007 Dominique Papin
+ * @copyright   2005-2020 Laurent Jouanneau, 2007 Dominique Papin
  *
  * @link        http://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
@@ -222,9 +222,9 @@ abstract class CastorCore
     /**
      * include the compiled template file and call one of the generated function.
      *
-     * @param string|jSelectorTpl $tpl        template selector
-     * @param string              $outputtype the type of output (html, text etc..)
-     * @param bool                $trusted    says if the template file is trusted or not
+     * @param string $tpl        template selector
+     * @param string $outputtype the type of output (html, text etc..)
+     * @param bool   $trusted    says if the template file is trusted or not
      *
      * @return string the suffix name of the function to call
      */
@@ -269,7 +269,7 @@ abstract class CastorCore
             array_pop($this->recursiveTpl);
             $this->_templateName = $previousTpl;
             $content = ob_get_clean();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             ob_end_clean();
             throw $e;
         }
@@ -326,7 +326,7 @@ abstract class CastorCore
             $fct($this);
             $content = ob_get_clean();
             $this->_templateName = $previousTpl;
-        } catch (exception $e) {
+        } catch (\Exception $e) {
             ob_end_clean();
             throw $e;
         }
@@ -384,11 +384,7 @@ abstract class CastorCore
      */
     public function getInternalException($messageKey, $parameters)
     {
-        try {
-            $msg = $this->config->getMessage($messageKey, $parameters);
-        } catch (\Jelix\SimpleLocalization\Container $e) {
-            $msg = $messageKey;
-        }
+        $msg = $this->config->getMessage($messageKey, $parameters);
 
         return new \Exception($msg);
     }
