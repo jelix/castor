@@ -99,8 +99,6 @@ class Compiler extends CompilerCore
 
     protected function _getPlugin($type, $name)
     {
-        $foundPath = '';
-
         if (isset($this->config->pluginPathList[$this->outputType])) {
             foreach ($this->config->pluginPathList[$this->outputType] as $path) {
                 $foundPath = $path.$type.'.'.$name.'.php';

@@ -244,7 +244,6 @@ abstract class CastorCore
 
     protected function _fetch($tpl, $getTemplateArg, $outputtype = '', $trusted = true, $callMeta = true)
     {
-        $content = '';
         ob_start();
         try {
             $previousTpl = $this->_templateName;
@@ -289,7 +288,6 @@ abstract class CastorCore
      */
     public function fetchFromString($tpl, $outputtype = '', $trusted = true, $callMeta = true)
     {
-        $content = '';
         ob_start();
         try {
             $cachePath = $this->getCachePath().'virtual/';
