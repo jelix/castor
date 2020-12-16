@@ -23,6 +23,10 @@ class Castor extends CastorCore
      */
     protected $config = null;
 
+    /**
+     *
+     * @param  Config  $config
+     */
     public function __construct(Config $config)
     {
         $this->config = $config;
@@ -37,6 +41,7 @@ class Castor extends CastorCore
      * @param bool   $trusted    says if the template file is trusted or not
      *
      * @return string the suffix name of the function to call
+     * @throws Exception
      */
     protected function getTemplate($tpl, $outputType = '', $trusted = true)
     {

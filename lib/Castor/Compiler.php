@@ -37,6 +37,7 @@ class Compiler extends CompilerCore
      * @param  string  $tplFile  the file name that contains the template
      *
      * @return bool true if ok
+     * @throws \Exception
      */
     public function compile($tplName, $tplFile, $outputType, $trusted,
                              $userModifiers = array(), $userFunctions = array())

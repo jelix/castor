@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin from smarty project and adapted for jtpl.
+ * Plugin from smarty project and adapted for jTpl.
  *
  * @copyright  2001-2003 ispi of Lincoln, Inc.
  * @contributor Brice Tence
@@ -11,17 +11,19 @@
  * @licence    GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
  */
 
+use Jelix\Castor\CompilerCore;
+
 /**
  * function plugin :  include a template into another template.
  *
  * <pre>{include 'myModule~foo'}</pre>
  *
- * @param \Jelix\Castor\CompilerCore $compiler the template compiler
+ * @param CompilerCore $compiler the template compiler
  * @param array $param   0=>$string the template selector (string)
  *
  * @return string the php code corresponding to the function content
  */
-function jtpl_cfunction_common_include(\Jelix\Castor\CompilerCore $compiler, $param = array())
+function jtpl_cfunction_common_include(CompilerCore $compiler, $param = array())
 {
     if (!$compiler->trusted) {
         $compiler->doError1('errors.tplplugin.untrusted.not.available', 'include');

@@ -10,6 +10,12 @@
 
 /**
  * remove all extra whitespaces.
+ *
+ * @param \Jelix\Castor\CompilerCore $compiler
+ * @param boolean $begin
+ * @param  array  $param
+ *
+ * @return string
  */
 function jtpl_block_common_stripws($compiler, $begin, $param = array())
 {

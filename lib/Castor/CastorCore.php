@@ -19,7 +19,7 @@ abstract class CastorCore
 {
     /**
      * all assigned template variables.
-     * It have a public access only for plugins. So you musn't use directly this property
+     * It have a public access only for plugins. So you mustn't use directly this property
      * except from tpl plugins.
      * See methods of CastorCore to manage template variables.
      *
@@ -29,7 +29,7 @@ abstract class CastorCore
 
     /**
      * temporary template variables for plugins.
-     * It have a public access only for plugins. So you musn't use directly this property
+     * It have a public access only for plugins. So you mustn't use directly this property
      * except from tpl plugins.
      *
      * @var array
@@ -38,7 +38,7 @@ abstract class CastorCore
 
     /**
      * internal use
-     * It have a public access only for plugins. So you musn't use directly this property
+     * It have a public access only for plugins. So you mustn't use directly this property
      * except from tpl plugins.
      *
      * @var array
@@ -213,7 +213,15 @@ abstract class CastorCore
      */
     public $_templateName;
 
+    /**
+     * @var string[] list of processed included template to check infinite recursion
+     */
     protected $recursiveTpl = array();
+
+    /**
+     * @var array list of already processed meta information, to not duplicate
+     *            meta content
+     */
     protected $processedMeta = array();
 
     /**
@@ -239,6 +247,15 @@ abstract class CastorCore
      */
     abstract public function fetch($tpl, $outputType = '', $trusted = true, $callMeta = true);
 
+    /**
+     * @param string $tpl        the template name
+     * @param string $getTemplateArg
+     * @param string $outputType the type of output (html, text etc..)
+     * @param bool   $trusted    says if the template file is trusted or not
+     * @param bool   $callMeta   false if meta should not be called
+     *
+     * @return false|string
+     */
     protected function _fetch($tpl, $getTemplateArg, $outputtype = '', $trusted = true, $callMeta = true)
     {
         ob_start();

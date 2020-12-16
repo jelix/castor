@@ -72,6 +72,7 @@ class Config
 
     /**
      * @internal
+     * @var \Jelix\SimpleLocalization\Container[]
      */
     protected $localizedMessages = array();
 
