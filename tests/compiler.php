@@ -235,10 +235,24 @@ function toto() {
 
 
    protected $contentPlugins = array(
-/*1=>array(
-        '<p>ok {zone \'toto\'}</p>',
-        '<p>ok <?php echo jZone::get(\'toto\');?></p>',
-        ),*/
+       1=>array(
+        '{callableblock \'foo\'}<p>ok</p>{/callableblock}',
+            '<?php $t->declareCallableBlock(\'foo\', array(),  function($t) {'."\n".
+            '?><p>ok</p><?php '."\n});\n?>"
+       ),
+       2=>array(
+        '{callableblock \'foo\', $arg1, $arg2}<p>ok {$arg1}</p>{/callableblock}',
+            '<?php $t->declareCallableBlock(\'foo\', array(\'arg1\',\'arg2\'),  function($t) {'."\n".
+            '?><p>ok <?php echo $t->_vars[\'arg1\']; ?></p><?php '."\n});\n?>"
+       ),
+       3=>array(
+        '{callblock \'foo\'}',
+            '<?php jtpl_function_common_callblock( $t,\'foo\');?>'
+       ),
+       3=>array(
+        '{callblock \'foo\', $arg1, $arg2 }',
+            '<?php jtpl_function_common_callblock( $t,\'foo\', $t->_vars[\'arg1\'], $t->_vars[\'arg2\'] );?>'
+       ),
 );
 
     function testCompilePlugins() {

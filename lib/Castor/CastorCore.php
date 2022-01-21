@@ -45,6 +45,15 @@ abstract class CastorCore
      */
     public $_meta = array();
 
+    /**
+     * internal use
+     * list of callable blocks
+     *
+     * See callableblock and callblock plugins
+     */
+    public $_callableBlocks = array();
+
+
     public function __construct()
     {
         $this->_vars['j_datenow'] = date('Y-m-d');
@@ -400,4 +409,42 @@ abstract class CastorCore
 
         return new \Exception($msg);
     }
+
+    public function declareCallableBlock($blockName, array $parametersNames, callable $func)
+    {
+        $this->_callableBlocks[$blockName] = array(
+            $func,
+            $parametersNames
+        );
+    }
+
+    public function callBlock($blockName, $parameters)
+    {
+        if (!isset($this->_callableBlocks[$blockName])) {
+            return null;
+        }
+
+        list($func, $paramNames) =  $this->_callableBlocks[$blockName];
+        $backupVars = array();
+
+        foreach ($paramNames as $k => $pName) {
+            if (isset($this->_vars[$pName])) {
+                $backupVars[$pName] = $this->_vars[$pName];
+            }
+            $this->_vars[$pName] = $parameters[$k];
+        }
+
+        $func($this);
+
+        // delete or restore parameters
+        foreach ($paramNames as $k => $pName) {
+            if (array_key_exists($pName, $backupVars)) {
+                $this->_vars[$pName] = $backupVars[$pName];
+            }
+            else {
+                unset($this->_vars[$pName]);
+            }
+        }
+    }
+
 }
