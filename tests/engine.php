@@ -7,11 +7,11 @@
 */
 
 
-class CastorTest extends PHPUnit_Framework_TestCase {
+class CastorTest extends \PHPUnit\Framework\TestCase {
 
     protected static $castorConfig;
 
-    function setUp() {
+    function setUp() : void {
         $cachePath = realpath(__DIR__.'/temp/') . '/';
         $templatePath = __DIR__.'/';
         self::$castorConfig = new \Jelix\Castor\Config($cachePath, $templatePath);        
@@ -36,13 +36,13 @@ class CastorTest extends PHPUnit_Framework_TestCase {
         
         $tpl->assign('countries', array());
         $tpl->assign('titre', 'This is a test !');
-        $result = $tpl->fetch('countries.tpl');
-        $this->assertEquals(file_get_contents(__DIR__.'/countries_empty.txt'), $result);
+        $result = $tpl->fetch('assets/countries.tpl');
+        $this->assertEquals(file_get_contents(__DIR__.'/assets/countries_empty.txt'), $result);
 
         $countries = array('France', 'Italie', 'Espagne', 'Belgique');
         $tpl->assign('countries', $countries);
-        $result = $tpl->fetch('countries.tpl');
-        $this->assertEquals(file_get_contents(__DIR__.'/countries.txt'), $result);
+        $result = $tpl->fetch('assets/countries.tpl');
+        $this->assertEquals(file_get_contents(__DIR__.'/assets/countries.txt'), $result);
     }
 
 }

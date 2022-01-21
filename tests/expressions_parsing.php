@@ -49,11 +49,11 @@ class testJtplCompiler extends \Jelix\Castor\Compiler {
 function testjtplcontentUserModifier($s){}
 
 
-class jtplCompilerExpressionTest extends PHPUnit_Framework_TestCase {
+class jtplCompilerExpressionTest extends \PHPUnit\Framework\TestCase {
 
     protected static $castorConfig;
 
-    function setUp() {
+    function setUp() :void {
         $cachePath = realpath(__DIR__.'/temp/') . '/';
         $templatePath = __DIR__.'/';
         self::$castorConfig = new \Jelix\Castor\Config($cachePath, $templatePath);

@@ -30,11 +30,11 @@ function testjtplcontentUserFunction($t,$a,$b) {
 }
 
 
-class jtplCompilerTest extends PHPUnit_Framework_TestCase {
+class jtplCompilerTest extends \PHPUnit\Framework\TestCase {
 
     protected static $castorConfig;
 
-    function setUp() {
+    function setUp()  : void {
         $cachePath = realpath(__DIR__.'/temp/') . '/';
         $templatePath = __DIR__.'/';
         
