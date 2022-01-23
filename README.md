@@ -11,7 +11,7 @@ Castor is a template engine for PHP, using syntax similar to PHP.
 - A plugin system, similar to Smarty plugins.
 - Plugins can be specific to a content type (HTML, XML, text…), so they produced right content.
 - a system of “meta”: allow the template to expose data to PHP code. For example, a "meta"
-  can be a url of a stylesheet to use with the generated content.
+  can be an url of a stylesheet to use with the generated content.
 
 # History
 
@@ -35,10 +35,13 @@ composer require "jelix/castor"
 A template file:
 
 ```
+{! autoescape !}
 <h1>{$titre|upper}</h1>
 <ul>
-{foreach $countries as $country}
-<li>{$country|eschtml} ({$country|count_characters})</li>
+{foreach $users as $user}
+<li>{$user->name} ({$user->birthday|datetime:'d/m/Y'})
+    <div>{$user->biography|raw}</div>
+</li>
 {/foreach}
 </ul>
 ```
@@ -61,8 +64,13 @@ $tpl = new \Jelix\Castor\Castor($config);
 
 // assign some values, so they will be available for the template
 
-$countries = array('France', 'Italie', 'Espagne', 'Belgique');
-$tpl->assign('countries', $countries);
+$users = array(
+    // User in an example class...
+    new User('Tom', '2001-02-01'), 
+    new User('Laurent', '1990-03-01'), 
+    new User('Bob', '1970-05-25')
+ );
+$tpl->assign('users', $users);
 $tpl->assign('titre', 'This is a test !');
 
 // content is generated from the given template file and returned

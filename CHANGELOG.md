@@ -1,8 +1,8 @@
 Changelog
 =========
 
-next
-----
+1.1.0
+-----
 
 - support of auto-escape, with a new tag `{! autoescape !}`. A new `raw` modifier allows to not escape
   automatically a variable.
