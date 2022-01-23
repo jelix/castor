@@ -60,250 +60,264 @@ class jtplCompilerExpressionTest extends \PHPUnit\Framework\TestCase {
         self::$castorConfig->setLang('fr');
     }
 
-    protected $varexpr = array(
-        'a'=>'a',
-        '"aaa"'=>'"aaa"',
-        '123'=>'123',
-        '  '=>' ',
-        '123.456'=>'123.456',
-        '->'=>'->',
-        "'aze'"=>"'aze'",
-        '$aa'=>'$t->_vars[\'aa\']',
-        '$aa.$bb'=>'$t->_vars[\'aa\'].$t->_vars[\'bb\']',
-        '$aa."bbb"'=>'$t->_vars[\'aa\']."bbb"',
-        '$aa+234'=>'$t->_vars[\'aa\']+234',
-        '$aa-234'=>'$t->_vars[\'aa\']-234',
-        '$aa*234'=>'$t->_vars[\'aa\']*234',
-        '$aa/234'=>'$t->_vars[\'aa\']/234',
-        '!$aa'=>'!$t->_vars[\'aa\']',
-        'array($aa)'=>'array($t->_vars[\'aa\'])',
-        ' array(   $aa  )   '=>' array( $t->_vars[\'aa\'] ) ',
-        ' array("e"=>$aa, "tt"=>987  )'=>' array("e"=>$t->_vars[\'aa\'], "tt"=>987 )',
-        '@aa@'=>'$t->getLocaleString(\'aa\')',
-        '@aa.$ooo@'=>'$t->getLocaleString(\'aa.\'.$t->_vars[\'ooo\'].\'\')',
-        '@aa~bbb@'=>'$t->getLocaleString(\'aa~bbb\')',
-        '@aa~trc.$abcd.popo@'=>'$t->getLocaleString(\'aa~trc.\'.$t->_vars[\'abcd\'].\'.popo\')',
-        '@$aa~trc.$abcd.popo@'=>'$t->getLocaleString(\'\'.$t->_vars[\'aa\'].\'~trc.\'.$t->_vars[\'abcd\'].\'.popo\')',
-        '$aa.@trc.$abcd.popo@'=>'$t->_vars[\'aa\'].$t->getLocaleString(\'trc.\'.$t->_vars[\'abcd\'].\'.popo\')',
-        '@aa~trc.234.popo@'=>'$t->getLocaleString(\'aa~trc.234.popo\')',
-        '@aa~trc.23.4.popo@'=>'$t->getLocaleString(\'aa~trc.23.4.popo\')',
-        '@aa~trc.23.4.list@'=>'$t->getLocaleString(\'aa~trc.23.4.list\')',
-        '$aa*count($bb)'=>'$t->_vars[\'aa\']*count($t->_vars[\'bb\'])',
-        '$aa & $bb'=>'$t->_vars[\'aa\'] & $t->_vars[\'bb\']',
-        '$aa | $bb'=>'$t->_vars[\'aa\'] | $t->_vars[\'bb\']',
-        '$aa++'=>'$t->_vars[\'aa\']++',
-        '$aa--'=>'$t->_vars[\'aa\']--',
-        '$bb->bar'=>'$t->_vars[\'bb\']->bar',
-        '$bb->$bar'=>'$t->_vars[\'bb\']->{$t->_vars[\'bar\']}',
-        '$bb->$bar->yo'=>'$t->_vars[\'bb\']->{$t->_vars[\'bar\']}->yo',
-        '@abstract.as.break.case.catch.class.clone@'=>'$t->getLocaleString(\'abstract.as.break.case.catch.class.clone\')',
-        '@const.continue.declare.default.do.echo.else.elseif.empty@'=>'$t->getLocaleString(\'const.continue.declare.default.do.echo.else.elseif.empty\')',
-        '@exit.final.for.foreach.function.global.if.implements.instanceof@'=>'$t->getLocaleString(\'exit.final.for.foreach.function.global.if.implements.instanceof\')',
-        '@interface.and.or.xor.new.private.public@'=>'$t->getLocaleString(\'interface.and.or.xor.new.private.public\')',
-        '@protected.return.static.switch.throw.try.use.var.eval.while@'=>'$t->getLocaleString(\'protected.return.static.switch.throw.try.use.var.eval.while\')',
-        '$aa*(234+$b)'=>'$t->_vars[\'aa\']*(234+$t->_vars[\'b\'])',
-        '$aa[$bb[4]]'=>'$t->_vars[\'aa\'][$t->_vars[\'bb\'][4]]',
-    );
+    public function getExpressionVars()
+    {
+        return array(
+            array('a', 'a'),
+            array('"aaa"', '"aaa"'),
+            array('123', '123'),
+            array('  ', ' '),
+            array('123.456', '123.456'),
+            array('->', '->'),
+            array("'aze'", "'aze'"),
+            array('$aa', '$t->_vars[\'aa\']'),
+            array('$aa.$bb', '$t->_vars[\'aa\'].$t->_vars[\'bb\']'),
+            array('$aa."bbb"', '$t->_vars[\'aa\']."bbb"'),
+            array('$aa+234', '$t->_vars[\'aa\']+234'),
+            array('$aa-234', '$t->_vars[\'aa\']-234'),
+            array('$aa*234', '$t->_vars[\'aa\']*234'),
+            array('$aa/234', '$t->_vars[\'aa\']/234'),
+            array('!$aa', '!$t->_vars[\'aa\']'),
+            array('array($aa)', 'array($t->_vars[\'aa\'])'),
+            array(' array(   $aa  )   ', ' array( $t->_vars[\'aa\'] ) '),
+            array(' array("e"=>$aa, "tt"=>987  )', ' array("e"=>$t->_vars[\'aa\'], "tt"=>987 )'),
+            array('@aa@', '$t->getLocaleString(\'aa\')'),
+            array('@aa.$ooo@', '$t->getLocaleString(\'aa.\'.$t->_vars[\'ooo\'].\'\')'),
+            array('@aa~bbb@', '$t->getLocaleString(\'aa~bbb\')'),
+            array('@aa~trc.$abcd.popo@', '$t->getLocaleString(\'aa~trc.\'.$t->_vars[\'abcd\'].\'.popo\')'),
+            array('@$aa~trc.$abcd.popo@', '$t->getLocaleString(\'\'.$t->_vars[\'aa\'].\'~trc.\'.$t->_vars[\'abcd\'].\'.popo\')'),
+            array('$aa.@trc.$abcd.popo@', '$t->_vars[\'aa\'].$t->getLocaleString(\'trc.\'.$t->_vars[\'abcd\'].\'.popo\')'),
+            array('@aa~trc.234.popo@', '$t->getLocaleString(\'aa~trc.234.popo\')'),
+            array('@aa~trc.23.4.popo@', '$t->getLocaleString(\'aa~trc.23.4.popo\')'),
+            array('@aa~trc.23.4.list@', '$t->getLocaleString(\'aa~trc.23.4.list\')'),
+            array('$aa*count($bb)', '$t->_vars[\'aa\']*count($t->_vars[\'bb\'])'),
+            array('$aa & $bb', '$t->_vars[\'aa\'] & $t->_vars[\'bb\']'),
+            array('$aa | $bb', '$t->_vars[\'aa\'] | $t->_vars[\'bb\']'),
+            array('$aa++', '$t->_vars[\'aa\']++'),
+            array('$aa--', '$t->_vars[\'aa\']--'),
+            array('$bb->bar', '$t->_vars[\'bb\']->bar'),
+            array('$bb->$bar', '$t->_vars[\'bb\']->{$t->_vars[\'bar\']}'),
+            array('$bb->$bar->yo', '$t->_vars[\'bb\']->{$t->_vars[\'bar\']}->yo'),
+            array('@abstract.as.break.case.catch.class.clone@', '$t->getLocaleString(\'abstract.as.break.case.catch.class.clone\')'),
+            array('@const.continue.declare.default.do.echo.else.elseif.empty@', '$t->getLocaleString(\'const.continue.declare.default.do.echo.else.elseif.empty\')'),
+            array('@exit.final.for.foreach.function.global.if.implements.instanceof@', '$t->getLocaleString(\'exit.final.for.foreach.function.global.if.implements.instanceof\')'),
+            array('@interface.and.or.xor.new.private.public@', '$t->getLocaleString(\'interface.and.or.xor.new.private.public\')'),
+            array('@protected.return.static.switch.throw.try.use.var.eval.while@', '$t->getLocaleString(\'protected.return.static.switch.throw.try.use.var.eval.while\')'),
+            array('$aa*(234+$b)', '$t->_vars[\'aa\']*(234+$t->_vars[\'b\'])'),
+            array('$aa[$bb[4]]', '$t->_vars[\'aa\'][$t->_vars[\'bb\'][4]]'),
+        );
+    }
 
-    protected $varexprTrustedMode = array(
-        '$aaa.PHP_VERSION'=>'$t->_vars[\'aaa\'].PHP_VERSION',
-    );
+    public function getExpressionVarsForTrustedMode()
+    {
+        return array(
+            array('$aaa.PHP_VERSION', '$t->_vars[\'aaa\'].PHP_VERSION'),
+        );
+    }
 
-    protected $varexprUnTrustedMode = array(
-
-    );
-
-
-    function testVarExprTrustedMode() {
+    /**
+     * @dataProvider getExpressionVars
+     * @return void
+     */
+    function testTrustedModeVarExpr($expression, $expectedResult) {
         $compil = new testJtplCompiler(self::$castorConfig);
         $compil->trusted = true;
-        foreach($this->varexpr as $k=>$t){
-            try{
-                $res = $compil->testParseVarExpr($k);
-                $this->assertEquals($t, $res);
-            }catch(Exception $e){
-                $this->assertTrue(false, "Test '$k', Unknown Exception: ".$e->getMessage());
-            }
-        }
-        foreach($this->varexprTrustedMode as $k=>$t){
-            try{
-                $res = $compil->testParseVarExpr($k);
-                $this->assertEquals($t, $res);
-            }catch(Exception $e){
-                $this->assertTrue(false, "Test '$k', Unknown Exception: ".$e->getMessage());
-            }
-        }
+        $res = $compil->testParseVarExpr($expression);
+        $this->assertEquals($expectedResult, $res);
     }
 
-    function testVarExprUnTrustedMode() {
-        $compil = new testJtplCompiler(self::$castorConfig);
-        $compil->trusted = false;
-        foreach($this->varexpr as $k=>$t){
-            try{
-                $res = $compil->testParseVarExpr($k);
-                $this->assertEquals($t, $res);
-            }catch(Exception $e){
-                $this->assertTrue(false, "Test '$k', Unknown Exception: ".$e->getMessage());
-            }
-        }
-        foreach($this->varexprUnTrustedMode as $k=>$t){
-            try{
-                $res = $compil->testParseVarExpr($k);
-                $this->assertEquals($t, $res);
-            }catch(Exception $e){
-                $this->assertTrue(false, "Test '$k', Unknown Exception: ".$e->getMessage());
-            }
-        }
-    }
-
-    protected $badvarexpr = array(
-        '$'             =>array('Dans le tag  du template , le caractère  $ n\'est pas autorisé'),
-        'foreach($a)'   =>array('Dans le tag  du template , le code php foreach n\'est pas autorisé'),
-        '@aaa.bbb'      =>array('Dans le tag  du template , il manque la fin de la clef de localisation'),
-        '@aaa.b,bb@'    =>array('Dans le tag  du template , le caractère  , n\'est pas autorisé'),
-        '@@'            =>array('Dans le tag  du template , clef de localisation vide'),
-        '[$aa/234]'     =>array('Dans le tag  du template , le caractère  [ n\'est pas autorisé'),
-        '$b+($aa/234'   =>array('Dans le tag  du template , il y a des erreurs au niveau des parenthèses'),
-        '$b+(($aa/234)' =>array('Dans le tag  du template , il y a des erreurs au niveau des parenthèses'),
-        '$aa/234)'      =>array('Dans le tag  du template , il y a des erreurs au niveau des parenthèses'),
-        '$aa/234))'     =>array('Dans le tag  du template , il y a des erreurs au niveau des parenthèses'),
-        '$aa[234'       =>array('Dans le tag  du template , il y a des erreurs au niveau des parenthèses'),
-        '$aa[[234]'     =>array('Dans le tag  du template , il y a des erreurs au niveau des parenthèses'),
-        '$aa234]'       =>array('Dans le tag  du template , il y a des erreurs au niveau des parenthèses'),
-        'isset($t[5])'  =>array('Dans le tag  du template , le code php isset n\'est pas autorisé'),
-        'empty($aa)'    =>array('Dans le tag  du template , le code php empty n\'est pas autorisé'),
-        '$aa == 123'    =>array('Dans le tag  du template , le code php == n\'est pas autorisé'),
-        '$aa != 123'    =>array('Dans le tag  du template , le code php != n\'est pas autorisé'),
-        '$aa >= 123'    =>array('Dans le tag  du template , le code php >= n\'est pas autorisé'),
-        '$aa !== 123'   =>array('Dans le tag  du template , le code php !== n\'est pas autorisé'),
-        '$aa <= 123'    =>array('Dans le tag  du template , le code php <= n\'est pas autorisé'),
-        '$aa << 123'    =>array('Dans le tag  du template , le code php << n\'est pas autorisé'),
-        '$aa >> 123'    =>array('Dans le tag  du template , le code php >> n\'est pas autorisé'),
-        '$aa == false'  =>array('Dans le tag  du template , le code php == n\'est pas autorisé'),
-        '$aa == true'   =>array('Dans le tag  du template , le code php == n\'est pas autorisé'),
-        '$aa == null'   =>array('Dans le tag  du template , le code php == n\'est pas autorisé'),
-        '$aa && $bb'    =>array('Dans le tag  du template , le code php && n\'est pas autorisé'),
-        '$aa || $bb'    =>array('Dans le tag  du template , le code php || n\'est pas autorisé'),
-        '$aa and $bb'   =>array('Dans le tag  du template , le code php and n\'est pas autorisé'),
-        '$aa or $bb'    =>array('Dans le tag  du template , le code php or n\'est pas autorisé'),
-        '$aa xor $bb'   =>array('Dans le tag  du template , le code php xor n\'est pas autorisé'),
-        '$aa=$bb'       =>array('Dans le tag  du template , le caractère  = n\'est pas autorisé'),
-        '$aa+=$bb'      =>array('Dans le tag  du template , le code php += n\'est pas autorisé'),
-        '$aa-=$bb'      =>array('Dans le tag  du template , le code php -= n\'est pas autorisé'),
-        '$aa/=$bb'      =>array('Dans le tag  du template , le code php /= n\'est pas autorisé'),
-        '$aa*=$bb'      =>array('Dans le tag  du template , le code php *= n\'est pas autorisé'),
-    );
-
-    protected $badvarexprTrustedMode = array(
-
-    );
-
-    protected $badvarexprUnTrustedMode = array(
-        '$aaa.PHP_VERSION'=>array('Dans le tag  du template , les constantes (PHP_VERSION) sont interdites'),
-    );
-
-    function testBadVarExprTrustedMode() {
+    /**
+     * @dataProvider getExpressionVarsForTrustedMode
+     * @return void
+     */
+    function testTrustedModeVarExprWithTrustedExpression($expression, $expectedResult) {
         $compil = new testJtplCompiler(self::$castorConfig);
         $compil->trusted = true;
-        foreach($this->badvarexpr as $k=>$t){
-            try{
-                $res = $compil->testParseVarExpr($k);
-                $this->assertTrue(false, "No Exception for this test '$k' ");
-            }catch(Exception $e){
-                $this->assertEquals($t[0], $e->getMessage());
-            }
-        }
-        foreach($this->badvarexprTrustedMode as $k=>$t){
-            try{
-                $res = $compil->testParseVarExpr($k);
-                $this->assertTrue(false, "No Exception for this test '$k' ");
-            }catch(Exception $e){
-                $this->assertEquals($t[0], $e->getMessage());
-            }
-        }
+        $res = $compil->testParseVarExpr($expression);
+        $this->assertEquals($expectedResult, $res);
     }
 
-    function testBadVarExprUnTrustedMode() {
+    /**
+     * @dataProvider getExpressionVars
+     */
+    function testUnTrustedModeVarExpr($expression, $expectedResult) {
         $compil = new testJtplCompiler(self::$castorConfig);
         $compil->trusted = false;
-        foreach($this->badvarexpr as $k=>$t){
-            try{
-                $res = $compil->testParseVarExpr($k);
-                $this->assertTrue(false, "No Exception for this test '$k' ");
-            }catch(Exception $e){
-                $this->assertEquals($t[0], $e->getMessage());
-            }
-        }
-        foreach($this->badvarexprUnTrustedMode as $k=>$t){
-            try{
-                $res = $compil->testParseVarExpr($k);
-                $this->assertTrue(false, "No Exception for this test '$k' ");
-            }catch(Exception $e){
-                $this->assertEquals($t[0], $e->getMessage());
-            }
-        }
+        $res = $compil->testParseVarExpr($expression);
+        $this->assertEquals($expectedResult, $res);
     }
 
-    protected $varTag = array(
-        '$aaa|escxml' => 'htmlspecialchars($t->_vars[\'aaa\'])',
-        '$aaa|bla'=>'testjtplcontentUserModifier($t->_vars[\'aaa\'])',
-        '$aaa|count_words'=>'jtpl_modifier_common_count_words($t->_vars[\'aaa\'])',
-        '$aaa|count_words|number_format:2|upper'=>'strtoupper(jtpl_modifier_common_number_format(jtpl_modifier_common_count_words($t->_vars[\'aaa\']),2))',
-        '$aaa|truncate:50|count_words|number_format:2'=>'jtpl_modifier_common_number_format(jtpl_modifier_common_count_words(jtpl_modifier2_common_truncate($t, $t->_vars[\'aaa\'],50)),2)',
-        
-    );
+    /**
+     * @dataProvider getExpressionVarsForTrustedMode
+     */
+    function testUnTrustedModeVarExprWithTrustedExpression($expression, $expectedResult) {
+        $compil = new testJtplCompiler(self::$castorConfig);
+        $compil->trusted = false;
+        $this->expectException('Exception');
+        $compil->testParseVarExpr($expression);
+    }
 
+    public function getBadVarExpression()
+    {
+        return array(
+            array('$', 'Dans le tag  du template , le caractère  $ n\'est pas autorisé'),
+            array('foreach($a)', 'Dans le tag  du template , le code php foreach n\'est pas autorisé'),
+            array('@aaa.bbb', 'Dans le tag  du template , il manque la fin de la clef de localisation'),
+            array('@aaa.b,bb@', 'Dans le tag  du template , le caractère  , n\'est pas autorisé'),
+            array('@@', 'Dans le tag  du template , clef de localisation vide'),
+            array('[$aa/234]', 'Dans le tag  du template , le caractère  [ n\'est pas autorisé'),
+            array('$b+($aa/234', 'Dans le tag  du template , il y a des erreurs au niveau des parenthèses'),
+            array('$b+(($aa/234)', 'Dans le tag  du template , il y a des erreurs au niveau des parenthèses'),
+            array('$aa/234)', 'Dans le tag  du template , il y a des erreurs au niveau des parenthèses'),
+            array('$aa/234))', 'Dans le tag  du template , il y a des erreurs au niveau des parenthèses'),
+            array('$aa[234', 'Dans le tag  du template , il y a des erreurs au niveau des parenthèses'),
+            array('$aa[[234]', 'Dans le tag  du template , il y a des erreurs au niveau des parenthèses'),
+            array('$aa234]', 'Dans le tag  du template , il y a des erreurs au niveau des parenthèses'),
+            array('isset($t[5])', 'Dans le tag  du template , le code php isset n\'est pas autorisé'),
+            array('empty($aa)', 'Dans le tag  du template , le code php empty n\'est pas autorisé'),
+            array('$aa == 123', 'Dans le tag  du template , le code php == n\'est pas autorisé'),
+            array('$aa != 123', 'Dans le tag  du template , le code php != n\'est pas autorisé'),
+            array('$aa >= 123', 'Dans le tag  du template , le code php >= n\'est pas autorisé'),
+            array('$aa !== 123', 'Dans le tag  du template , le code php !== n\'est pas autorisé'),
+            array('$aa <= 123', 'Dans le tag  du template , le code php <= n\'est pas autorisé'),
+            array('$aa << 123', 'Dans le tag  du template , le code php << n\'est pas autorisé'),
+            array('$aa >> 123', 'Dans le tag  du template , le code php >> n\'est pas autorisé'),
+            array('$aa == false', 'Dans le tag  du template , le code php == n\'est pas autorisé'),
+            array('$aa == true', 'Dans le tag  du template , le code php == n\'est pas autorisé'),
+            array('$aa == null', 'Dans le tag  du template , le code php == n\'est pas autorisé'),
+            array('$aa && $bb', 'Dans le tag  du template , le code php && n\'est pas autorisé'),
+            array('$aa || $bb', 'Dans le tag  du template , le code php || n\'est pas autorisé'),
+            array('$aa and $bb', 'Dans le tag  du template , le code php and n\'est pas autorisé'),
+            array('$aa or $bb', 'Dans le tag  du template , le code php or n\'est pas autorisé'),
+            array('$aa xor $bb', 'Dans le tag  du template , le code php xor n\'est pas autorisé'),
+            array('$aa=$bb', 'Dans le tag  du template , le caractère  = n\'est pas autorisé'),
+            array('$aa+=$bb', 'Dans le tag  du template , le code php += n\'est pas autorisé'),
+            array('$aa-=$bb', 'Dans le tag  du template , le code php -= n\'est pas autorisé'),
+            array('$aa/=$bb', 'Dans le tag  du template , le code php /= n\'est pas autorisé'),
+            array('$aa*=$bb', 'Dans le tag  du template , le code php *= n\'est pas autorisé'),
+        );
+    }
 
-    function testVarTag() {
+    public function getBadvarexprUnTrustedMode ()
+    {
+        return array(
+            array ('$aaa.PHP_VERSION', 'Dans le tag  du template , les constantes (PHP_VERSION) sont interdites'),
+        );
+    }
+
+    /**
+     * @dataProvider getBadVarExpression
+     * @return void
+     */
+    function testTrustedModeBadVarExpr($expression, $errMessage)
+    {
+        $compil = new testJtplCompiler(self::$castorConfig);
+        $compil->trusted = true;
+        $this->expectErrorMessage($errMessage);
+        $compil->testParseVarExpr($expression);
+    }
+
+    /**
+     * @dataProvider getBadvarexprUnTrustedMode
+     * @return void
+     */
+    function testTrustedModeBadVarExprForTrustMode($expression, $errMessage)
+    {
+        $compil = new testJtplCompiler(self::$castorConfig);
+        $compil->trusted = true;
+        $res = $compil->testParseVarExpr($expression);
+        $this->assertNotEquals('', $res);
+    }
+
+    /**
+     * @dataProvider getBadVarExpression
+     * @return void
+     */
+    function testUnTrustedModeBadVarExpr($expression, $errMessage) {
+        $compil = new testJtplCompiler(self::$castorConfig);
+        $compil->trusted = false;
+        $this->expectErrorMessage($errMessage);
+        $compil->testParseVarExpr($expression);
+    }
+
+    /**
+     * @dataProvider getBadvarexprUnTrustedMode
+     * @return void
+     */
+    function testUnTrustedModeBadVarExprForTrustMode($expression, $errMessage) {
+        $compil = new testJtplCompiler(self::$castorConfig);
+        $compil->trusted = false;
+        $this->expectErrorMessage($errMessage);
+        $compil->testParseVarExpr($expression);
+    }
+
+    public function getVarTag()
+    {
+        return array(
+            array('$aaa|escxml', 'htmlspecialchars($t->_vars[\'aaa\'])'),
+            array('$aaa|bla', 'testjtplcontentUserModifier($t->_vars[\'aaa\'])'),
+            array('$aaa|count_words', 'jtpl_modifier_common_count_words($t->_vars[\'aaa\'])'),
+            array('$aaa|count_words|number_format:2|upper', 'strtoupper(jtpl_modifier_common_number_format(jtpl_modifier_common_count_words($t->_vars[\'aaa\']),2))'),
+            array('$aaa|truncate:50|count_words|number_format:2', 'jtpl_modifier_common_number_format(jtpl_modifier_common_count_words(jtpl_modifier2_common_truncate($t, $t->_vars[\'aaa\'],50)),2)'),
+
+        );
+    }
+
+    /**
+     * @dataProvider getVarTag
+     * @return void
+     */
+    function testVarTag($tag, $expectedResult) {
         $compil = new testJtplCompiler(self::$castorConfig);
         $compil->trusted = true;
         $compil->setUserPlugins(array('bla'=>'testjtplcontentUserModifier'),array());
 
-        foreach($this->varTag as $k=>$t){
-            $res = $compil->testParseVariable($k);
-            $this->assertEquals($t, $res);
-        }
+        $res = $compil->testParseVariable($tag);
+        $this->assertEquals($expectedResult, $res);
     }
 
 
-    protected $varAssign = array(
-        '$aa=$bb'=>'$t->_vars[\'aa\']=$t->_vars[\'bb\']',
-        '$aa+=$bb'=>'$t->_vars[\'aa\']+=$t->_vars[\'bb\']',
-        '$aa-=$bb'=>'$t->_vars[\'aa\']-=$t->_vars[\'bb\']',
-        '$aa/=$bb'=>'$t->_vars[\'aa\']/=$t->_vars[\'bb\']',
-        '$aa*=$bb'=>'$t->_vars[\'aa\']*=$t->_vars[\'bb\']',
-        'TEST_JTPL_COMPILER_ASSIGN'=>'TEST_JTPL_COMPILER_ASSIGN'
-    );
+    public function getVarAssign()
+    {
+        return array(
+            array('$aa=$bb', '$t->_vars[\'aa\']=$t->_vars[\'bb\']'),
+            array('$aa+=$bb', '$t->_vars[\'aa\']+=$t->_vars[\'bb\']'),
+            array('$aa-=$bb', '$t->_vars[\'aa\']-=$t->_vars[\'bb\']'),
+            array('$aa/=$bb', '$t->_vars[\'aa\']/=$t->_vars[\'bb\']'),
+            array('$aa*=$bb', '$t->_vars[\'aa\']*=$t->_vars[\'bb\']'),
+            array('TEST_JTPL_COMPILER_ASSIGN', 'TEST_JTPL_COMPILER_ASSIGN')
+        );
+    }
 
-    protected $varAssignUnTrustedMode = array(
-        'TEST_JTPL_COMPILER_ASSIGN'=>array('Dans le tag  du template , les constantes (TEST_JTPL_COMPILER_ASSIGN) sont interdites'),
-    );
-
-
-    function testAssign() {
+    /**
+     * @dataProvider getVarAssign
+     * @return void
+     */
+    function testAssign($expression, $expectedResult)
+    {
         $compil = new testJtplCompiler(self::$castorConfig);
         $compil->trusted = true;
+        $res = $compil->testParseAssignExpr($expression);
+        $this->assertEquals($expectedResult, $res);
+    }
 
-        foreach($this->varAssign as $k=>$t){
-            try{
-                $res = $compil->testParseAssignExpr($k);
-                $this->assertEquals($t, $res);
-            }catch(Exception $e){
-                $this->assertTrue(false, "Test '$k', Unknown Exception: ".$e->getMessage());
-            }
-        }
 
+    public function getVarAssignUntrustedMode()
+    {
+        return array(
+            array('TEST_JTPL_COMPILER_ASSIGN', 'Dans le tag  du template , les constantes (TEST_JTPL_COMPILER_ASSIGN) sont interdites'),
+        );
+    }
+    /**
+     * @dataProvider getVarAssignUntrustedMode
+     * @return void
+     */
+    function testAssignUntrustedMode($expression, $errMessage)
+    {
+        $compil = new testJtplCompiler(self::$castorConfig);
         $compil->trusted = false;
-
-        foreach($this->varAssignUnTrustedMode as $k=>$t){
-            try{
-                $res = $compil->testParseAssignExpr($k);
-                $this->assertTrue(false, "No Exception for this test '$k' ");
-            }catch(Exception $e){
-                $this->assertEquals($t[0], $e->getMessage());
-            }
-
-        }
+        $this->expectErrorMessage($errMessage);
+        $compil->testParseAssignExpr($expression);
     }
 }
 

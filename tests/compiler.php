@@ -42,167 +42,178 @@ class jtplCompilerTest extends \PHPUnit\Framework\TestCase {
         self::$castorConfig->setLang('fr');
     }
 
-    protected $content = array(
-0=>array(
-        '',
-        '',
-        ),
-1=>array(
-        '<p>ok</p>',
-        '<p>ok</p>',
-        ),
-2=>array(
-        '<p>ok<?php echo $toto ?></p>',
-        '<p>ok</p>',
-        ),
-3=>array(
-        '<p>ok</p>
+
+    public function getTemplateToCompile()
+    {
+        return array(
+            array(
+                '',
+                '',
+            ),
+            array(
+                '<p>ok</p>',
+                '<p>ok</p>',
+            ),
+            array(
+                '<p>ok<?php echo $toto ?></p>',
+                '<p>ok</p>',
+            ),
+            array(
+                '<p>ok</p>
 <script>{literal}
 function toto() {
 }
 {/literal}
 </script>
 <p>ko</p>',
-        '<p>ok</p>
+                '<p>ok</p>
 <script>
 function toto() {
 }
 
 </script>
 <p>ko</p>',
-        ),
-4=>array(
-        '<p>ok {* toto $toto *}</p>',
-        '<p>ok </p>',
-        ),
+            ),
+            array(
+                '<p>ok {* toto $toto *}</p>',
+                '<p>ok </p>',
+            ),
 
-5=>array(
-        '<p>ok {* toto
+            array(
+                '<p>ok {* toto
 
  $toto *}</p>',
-        '<p>ok </p>',
-        ),
+                '<p>ok </p>',
+            ),
 
-6=>array(
-        '<p>ok {* toto
+            array(
+                '<p>ok {* toto
 {$toto} *}</p>',
-        '<p>ok </p>',
-        ),
-7=>array(
-        '<p>ok {* toto
+                '<p>ok </p>',
+            ),
+            array(
+                '<p>ok {* toto
 {$toto} *}</p> {* hello *}',
-        '<p>ok </p> ',
-        ),
-8=>array(
-        '<p>ok {* {if $a == "a"}aaa{/if} *}</p>',
-        '<p>ok </p>',
-        ),
-9=>array(
-        '<p>ok<? echo $toto ?></p>',
-        '<p>ok</p>',
-        ),
-10=>array(
-        '<p>ok<?= $toto ?></p>',
-        '<p>ok</p>',
-        ),
-11=>array(
-        '<p>ok{if $foo} {/if}</p>',
-        '<p>ok<?php if($t->_vars[\'foo\']):?> <?php endif;?></p>',
-        ),
-12=>array(
-        '<p>ok{if ($foo)} {/if}</p>',
-        '<p>ok<?php if(($t->_vars[\'foo\'])):?> <?php endif;?></p>',
-        ),
-13=>array(
-        '<p>ok{while ($foo)} {/while}</p>',
-        '<p>ok<?php while(($t->_vars[\'foo\'])):?> <?php endwhile;?></p>',
-        ),
-14=>array(
-        '<p>ok{while $foo} {/while}</p>',
-        '<p>ok<?php while($t->_vars[\'foo\']):?> <?php endwhile;?></p>',
-        ),
-17=>array(
-        '<p>ok{$foo.($truc.$bbb)}</p>',
-        '<p>ok<?php echo $t->_vars[\'foo\'].($t->_vars[\'truc\'].$t->_vars[\'bbb\']); ?></p>',
-        ),
-18=>array(
-        '<p>ok{if ($foo || $bar) && $baz} {/if}</p>',
-        '<p>ok<?php if(($t->_vars[\'foo\'] || $t->_vars[\'bar\']) && $t->_vars[\'baz\']):?> <?php endif;?></p>',
-        ),
-19=>array(
-        '<p>ok{bla $foo, $params}</p>',
-        '<p>ok<?php testjtplcontentUserFunction( $t,$t->_vars[\'foo\'], $t->_vars[\'params\']);?></p>',
-        ),
-20=>array('{for ($i=0;$i<$p;$i++)} A {/for}',
-          '<?php for($t->_vars[\'i\']=0;$t->_vars[\'i\']<$t->_vars[\'p\'];$t->_vars[\'i\']++):?> A <?php endfor;?>'
-         ),
-21=>array('{for $i=0;$i<$p;$i++} A {/for}',
-          '<?php for($t->_vars[\'i\']=0;$t->_vars[\'i\']<$t->_vars[\'p\'];$t->_vars[\'i\']++):?> A <?php endfor;?>'
-         ),
-22=>array('{for $i=count($o);$i<$p;$i++} A {/for}',
-          '<?php for($t->_vars[\'i\']=count($t->_vars[\'o\']);$t->_vars[\'i\']<$t->_vars[\'p\'];$t->_vars[\'i\']++):?> A <?php endfor;?>'
-         ),
-23=>array(
-        '<p>ok {const $foo}</p>',
-        '<p>ok <?php echo htmlspecialchars(constant($t->_vars[\'foo\']));?></p>',
-        ),
-24=>array(
-        '<p>ok{=$foo.($truc.$bbb)}</p>',
-        '<p>ok<?php echo $t->_vars[\'foo\'].($t->_vars[\'truc\'].$t->_vars[\'bbb\']); ?></p>',
-        ),
-25=>array(
-        '<p>ok{=intval($foo.($truc.$bbb))}</p>',
-        '<p>ok<?php echo intval($t->_vars[\'foo\'].($t->_vars[\'truc\'].$t->_vars[\'bbb\'])); ?></p>',
-        ),
-26=>array(
-        '<p>ok<? echo $toto ?></p>',
-        '<p>ok</p>',
-        ),
-27=>array(
-        '<p>ok<?
+                '<p>ok </p> ',
+            ),
+            array(
+                '<p>ok {* {if $a == "a"}aaa{/if} *}</p>',
+                '<p>ok </p>',
+            ),
+            array(
+                '<p>ok<? echo $toto ?></p>',
+                '<p>ok</p>',
+            ),
+            array(
+                '<p>ok<?= $toto ?></p>',
+                '<p>ok</p>',
+            ),
+            array(
+                '<p>ok{if $foo} {/if}</p>',
+                '<p>ok<?php if($t->_vars[\'foo\']):?> <?php endif;?></p>',
+            ),
+            array(
+                '<p>ok{if ($foo)} {/if}</p>',
+                '<p>ok<?php if(($t->_vars[\'foo\'])):?> <?php endif;?></p>',
+            ),
+            array(
+                '<p>ok{while ($foo)} {/while}</p>',
+                '<p>ok<?php while(($t->_vars[\'foo\'])):?> <?php endwhile;?></p>',
+            ),
+            array(
+                '<p>ok{while $foo} {/while}</p>',
+                '<p>ok<?php while($t->_vars[\'foo\']):?> <?php endwhile;?></p>',
+            ),
+            array(
+                '<p>ok{$foo.($truc.$bbb)}</p>',
+                '<p>ok<?php echo $t->_vars[\'foo\'].($t->_vars[\'truc\'].$t->_vars[\'bbb\']); ?></p>',
+            ),
+            array(
+                '<p>ok{if ($foo || $bar) && $baz} {/if}</p>',
+                '<p>ok<?php if(($t->_vars[\'foo\'] || $t->_vars[\'bar\']) && $t->_vars[\'baz\']):?> <?php endif;?></p>',
+            ),
+            array(
+                '<p>ok{bla $foo, $params}</p>',
+                '<p>ok<?php testjtplcontentUserFunction( $t,$t->_vars[\'foo\'], $t->_vars[\'params\']);?></p>',
+            ),
+            array('{for ($i=0;$i<$p;$i++)} A {/for}',
+                '<?php for($t->_vars[\'i\']=0;$t->_vars[\'i\']<$t->_vars[\'p\'];$t->_vars[\'i\']++):?> A <?php endfor;?>'
+            ),
+            array('{for $i=0;$i<$p;$i++} A {/for}',
+                '<?php for($t->_vars[\'i\']=0;$t->_vars[\'i\']<$t->_vars[\'p\'];$t->_vars[\'i\']++):?> A <?php endfor;?>'
+            ),
+            array('{for $i=count($o);$i<$p;$i++} A {/for}',
+                '<?php for($t->_vars[\'i\']=count($t->_vars[\'o\']);$t->_vars[\'i\']<$t->_vars[\'p\'];$t->_vars[\'i\']++):?> A <?php endfor;?>'
+            ),
+            array(
+                '<p>ok {const $foo}</p>',
+                '<p>ok <?php echo htmlspecialchars(constant($t->_vars[\'foo\']));?></p>',
+            ),
+            array(
+                '<p>ok{=$foo.($truc.$bbb)}</p>',
+                '<p>ok<?php echo $t->_vars[\'foo\'].($t->_vars[\'truc\'].$t->_vars[\'bbb\']); ?></p>',
+            ),
+            array(
+                '<p>ok{=intval($foo.($truc.$bbb))}</p>',
+                '<p>ok<?php echo intval($t->_vars[\'foo\'].($t->_vars[\'truc\'].$t->_vars[\'bbb\'])); ?></p>',
+            ),
+            array(
+                '<p>ok<? echo $toto ?></p>',
+                '<p>ok</p>',
+            ),
+            array(
+                '<p>ok<?
  echo $toto ?></p>',
-        '<p>ok</p>',
-        ),
-28=>array(
-        '<p>ok<?=$toto ?></p>',
-        '<p>ok</p>',
-        ),
-29=>array(
-        '<p>ok<?xml echo $toto ?></p>',
-        '<p>ok<?php echo \'<?xml echo $toto ?>\'?></p>',
-        ),
-30=>array(
-        '<p>ok<?browser echo $toto ?></p>',
-        '<p>ok<?php echo \'<?browser echo $toto ?>\'?></p>',
-        ),
-31=>array(
-        '<p>ok<?php
+                '<p>ok</p>',
+            ),
+            array(
+                '<p>ok<?=$toto ?></p>',
+                '<p>ok</p>',
+            ),
+            array(
+                '<p>ok<?xml echo $toto ?></p>',
+                '<p>ok<?php echo \'<?xml echo $toto ?>\'?></p>',
+            ),
+            array(
+                '<p>ok<?browser echo $toto ?></p>',
+                '<p>ok<?php echo \'<?browser echo $toto ?>\'?></p>',
+            ),
+            array(
+                '<p>ok<?php
  echo $toto ?></p>',
-        '<p>ok</p>',
-        ),
+                '<p>ok</p>',
+            ),
 
+            array(
+                '<p>{assign $foo = \'bar\'}ok{$foo}</p>',
+                '<p><?php $t->_vars[\'foo\'] = \'bar\';?>ok<?php echo $t->_vars[\'foo\']; ?></p>',
+            ),
 
-/*26=>array(
-        '',
-        '',
-        ),
-27=>array(
-        '',
-        '',
-        ),*/
-    );
+        );
+    }
 
-    function testCompileContent() {
+    /**
+     * @dataProvider getTemplateToCompile
+     * @param string $template
+     * @param string $expectedResult
+     */
+    function testCompileContent($template, $expectedResult)
+    {
         $compil = new testJtplContentCompiler(self::$castorConfig);
         $compil->outputType = 'html';
         $compil->trusted = true;
-        $compil->setUserPlugins(array(), array('bla'=>'testjtplcontentUserFunction'));
+        $compil->setUserPlugins(array(), array('bla' => 'testjtplcontentUserFunction'));
         $compil->setRemoveASPtags(false);
-        
-        foreach($this->content as $k=>$t){
-            $this->assertEquals($t[1], $compil->compileContent2($t[0]));
-        }
 
+        $this->assertEquals($expectedResult, $compil->compileContent2($template));
+    }
+
+    function testCompileContentWithASPTags()
+    {
+        $compil = new testJtplContentCompiler(self::$castorConfig);
+        $compil->outputType = 'html';
+        $compil->trusted = true;
+        $compil->setUserPlugins(array(), array('bla' => 'testjtplcontentUserFunction'));
         $compil->setRemoveASPtags(false);
         $this->assertEquals('<p>ok<?php echo \'<?xml version="truc"?>\'?></p>', $compil->compileContent2('<p>ok<?xml version="truc"?></p>'));
         $this->assertEquals('<p>ok<?php echo \'<?xml version=\\\'truc\\\'?>\'?></p>', $compil->compileContent2('<p>ok<?xml version=\'truc\'?></p>'));
@@ -214,106 +225,134 @@ function toto() {
         $this->assertEquals('<p>ok</p>', $compil->compileContent2('<p>ok<%=$truc%></p>'));
     }
 
-    protected $contentUntrusted = array(
-0=>array('{for ($i=0;$i<$p;$i++)} A {/for}',
-          '<?php for($t->_vars[\'i\']=0;$t->_vars[\'i\']<$t->_vars[\'p\'];$t->_vars[\'i\']++):?> A <?php endfor;?>'
-         ),
-1=>array('{for $i=0;$i<$p;$i++} A {/for}',
-          '<?php for($t->_vars[\'i\']=0;$t->_vars[\'i\']<$t->_vars[\'p\'];$t->_vars[\'i\']++):?> A <?php endfor;?>'
-         ),
-    );
-    
-    function testCompileContentUntrusted() {
+    public function getUntrustedContent()
+    {
+        return array(
+            0 => array('{for ($i=0;$i<$p;$i++)} A {/for}',
+                '<?php for($t->_vars[\'i\']=0;$t->_vars[\'i\']<$t->_vars[\'p\'];$t->_vars[\'i\']++):?> A <?php endfor;?>'
+            ),
+            1 => array('{for $i=0;$i<$p;$i++} A {/for}',
+                '<?php for($t->_vars[\'i\']=0;$t->_vars[\'i\']<$t->_vars[\'p\'];$t->_vars[\'i\']++):?> A <?php endfor;?>'
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider getUntrustedContent
+     * @return void
+     */
+    function testCompileContentUntrusted($template, $expectedResult) {
         $compil = new testJtplContentCompiler(self::$castorConfig);
         $compil->outputType = 'html';
         $compil->trusted = false;
         $compil->setUserPlugins(array(), array('bla'=>'testjtplcontentUserFunction'));
-        foreach($this->contentUntrusted as $k=>$t){
-            $this->assertEquals($t[1], $compil->compileContent2($t[0]));
-        }
+        $this->assertEquals($expectedResult, $compil->compileContent2($template));
     }
 
 
-   protected $contentPlugins = array(
-       1=>array(
-        '{macro \'foo\'}<p>ok</p>{/macro}',
-            '<?php $t->declareMacro(\'foo\', array(),  function($t) {'."\n".
-            '?><p>ok</p><?php '."\n});\n?>"
-       ),
-       2=>array(
-        '{macro \'foo\', $arg1, $arg2}<p>ok {$arg1}</p>{/macro}',
-            '<?php $t->declareMacro(\'foo\', array(\'arg1\',\'arg2\'),  function($t) {'."\n".
-            '?><p>ok <?php echo $t->_vars[\'arg1\']; ?></p><?php '."\n});\n?>"
-       ),
-       3=>array(
-        '{usemacro \'foo\'}',
-            '<?php jtpl_function_common_usemacro( $t,\'foo\');?>'
-       ),
-       3=>array(
-        '{usemacro \'foo\', $arg1, $arg2 }',
-            '<?php jtpl_function_common_usemacro( $t,\'foo\', $t->_vars[\'arg1\'], $t->_vars[\'arg2\'] );?>'
-       ),
-);
+    public function getContentPlugins()
+    {
+        return array(
+            1 => array(
+                '{macro \'foo\'}<p>ok</p>{/macro}',
+                '<?php $t->declareMacro(\'foo\', array(),  function($t) {' . "\n" .
+                '?><p>ok</p><?php ' . "\n});\n?>"
+            ),
+            2 => array(
+                '{macro \'foo\', $arg1, $arg2}<p>ok {$arg1}</p>{/macro}',
+                '<?php $t->declareMacro(\'foo\', array(\'arg1\',\'arg2\'),  function($t) {' . "\n" .
+                '?><p>ok <?php echo $t->_vars[\'arg1\']; ?></p><?php ' . "\n});\n?>"
+            ),
+            3 => array(
+                '{usemacro \'foo\'}',
+                '<?php jtpl_function_common_usemacro( $t,\'foo\');?>'
+            ),
+            3 => array(
+                '{usemacro \'foo\', $arg1, $arg2 }',
+                '<?php jtpl_function_common_usemacro( $t,\'foo\', $t->_vars[\'arg1\'], $t->_vars[\'arg2\'] );?>'
+            ),
+        );
+    }
 
-    function testCompilePlugins() {
+    /**
+     * @dataProvider getContentPlugins
+     * @param $template
+     * @param $expectedResult
+     * @return void
+     */
+    function testCompilePlugins($template, $expectedResult)
+    {
         $compil = new testJtplContentCompiler(self::$castorConfig);
         $compil->outputType = 'html';
         $compil->trusted = true;
 
-        foreach($this->contentPlugins as $k=>$t){
-            $this->assertEquals($t[1], $compil->compileContent2($t[0]));
-        }
+        $this->assertEquals($expectedResult, $compil->compileContent2($template));
     }
 
-    protected $tplerrors = array(
-         0=>array('{if $foo}',
-                  'Dans le template , la fin d\'un bloc if est manquant'),
-         2=>array('{foreach ($t=>$a);} A {/foreach}',
-                  'Dans le tag foreach ($t=>$a); du template , le caractère  ; n\'est pas autorisé'),
-         3=>array('{for ($i=0;$i<$p;$i++} A {/for}',
-                  'Dans le tag for ($i=0;$i<$p;$i++ du template , il y a des erreurs au niveau des parenthèses' ),
-         5=>array('{($aaa)}',
-                  'Dans le template  La syntaxe de balise ($aaa) est invalide'),
-         );
+    public function getTemplateErrors()
+    {
+        return array(
+            0 => array('{if $foo}',
+                'Dans le template , la fin d\'un bloc if est manquant'),
+            2 => array('{foreach ($t=>$a);} A {/foreach}',
+                'Dans le tag foreach ($t=>$a); du template , le caractère  ; n\'est pas autorisé'),
+            3 => array('{for ($i=0;$i<$p;$i++} A {/for}',
+                'Dans le tag for ($i=0;$i<$p;$i++ du template , il y a des erreurs au niveau des parenthèses'),
+            5 => array('{($aaa)}',
+                'Dans le template  La syntaxe de balise ($aaa) est invalide'),
+        );
+    }
 
-    function testCompileErrors() {
+    /**
+     * @dataProvider getTemplateErrors
+     * @param $template
+     * @param $expectedResult
+     * @return void
+     */
+    function testCompileErrors($template, $expectedResult) {
 
-        foreach($this->tplerrors as $k=>$t){
             $compil = new testJtplContentCompiler(self::$castorConfig);
             $compil->outputType = 'html';
             $compil->trusted = true;
             $ok = true;
             try{
-                $compil->compileContent2($t[0]);
+                $compil->compileContent2($template);
                 $ok = false;
             }catch(Exception $e){
-                $this->assertEquals($t[1], $e->getMessage(),  "Test '$k': %s ");
+                $this->assertEquals($expectedResult, $e->getMessage());
             }
-            $this->assertTrue($ok,"Test '$k', exception didn't happen");
-        }
+            $this->assertTrue($ok);
     }
 
-    protected $tplerrors2 = array(
-         0=>array('{for $i=count($a);$i<$p;$i++} A {/for}',
-                  'Dans le tag for $i=count($a);$i<$p;$i++ du template , le caractère  ( n\'est pas autorisé'),
-         1=>array('{const \'fff\'}',
-                  'Le tag const dans le template  n\'est pas autorisé dans un template sans confiance'),
-    );
-    function testCompileErrorsUntrusted() {
+    public function getTplErrors2()
+    {
+        return array(
+            0 => array('{for $i=count($a);$i<$p;$i++} A {/for}',
+                'Dans le tag for $i=count($a);$i<$p;$i++ du template , le caractère  ( n\'est pas autorisé'),
+            1 => array('{const \'fff\'}',
+                'Le tag const dans le template  n\'est pas autorisé dans un template sans confiance'),
+        );
+    }
 
-        foreach($this->tplerrors2 as $k=>$t){
+    /**
+     * @dataProvider getTplErrors2
+     * @param $template
+     * @param $expectedResult
+     * @return void
+     */
+    function testCompileErrorsUntrusted($template, $expectedResult) {
+
             $compil = new testJtplContentCompiler(self::$castorConfig);
             $compil->outputType = 'html';
             $compil->trusted = false;
             $ok = true;
             try{
-                $compil->compileContent2($t[0]);
+                $compil->compileContent2($template);
                 $ok = false;
             }catch(Exception $e){
-                $this->assertEquals( $t[1], $e->getMessage(), "Test '$k': %s ");
+                $this->assertEquals($expectedResult, $e->getMessage());
             }
-            $this->assertTrue($ok,"Test '$k', exception didn't happen");
-        }
+            $this->assertTrue($ok);
     }
 
 }
