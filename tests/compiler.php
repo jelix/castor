@@ -75,6 +75,22 @@ function toto() {
 <p>ko</p>',
             ),
             array(
+                '<p>ok</p>
+<script>{verbatim}
+function toto() {
+}
+{/verbatim}
+</script>
+<p>ko</p>',
+                '<p>ok</p>
+<script>
+function toto() {
+}
+
+</script>
+<p>ko</p>',
+            ),
+            array(
                 '<p>ok {* toto $toto *}</p>',
                 '<p>ok </p>',
             ),

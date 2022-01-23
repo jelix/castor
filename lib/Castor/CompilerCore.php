@@ -20,6 +20,7 @@ namespace Jelix\Castor;
 abstract class CompilerCore
 {
     protected $_literals;
+    protected $_verbatims;
 
     /**
      * tokens of variable type.
@@ -195,10 +196,12 @@ abstract class CompilerCore
         }
 
         preg_match_all('!{literal}(.*?){/literal}!s', $tplContent, $_match);
-
         $this->_literals = $_match[1];
-
         $tplContent = preg_replace('!{literal}(.*?){/literal}!s', '{literal}', $tplContent);
+
+        preg_match_all('!{verbatim}(.*?){/verbatim}!s', $tplContent, $_match);
+        $this->_verbatims = $_match[1];
+        $tplContent = preg_replace('!{verbatim}(.*?){/verbatim}!s', '{verbatim}', $tplContent);
 
         $tplContent = preg_replace_callback("/{((.).*?)}(\n)/sm", function ($matches) {
                 list($full, , $firstCar, $lastcar) = $matches;
@@ -397,12 +400,21 @@ abstract class CompilerCore
                 if (count($this->_literals)) {
                     $res = '?>'.array_shift($this->_literals).'<?php ';
                 } else {
-                    $this->doError1('errors.tpl.tag.block.end.missing', $name);
+                    $this->doError1('errors.tpl.tag.block.end.missing', 'literal');
+                }
+                break;
+
+            case 'verbatim':
+                if (count($this->_verbatims)) {
+                    $res = '?>'.array_shift($this->_verbatims).'<?php ';
+                } else {
+                    $this->doError1('errors.tpl.tag.block.end.missing', 'verbatim');
                 }
                 break;
 
             case '/literal':
-                $this->doError1('errors.tpl.tag.block.begin.missing', 'literal');
+            case '/verbatim':
+                $this->doError1('errors.tpl.tag.block.begin.missing', substr($name, 1));
                 break;
 
             case 'meta':
