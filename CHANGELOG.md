@@ -5,6 +5,7 @@ next
 ----
 
 - Support of macro
+- Support of `{set}`, alias of `{assign}`
 - Add `json_encode` modifier
 - Fix some exceptions
 - A little code cleanup

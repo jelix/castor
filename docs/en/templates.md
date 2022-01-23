@@ -128,6 +128,23 @@ Some variables are predefined so you have not to assign them:
 - `$j_datenow`: current date (aaaa-mm-jj)
 - `$j_timenow`: current hour (hh:mm:ss)
 
+## Creating variables into a template
+
+You may want to create a variable or modify a variable from inside the template.
+
+You should use the tag `{assign}`, or since version 1.1, its alias `{set}`.
+
+Example: 
+
+```
+{assign $vaname = 'a value'}
+{set $vaname2 = $a + $b}
+```
+
+Instead of the operator `=`, you can use also `.=`, `+=`, `-=`, `*=`, `/=`,  `|=`,  `&=`, `%=`...
+The value can be an expression.
+
+
 ## Modifiers
 
 A modifier is a function which modify the output of an expression. You can use many
@@ -298,7 +315,7 @@ object, by using the `meta()` method.
 
 Note: if you use a variable in the expression of a meta tag, this variable should be
 assigned from the Castor object, not from other instruction in the template itself (like
-`{assign ...}`).
+`{set ...}`).
 
 ### Advanced meta informations
 

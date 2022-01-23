@@ -32,7 +32,7 @@ abstract class CompilerCore
      * tokens of operators for assignements.
      */
     protected $_assignOp = array(T_AND_EQUAL, T_DIV_EQUAL, T_MINUS_EQUAL,
-            T_MOD_EQUAL, T_MUL_EQUAL, T_OR_EQUAL, T_PLUS_EQUAL, T_PLUS_EQUAL,
+            T_MOD_EQUAL, T_MUL_EQUAL, T_OR_EQUAL, T_PLUS_EQUAL,
             T_SL_EQUAL, T_SR_EQUAL, T_XOR_EQUAL, );
 
     /**
@@ -388,6 +388,7 @@ abstract class CompilerCore
                 break;
 
             case 'assign':
+            case 'set':
             case 'eval':
                 $res = $this->_parseFinal($args, $this->_allowedAssign).';';
                 break;
@@ -396,7 +397,7 @@ abstract class CompilerCore
                 if (count($this->_literals)) {
                     $res = '?>'.array_shift($this->_literals).'<?php ';
                 } else {
-                    $this->doError1('errors.tpl.tag.block.end.missing', 'literal');
+                    $this->doError1('errors.tpl.tag.block.end.missing', $name);
                 }
                 break;
 

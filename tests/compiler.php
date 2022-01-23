@@ -189,6 +189,16 @@ function toto() {
                 '<p><?php $t->_vars[\'foo\'] = \'bar\';?>ok<?php echo $t->_vars[\'foo\']; ?></p>',
             ),
 
+            array(
+                '<p>{set $foo = \'bar\'}ok{$foo}</p>',
+                '<p><?php $t->_vars[\'foo\'] = \'bar\';?>ok<?php echo $t->_vars[\'foo\']; ?></p>',
+            ),
+
+            array(
+                '<p>{set $foo += 50}ok{$foo}</p>',
+                '<p><?php $t->_vars[\'foo\'] += 50;?>ok<?php echo $t->_vars[\'foo\']; ?></p>',
+            ),
+
         );
     }
 
