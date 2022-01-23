@@ -45,12 +45,12 @@ class CastorTest extends \PHPUnit\Framework\TestCase {
         $this->assertEquals(file_get_contents(__DIR__.'/assets/countries.txt'), $result);
     }
 
-    function testCallableBlocks() {
+    function testMacro() {
         $tpl = new \Jelix\Castor\Castor(self::$castorConfig);
 
         $tpl->assign('existingVar', 'realValueOfExistingVar');
-        $result = $tpl->fetch('assets/callableblocks.tpl');
-        $this->assertEquals(file_get_contents(__DIR__.'/assets/callableblocks.txt'), $result);
+        $result = $tpl->fetch('assets/macros.tpl');
+        $this->assertEquals(file_get_contents(__DIR__.'/assets/macros.txt'), $result);
 
     }
 

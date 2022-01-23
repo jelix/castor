@@ -337,72 +337,74 @@ the template which will include the other template.
 All template variables declared in the Castor object will be accessible into the included
 template.
 
-## Callable blocks
+## Macros
 
 In a template, you may want to repeat a piece of template without using a loop. You could include 
 several time an other template, but for little piece of template, this slower than the use
-of a callable block.
+of a macro.
 
-A callable block is a part of a template into a `{callableblock}` block. A callable block have a 
-name. So a callable block is like a function in PHP. 
+A macro is a part of a template declared with the `{macro}` tag. A macro have a 
+name and it is like a function in PHP. 
 
 Example of the declaration:
 
 ```
-{callableblock 'myblock'}
+{macro 'myblock'}
 <p>This is a block, displaying the value of $val: {$val}</p>
-{/callableblock}
+{/macro}
 ```
 The name is set using the syntax of a PHP string. Variables or any other language syntax are not allowed.
 
 Variables used inside the block can be variables declared into the template. The scope is global.
 You can use any template plugin, statements etc.
 
-To call a block, use `{callblock}`:
+To call a macro, use `{usemacro}`:
 
 ```
 This is my piece of html:
-{callblock 'myblock'}
+{usemacro 'myblock'}
 
 ...
 I can display my piece of html again:
-{callblock 'myblock'}
+{usemacro 'myblock'}
 ```
 
 If `$val` equals `'hello'`, the results will be :
 
 ```
 This is my piece of html:
-<p>This is a block, displaying the value of $val: hello</p>
+<p>This is a macro, displaying the value of $val: hello</p>
 
 ...
 I can display my piece of html again:
-<p>This is a block, displaying the value of $val: hello</p>
+<p>This is a macro, displaying the value of $val: hello</p>
 ```
 
-You can declare parameters to a block. Indicate parameters like for a PHP function (i.e. `$foo`), and
-use parameters inside the block like any other variables.
+You can declare parameters to a macro. Indicate parameters like for a PHP function (i.e. `$foo`), and
+use parameters inside the macro like any other variables.
 
 ```
-{* declaration of the block *}
-{callableblock 'myblock', $name, $result}
-<p>This is a block with parameters.<p>
+{* declaration of the macro *}
+{macro 'myblock', $name, $result}
+<p>This is a macro with parameters.<p>
 <ul>
     <li>name= {$name}</li>
     <li>{if $result == true}this is green{else}this is red{/if}</li>
 </ul>
 <p>You can still see the value of $val: {$val}</p>
-{/callableblock}
+{/macro}
 
-{* usage of the block *}
+{* usage of the macro *}
 
-{callblock 'myblock', 'SuperGuppy', true}
+{usemacro 'myblock', 'SuperGuppy', true}
 
 ```
 
-Declared parameters are not usable outside the block. If there is a template variable with the
+Declared parameters are not usable outside the macro. If there is a template variable with the
 same name, the value of the template variable is replaced by the value of the parameter inside
-the block, but is restored after the call of the block.
+the macro, but is restored after the call of the macro.
+
+Macro declared into an included template can be used in the template caller.
 
 
 ## Escaping content

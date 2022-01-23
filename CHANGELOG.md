@@ -4,7 +4,7 @@ Changelog
 next
 ----
 
-- Support of "callable blocks"
+- Support of macro
 - Add `json_encode` modifier
 - Fix some exceptions
 - A little code cleanup

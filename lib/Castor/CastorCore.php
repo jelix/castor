@@ -4,7 +4,7 @@
  * @author      Laurent Jouanneau
  * @contributor Dominique Papin
  *
- * @copyright   2005-2020 Laurent Jouanneau, 2007 Dominique Papin
+ * @copyright   2005-2022 Laurent Jouanneau, 2007 Dominique Papin
  *
  * @link        http://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
@@ -47,11 +47,11 @@ abstract class CastorCore
 
     /**
      * internal use
-     * list of callable blocks
+     * list of macro
      *
-     * See callableblock and callblock plugins
+     * See macro and usemacro plugins
      */
-    public $_callableBlocks = array();
+    public $_macros = array();
 
 
     public function __construct()
@@ -410,21 +410,21 @@ abstract class CastorCore
         return new \Exception($msg);
     }
 
-    public function declareCallableBlock($blockName, array $parametersNames, callable $func)
+    public function declareMacro($macroName, array $parametersNames, callable $func)
     {
-        $this->_callableBlocks[$blockName] = array(
+        $this->_macros[$macroName] = array(
             $func,
             $parametersNames
         );
     }
 
-    public function callBlock($blockName, $parameters)
+    public function callMacro($macroName, $parameters)
     {
-        if (!isset($this->_callableBlocks[$blockName])) {
+        if (!isset($this->_macros[$macroName])) {
             return null;
         }
 
-        list($func, $paramNames) =  $this->_callableBlocks[$blockName];
+        list($func, $paramNames) =  $this->_macros[$macroName];
         $backupVars = array();
 
         foreach ($paramNames as $k => $pName) {

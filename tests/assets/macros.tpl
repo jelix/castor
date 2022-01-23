@@ -1,21 +1,21 @@
-{callableblock 'mytest', $arg1}
+{macro 'mytest', $arg1}
     <p>This is my block {$arg1} {$existingVar}</p>
-{/callableblock}
+{/macro}
 
-{callableblock 'mytest2'}
+{macro 'mytest2'}
     <p>This is my block test 2 without parameters, and displaying existingVar={$existingVar} </p>
-{/callableblock}
+{/macro}
 
-{callableblock 'mytest3', $existingVar}
+{macro 'mytest3', $existingVar}
     <p>This is my block test 3 with a parameter having the same name of a variable.
         arg existingVar={$existingVar} </p>
-{/callableblock}
+{/macro}
 
 <div class="box">
-    {callblock 'mytest', 'toto'}
+    {usemacro 'mytest', 'toto'}
 
-    {callblock 'mytest2'}
+    {usemacro 'mytest2'}
 
-    {callblock 'mytest3', 'tata'}
+    {usemacro 'mytest3', 'tata'}
     Real existingVar={$existingVar}
 </div>
