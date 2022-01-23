@@ -13,3 +13,11 @@
         arg existingVar=tata </p>
     Real existingVar=realValueOfExistingVar
 </div>
+
+<div class="box">
+mytest is defined
+
+
+
+there is no macro 'unknown'
+</div>

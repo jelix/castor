@@ -4,7 +4,10 @@ Changelog
 next
 ----
 
-- Support of macro
+- Support of macro, with new tags:
+  - `{macro}` to declare a block of a macro
+  - a function `{usemacro}`
+  - some tests `{ifdefinedmacro}` and `{ifundefinedmacro}`
 - Support of `{set}`, an alias for `{assign}`
 - Support of `{verbatim}`, an alias for `{literal}`
 - Support of a new syntax for comments, `{# .. #}`

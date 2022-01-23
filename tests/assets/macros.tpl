@@ -19,3 +19,21 @@
     {usemacro 'mytest3', 'tata'}
     Real existingVar={$existingVar}
 </div>
+
+<div class="box">
+{ifdefinedmacro 'mytest'}
+mytest is defined
+{/ifdefinedmacro}
+
+{ifdefinedmacro 'unknown'}
+unknown is defined
+{/ifdefinedmacro}
+
+{ifundefinedmacro 'mytest'}
+there is no macro 'mytest'
+{/ifundefinedmacro}
+
+{ifundefinedmacro 'unknown'}
+there is no macro 'unknown'
+{/ifundefinedmacro}
+</div>

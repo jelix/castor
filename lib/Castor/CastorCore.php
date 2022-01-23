@@ -410,6 +410,12 @@ abstract class CastorCore
         return new \Exception($msg);
     }
 
+    /**
+     * @param string $macroName the macro name
+     * @param array $parametersNames parameter names for the macro
+     * @param callable $func the macro itself, as a function accepting a CastorCore engine as a parameter.
+     * @return void
+     */
     public function declareMacro($macroName, array $parametersNames, callable $func)
     {
         $this->_macros[$macroName] = array(
@@ -418,10 +424,23 @@ abstract class CastorCore
         );
     }
 
+    public function isMacroDefined($macroName)
+    {
+        return isset($this->_macros[$macroName]);
+    }
+
+    /**
+     * Call the given macro. Parameters are injected into the template engine as template variables, and removed
+     * after the call of the macro.
+     *
+     * @param string $macroName the macro name to call
+     * @param array $parameters parameters for the macro. This is an associative array, with variables names as keys.
+     * @return void
+     */
     public function callMacro($macroName, $parameters)
     {
         if (!isset($this->_macros[$macroName])) {
-            return null;
+            return;
         }
 
         list($func, $paramNames) =  $this->_macros[$macroName];
