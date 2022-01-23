@@ -16,6 +16,19 @@ goal is to have templates readable enough, easy to modify and easy to learn.
 
 Instructions in Castor are specified between curly braces : `{instruction ...}`
 
+You can write an instruction on several lines:
+
+```html
+<div>
+{zone 
+    'foo~bar',
+    array(
+        'foo1'=>$foo1,
+        'foo2'=>$foo2)}
+</div>
+```
+
+
 If you want to include curly braces in your template, outside of a Castor instruction, you
 can use `{ldelim}` for "{", or `{rdelim}` for "}".
 
@@ -32,25 +45,16 @@ can use `{literal}` instead of `{ldelim}` or `{rdelim}`.
   </script>
 ```
 
-If you want to put comments, use `{*...*}`. Of course they did not appears in the generated
+If you want to put comments, use `{*...*}` or `{# .. #}`. Of course they did not appear in the generated
 content.
 
 ```html
    <p>bla bla</p>
    {* this is a comment *}
+   {# this is an other comment #}
 ```
 
-You can write an instruction on several lines:
 
-```html
-<div>
-{zone 
-    'foo~bar',
-    array(
-        'foo1'=>$foo1,
-        'foo2'=>$foo2)}
-</div>
-```
 
 ## Expressions
 

@@ -4,7 +4,7 @@
  * @author      Laurent Jouanneau
  * @contributor Loic Mathaud (standalone version), Dominique Papin, DSDenes, Christophe Thiriot, Julien Issler, Brice Tence
  *
- * @copyright   2005-2020 Laurent Jouanneau
+ * @copyright   2005-2022 Laurent Jouanneau
  * @copyright   2006 Loic Mathaud, 2007 Dominique Papin, 2009 DSDenes, 2010 Christophe Thiriot
  * @copyright   2010-2016 Julien Issler, 2010 Brice Tence
  *
@@ -185,6 +185,7 @@ abstract class CompilerCore
         $tplContent = preg_replace("!<\?((?:php|=|\s).*)\?>!s", '', $tplContent);
         // we remove all template comments
         $tplContent = preg_replace("!{\*(.*?)\*}!s", '', $tplContent);
+        $tplContent = preg_replace("!{#(.*?)#}!s", '', $tplContent);
 
         $tplContent = preg_replace_callback("!(<\?.*\?>)!sm", function ($matches) {
             return '<?php echo \''.str_replace("'", "\\'", $matches[1]).'\'?>';

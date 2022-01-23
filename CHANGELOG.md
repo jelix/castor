@@ -7,6 +7,7 @@ next
 - Support of macro
 - Support of `{set}`, an alias for `{assign}`
 - Support of `{verbatim}`, an alias for `{literal}`
+- Support of a new syntax for comments, `{# .. #}`
 - Add `json_encode` modifier
 - Fix some exceptions
 - A little code cleanup

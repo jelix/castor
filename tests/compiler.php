@@ -1,7 +1,7 @@
 <?php
 /**
 * @author      Laurent Jouanneau
-* @copyright   2007-2015 Laurent Jouanneau
+* @copyright   2007-2022 Laurent Jouanneau
 * @link        http://www.jelix.org
 * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
 */
@@ -114,6 +114,33 @@ function toto() {
             ),
             array(
                 '<p>ok {* {if $a == "a"}aaa{/if} *}</p>',
+                '<p>ok </p>',
+            ),
+
+            array(
+                '<p>ok {# toto $toto #}</p>',
+                '<p>ok </p>',
+            ),
+
+            array(
+                '<p>ok {# toto
+
+ $toto #}</p>',
+                '<p>ok </p>',
+            ),
+
+            array(
+                '<p>ok {# toto
+{$toto} #}</p>',
+                '<p>ok </p>',
+            ),
+            array(
+                '<p>ok {# toto
+{$toto} #}</p> {# hello #}',
+                '<p>ok </p> ',
+            ),
+            array(
+                '<p>ok {# {if $a == "a"}aaa{/if} #}</p>',
                 '<p>ok </p>',
             ),
             array(
