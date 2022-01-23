@@ -8,6 +8,7 @@ return array(
     'errors.tpl.tag.syntax.invalid' => 'Dans le template %2$s La syntaxe de balise %1$s est invalide',
     'errors.tpl.tag.function.invalid' => 'Dans le template %2$s La syntaxe de la fonction %1$s est invalide',
     'errors.tpl.tag.function.unknown' => 'Dans le template %2$s La fonction %1$s est inconnue',
+    'errors.tpl.tag.pragma.unknown' => 'Dans le template %2$s L\'instruction pragma %1$s est inconnue',
     'errors.tpl.tag.modifier.invalid' => 'Dans le tag %s du template %3$s La syntaxe du modificateur %2$s est invalide',
     'errors.tpl.tag.modifier.unknown' => 'Dans le tag %s du template %3$s Le modificateur %2$s est inconnu',
     'errors.tpl.tag.block.end.missing' => 'Dans le template %2$s, la fin d\'un bloc %1$s est manquant',

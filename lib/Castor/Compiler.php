@@ -25,7 +25,7 @@ class Compiler extends CompilerCore
      */
     public function __construct(Config $config)
     {
-        parent::__construct();
+        parent::__construct($config->charset);
         $this->config = $config;
     }
 

@@ -8,6 +8,7 @@ return array(
     'errors.tpl.tag.syntax.invalid' => 'In the template %2$s, invalid syntax on tag %1$s',
     'errors.tpl.tag.function.invalid' => 'In the template %2$s, invalid syntax on the function %1$s',
     'errors.tpl.tag.function.unknown' => 'In the template %2$s, unknown fonction %1$s',
+    'errors.tpl.tag.pragma.unknown' => 'In the template %2$s, unknown pragma instruction %1$s',
     'errors.tpl.tag.modifier.invalid' => 'In the tag %s in the template %3$s, invalid syntax on the modifier %2$s',
     'errors.tpl.tag.modifier.unknown' => 'In the tag %s  in the template %3$s,  unknown modifier %2$s',
     'errors.tpl.tag.block.end.missing' => 'In the template %2$s, end of  bloc %1$s is missing',

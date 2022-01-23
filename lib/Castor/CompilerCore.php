@@ -97,7 +97,6 @@ abstract class CompilerCore
      * native modifiers.
      */
     protected $_modifier = array('upper' => 'strtoupper', 'lower' => 'strtolower',
-            'escxml' => 'htmlspecialchars', 'eschtml' => 'htmlspecialchars',
             'strip_tags' => 'strip_tags', 'escurl' => 'rawurlencode',
             'capitalize' => 'ucwords', 'stripslashes' => 'stripslashes',
             'upperfirst' => 'ucfirst', 'json_encode'=>'json_encode');
@@ -129,6 +128,11 @@ abstract class CompilerCore
      */
     public $trusted = true;
 
+
+    protected $encoding = 'UTF-8';
+
+    protected $_autoescape = false;
+
     /**
      * list of user functions.
      */
@@ -139,8 +143,10 @@ abstract class CompilerCore
     /**
      * Initialize some properties.
      */
-    public function __construct()
+    public function __construct($encoding = 'UTF-8')
     {
+        $this->encoding = $encoding;
+
         if (defined('T_CHARACTER')) {
             $this->_vartype[] = T_CHARACTER;
         }
@@ -151,6 +157,22 @@ abstract class CompilerCore
 
         $this->removeASPtags = (ini_get('asp_tags') == '1');
     }
+
+    /**
+     * Enable or disable the autoescaping behavior
+     * @param boolean $enabled
+     * @return void
+     */
+    public function setAutoEscape($enabled = true)
+    {
+        $this->_autoescape = $enabled;
+    }
+
+    public function isAutoEscapeEnabled()
+    {
+        return $this->_autoescape;
+    }
+
 
     public function compileString($templateContent, $cacheFile, $userModifiers, $userFunctions, $md5, $header = '', $footer = '')
     {
@@ -236,7 +258,7 @@ abstract class CompilerCore
         list(, $tag, $firstcar) = $matches;
 
         // check the first character
-        if (!preg_match('/^\$|@|=|[a-zA-Z\/]$/', $firstcar)) {
+        if (!preg_match('/^\$|@|=|[a-zA-Z\/]|!$/', $firstcar)) {
             $this->doError1('errors.tpl.tag.syntax.invalid', $tag);
         }
 
@@ -244,7 +266,9 @@ abstract class CompilerCore
         if ($firstcar == '=') {
             return  '<?php echo '.$this->_parseVariable(substr($tag, 1)).'; ?>';
         } elseif ($firstcar == '$' || $firstcar == '@') {
-            return  '<?php echo '.$this->_parseVariable($tag).'; ?>';
+            return '<?php echo ' . $this->_parseVariable($tag) . '; ?>';
+        } elseif ($firstcar == '!') {
+            return $this->_parsePragma($tag);
         } else {
             if (!preg_match('/^(\/?[a-zA-Z0-9_]+)(?:(?:\s+(.*))|(?:\((.*)\)))?$/ms', $tag, $m)) {
                 $this->doError1('errors.tpl.tag.function.invalid', $tag);
@@ -278,6 +302,8 @@ abstract class CompilerCore
         $tok = explode('|', $expr);
         $res = $this->_parseFinal(array_shift($tok), $this->_allowedInVar, $this->_excludedInVar);
 
+        $hasEscHtmlModifier = false;
+        $hasNoEscModifier = false;
         foreach ($tok as $modifier) {
             if (!preg_match('/^(\w+)(?:\:(.*))?$/', $modifier, $m)) {
                 $this->doError2('errors.tpl.tag.modifier.invalid', $this->_currentTag, $modifier);
@@ -301,12 +327,30 @@ abstract class CompilerCore
                 $res = $path[1].'('.implode(',', $targs).')';
                 $this->_pluginPath[$path[0]] = true;
             } else {
-                if (isset($this->_modifier[$m[1]])) {
+                if ($m[1] == 'noesc' || $m[1] == 'raw') {
+                    $hasNoEscModifier = true;
+                }
+                elseif ($m[1] == 'eschtml' || $m[1] == 'escxml') {
+                    $hasEscHtmlModifier = true;
+                    $res = 'htmlspecialchars('.$res.', ENT_QUOTES | ENT_SUBSTITUTE, "'.$this->encoding.'")';
+                }
+                elseif (isset($this->_modifier[$m[1]])) {
                     $res = $this->_modifier[$m[1]].'('.$res.')';
                 } else {
                     $this->doError2('errors.tpl.tag.modifier.unknown', $this->_currentTag, $m[1]);
                 }
             }
+        }
+
+        if ($this->_autoescape && !$hasEscHtmlModifier && !$hasNoEscModifier) {
+            switch($this->outputType) {
+                case 'html':
+                case 'xml':
+                case '':
+                    $res = 'htmlspecialchars('.$res.', ENT_QUOTES | ENT_SUBSTITUTE, "'.$this->encoding.'")';
+                    break;
+            }
+
         }
 
         return $res;
@@ -504,6 +548,30 @@ abstract class CompilerCore
     }
 
     /**
+     * analyse a pragma tag : `{! !}`
+     *
+     * @param string $expr the content of the tag
+     */
+    protected function _parsePragma($expr)
+    {
+        if (!preg_match('/^\!\s*([a-z0-9_]+)\s*(?:=\s*([a-z0-9_]+)\s*)?\!$/', $expr, $m)) {
+            $this->doError1('errors.tpl.tag.syntax.invalid', '{'.$expr.'}');
+        }
+
+        switch($m[1]) {
+            case 'autoescape':
+                if (isset($m[2])) {
+                    $this->_autoescape = in_array(strtolower($m[2]), array('true', 'on', '1'));
+                }
+                else {
+                    $this->_autoescape = true;
+                }
+                return '';
+        }
+        $this->doError1('errors.tpl.tag.pragma.unknown', '{'.$expr.'}');
+    }
+
+    /**
      * for plugins, it says if the plugin is inside the given block.
      *
      * @param string $blockName the block to search
@@ -691,9 +759,24 @@ abstract class CompilerCore
      */
     abstract protected function _getPlugin($type, $name);
 
+    /**
+     * @param string $err the error message code
+     * @throws \Exception
+     */
     abstract public function doError0($err);
 
+    /**
+     * @param string $err the error message code
+     * @param string $arg a parameter to insert into the translated message
+     * @throws \Exception
+     */
     abstract public function doError1($err, $arg);
 
+    /**
+     * @param string $err the error message code
+     * @param string $arg1 a parameter to insert into the translated message
+     * @param string $arg2 a parameter to insert into the translated message
+     * @throws \Exception
+     */
     abstract public function doError2($err, $arg1, $arg2);
 }

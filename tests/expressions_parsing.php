@@ -8,7 +8,8 @@
 
 define('TEST_JTPL_COMPILER_ASSIGN',1);
 
-class testJtplCompiler extends \Jelix\Castor\Compiler {
+class testJtplCompiler extends \Jelix\Castor\Compiler
+{
 
     public function setUserPlugins($userModifiers, $userFunctions) {
         $this->_modifier = array_merge($this->_modifier, $userModifiers);
@@ -40,7 +41,8 @@ class testJtplCompiler extends \Jelix\Castor\Compiler {
         return $this->_parseFinal($string,$this->_allowedAssign, array(';'),true);
    }
 
-   public function testParseVariable($string){
+   public function testParseVariable($string, $outputType = ''){
+        $this->outputType = $outputType;
         return $this->_parseVariable($string);
    }
 
@@ -254,7 +256,7 @@ class jtplCompilerExpressionTest extends \PHPUnit\Framework\TestCase {
     public function getVarTag()
     {
         return array(
-            array('$aaa|escxml', 'htmlspecialchars($t->_vars[\'aaa\'])'),
+            array('$aaa|escxml', 'htmlspecialchars($t->_vars[\'aaa\'], ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8")'),
             array('$aaa|bla', 'testjtplcontentUserModifier($t->_vars[\'aaa\'])'),
             array('$aaa|count_words', 'jtpl_modifier_common_count_words($t->_vars[\'aaa\'])'),
             array('$aaa|count_words|number_format:2|upper', 'strtoupper(jtpl_modifier_common_number_format(jtpl_modifier_common_count_words($t->_vars[\'aaa\']),2))'),
@@ -273,6 +275,38 @@ class jtplCompilerExpressionTest extends \PHPUnit\Framework\TestCase {
         $compil->setUserPlugins(array('bla'=>'testjtplcontentUserModifier'),array());
 
         $res = $compil->testParseVariable($tag);
+        $this->assertEquals($expectedResult, $res);
+    }
+
+    public function getEscapedVarTag()
+    {
+        return array(
+            // expression ,  autoescape , content type, result
+            array('$aaa', true, 'html', 'htmlspecialchars($t->_vars[\'aaa\'], ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8")'),
+            array('$aaa', true, 'xml', 'htmlspecialchars($t->_vars[\'aaa\'], ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8")'),
+            array('$aaa', false, 'html', '$t->_vars[\'aaa\']'),
+            array('$aaa', true, 'css', '$t->_vars[\'aaa\']'),
+            array('$aaa|escxml', true, 'html', 'htmlspecialchars($t->_vars[\'aaa\'], ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8")'),
+            array('$aaa|escxml', false, 'html', 'htmlspecialchars($t->_vars[\'aaa\'], ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8")'),
+            array('$aaa|eschtml', true, 'html', 'htmlspecialchars($t->_vars[\'aaa\'], ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8")'),
+            array('$aaa|eschtml', false, 'html', 'htmlspecialchars($t->_vars[\'aaa\'], ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8")'),
+            array('$aaa|raw', true, 'html', '$t->_vars[\'aaa\']'),
+            array('$aaa|raw', false, 'html', '$t->_vars[\'aaa\']'),
+            array('$aaa|noesc', true, 'html', '$t->_vars[\'aaa\']'),
+            array('$aaa|noesc', false, 'html', '$t->_vars[\'aaa\']'),
+        );
+    }
+
+    /**
+     * @dataProvider getEscapedVarTag
+     * @return void
+     */
+    function testVarTagAutoescape($tag, $autoescape, $outputType, $expectedResult)
+    {
+        $compil = new testJtplCompiler(self::$castorConfig);
+        $compil->setAutoEscape($autoescape);
+        $compil->trusted = true;
+        $res = $compil->testParseVariable($tag, $outputType);
         $this->assertEquals($expectedResult, $res);
     }
 

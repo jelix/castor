@@ -242,6 +242,29 @@ function toto() {
                 '<p><?php $t->_vars[\'foo\'] += 50;?>ok<?php echo $t->_vars[\'foo\']; ?></p>',
             ),
 
+            array(
+                '<p>{$foo}</p>
+<p>{$foo|raw}</p>
+<p>{$foo|eschtml}</p>
+',
+                '<p><?php echo $t->_vars[\'foo\']; ?></p>
+<p><?php echo $t->_vars[\'foo\']; ?></p>
+<p><?php echo htmlspecialchars($t->_vars[\'foo\'], ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8"); ?></p>
+',
+            ),
+            array(
+                '{! autoescape !}
+<p>{$foo}</p>
+<p>{$foo|raw}</p>
+<p>{$foo|eschtml}</p>
+',
+                '
+<p><?php echo htmlspecialchars($t->_vars[\'foo\'], ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8"); ?></p>
+<p><?php echo $t->_vars[\'foo\']; ?></p>
+<p><?php echo htmlspecialchars($t->_vars[\'foo\'], ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8"); ?></p>
+',
+            ),
+
         );
     }
 

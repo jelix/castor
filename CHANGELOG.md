@@ -4,6 +4,8 @@ Changelog
 next
 ----
 
+- support of auto-escape, with a new tag `{! autoescape !}`. A new `raw` modifier allows to not escape
+  automatically a variable.
 - Support of macro, with new tags:
   - `{macro}` to declare a block of a macro
   - a function `{usemacro}`

@@ -432,7 +432,13 @@ Macro declared into an included template can be used in the template caller.
 
 By default content variables are inserted as is into the generated content. This may be not
 what you want. You would escape some characters, like `<` and `>` in HTML, so the browser
-will not interprete these characters as tags.
+will not perform these characters as tags.
 
-So be sure to use `eschtml` modifiers and others to escape specific characters on some
-content. See templates.md
+So you should escape content variable:
+- by using the `eschtml` or `escxml` modifier : `{$myvar|eschtml}`
+- or by activating the auto-escaping: add a `{! autoescape !}` tag at the beginning of your template. All output
+  of variables (with a tag `{$..}` will be escaped. 
+  - If there is already an `eschtml` modifier, it will not add
+    an additionnal escape process.
+  - If you don't want to escape a variable, use the `raw` modifier: `{$myHTMLcontent|raw}`
+
