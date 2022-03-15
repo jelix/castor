@@ -151,6 +151,11 @@ abstract class CompilerCore
             $this->_vartype[] = T_CHARACTER;
         }
         $this->_allowedInVar = array_merge($this->_vartype, array(T_INC, T_DEC, T_DOUBLE_ARROW));
+
+        if (defined('T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG')) {
+            $this->_allowedInVar[] = T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG;
+            $this->_op[] = T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG;
+        }
         $this->_allowedInExpr = array_merge($this->_vartype, $this->_op);
         $this->_allowedAssign = array_merge($this->_vartype, $this->_assignOp, $this->_op);
         $this->_allowedInForeach = array_merge($this->_vartype, array(T_AS, T_DOUBLE_ARROW));
