@@ -1,6 +1,12 @@
 Changelog
 =========
 
+next
+----
+
+- New modifier `json_decode`
+
+
 1.1.1
 -----
 

@@ -54,4 +54,15 @@ class CastorTest extends \PHPUnit\Framework\TestCase {
 
     }
 
+
+    function testModifiers() {
+        $tpl = new \Jelix\Castor\Castor(self::$castorConfig);
+        $json = json_encode(['foo'=>'foo value', 'bar'=>'bar value']);
+        $tpl->assign('myjson', $json);
+        $result = $tpl->fetch('assets/modifiers.tpl');
+        $this->assertEquals(file_get_contents(__DIR__.'/assets/modifiers.txt'), $result);
+
+    }
+
+
 }
