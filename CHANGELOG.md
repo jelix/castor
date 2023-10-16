@@ -1,11 +1,11 @@
 Changelog
 =========
 
-next
-----
+1.1.2
+-----
 
 - New modifier `json_decode`
-
+- Is compatible with PHP 8.2
 
 1.1.1
 -----
