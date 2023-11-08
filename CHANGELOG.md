@@ -1,6 +1,11 @@
 Changelog
 =========
 
+1.1.3
+-----
+
+- fix composer.json so the library can be used with PHP 8.2
+
 1.1.2
 -----
 
