@@ -1,6 +1,12 @@
 Changelog
 =========
 
+next
+-----
+
+- deprecate `date_format` as strftime is deprecated into php 8.1. Use the `datetime` modifier instead.
+
+
 1.1.3
 -----
 

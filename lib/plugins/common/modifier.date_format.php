@@ -26,6 +26,7 @@
  * @param string|int $default_date default date if $string is empty
  *
  * @return string  the formated date
+ * @deprecated  use datetime modifier instead.
  */
 function jtpl_modifier_common_date_format($string, $format = '%b %e, %Y',
                                     $default_date = null)

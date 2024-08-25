@@ -24,7 +24,7 @@
  *  {$mydate|datetime}
  *  {$mydate|datetime:'d/m/Y'}
  *
- * @param string $date the date
+ * @param string|DateTime $date the date
  * @param string $format_in  the format identifier of the given date
  * @param string $format_out the format identifier of the output date
  *
