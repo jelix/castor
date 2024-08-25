@@ -215,7 +215,7 @@ class jtplCompilerExpressionTest extends \PHPUnit\Framework\TestCase {
     {
         $compil = new testJtplCompiler(self::$castorConfig);
         $compil->trusted = true;
-        $this->expectErrorMessage($errMessage);
+        $this->expectExceptionMessage($errMessage);
         $compil->testParseVarExpr($expression);
     }
 
@@ -238,7 +238,7 @@ class jtplCompilerExpressionTest extends \PHPUnit\Framework\TestCase {
     function testUnTrustedModeBadVarExpr($expression, $errMessage) {
         $compil = new testJtplCompiler(self::$castorConfig);
         $compil->trusted = false;
-        $this->expectErrorMessage($errMessage);
+        $this->expectExceptionMessage($errMessage);
         $compil->testParseVarExpr($expression);
     }
 
@@ -249,7 +249,7 @@ class jtplCompilerExpressionTest extends \PHPUnit\Framework\TestCase {
     function testUnTrustedModeBadVarExprForTrustMode($expression, $errMessage) {
         $compil = new testJtplCompiler(self::$castorConfig);
         $compil->trusted = false;
-        $this->expectErrorMessage($errMessage);
+        $this->expectExceptionMessage($errMessage);
         $compil->testParseVarExpr($expression);
     }
 
@@ -350,7 +350,7 @@ class jtplCompilerExpressionTest extends \PHPUnit\Framework\TestCase {
     {
         $compil = new testJtplCompiler(self::$castorConfig);
         $compil->trusted = false;
-        $this->expectErrorMessage($errMessage);
+        $this->expectExceptionMessage($errMessage);
         $compil->testParseAssignExpr($expression);
     }
 }

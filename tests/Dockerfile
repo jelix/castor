@@ -1,9 +1,9 @@
-ARG php_version
+ARG php_version=7.4
 
 FROM 3liz/liz-php-cli:${php_version}
 
 
-ARG php_version
+ARG php_version=7.4
 ARG DEBIAN_FRONTEND=noninteractive
 ENV PHP_VERSION=${php_version}
 
