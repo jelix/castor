@@ -14,7 +14,8 @@ class CastorTest extends \PHPUnit\Framework\TestCase {
     function setUp() : void {
         $cachePath = realpath(__DIR__.'/temp/') . '/';
         $templatePath = __DIR__.'/';
-        self::$castorConfig = new \Jelix\Castor\Config($cachePath, $templatePath);        
+        self::$castorConfig = new \Jelix\Castor\Config($cachePath, $templatePath);
+        self::$castorConfig->addPluginsRepository(__DIR__.'/plugins');
         $this->clearDir($cachePath);
     }
 
@@ -66,5 +67,14 @@ class CastorTest extends \PHPUnit\Framework\TestCase {
 
     }
 
+    function testContentType() {
+        $tpl = new \Jelix\Castor\Castor(self::$castorConfig);
+
+        $result = $tpl->fetch('assets/content_html.tpl');
+        $this->assertEquals(file_get_contents(__DIR__.'/assets/content_html.txt'), $result);
+
+        $result = $tpl->fetch('assets/content_text.tpl');
+        $this->assertEquals(file_get_contents(__DIR__.'/assets/content_text.txt'), $result);
+    }
 
 }

@@ -4,7 +4,7 @@
  * @author      Laurent Jouanneau
  * @contributor Loic Mathaud (standalone version), Dominique Papin, DSDenes, Christophe Thiriot, Julien Issler, Brice Tence
  *
- * @copyright   2005-2022 Laurent Jouanneau
+ * @copyright   2005-2024 Laurent Jouanneau
  * @copyright   2006 Loic Mathaud, 2007 Dominique Papin, 2009 DSDenes, 2010 Christophe Thiriot
  * @copyright   2010-2016 Julien Issler, 2010 Brice Tence
  *
@@ -119,7 +119,7 @@ abstract class CompilerCore
     /**
      * type of the output.
      */
-    public $outputType = '';
+    public $outputType = 'html';
 
     /**
      * true if the template doesn't come from an untrusted source.
@@ -561,21 +561,30 @@ abstract class CompilerCore
      */
     protected function _parsePragma($expr)
     {
-        if (!preg_match('/^\!\s*([a-z0-9_]+)\s*(?:=\s*([a-z0-9_]+)\s*)?\!$/', $expr, $m)) {
+        if (!preg_match('/^\!\s*([a-z0-9_\-]+)\s*(?:=\s*([a-z0-9_]+)\s*)?\!$/', $expr, $m)) {
             $this->doError1('errors.tpl.tag.syntax.invalid', '{'.$expr.'}');
         }
 
-        switch($m[1]) {
+        $parameter = $m[1];
+        $value = $m[2] ?? null;
+        switch($parameter) {
             case 'autoescape':
-                if (isset($m[2])) {
-                    $this->_autoescape = in_array(strtolower($m[2]), array('true', 'on', '1'));
+                if ($value !== null) {
+                    $this->_autoescape = in_array(strtolower($value), array('true', 'on', '1'));
                 }
                 else {
                     $this->_autoescape = true;
                 }
-                return '';
+                break;
+            case 'output-type':
+                if ($value !== null) {
+                    $this->outputType = $value;
+                }
+                break;
+            default:
+                $this->doError1('errors.tpl.tag.pragma.unknown', '{'.$expr.'}');
         }
-        $this->doError1('errors.tpl.tag.pragma.unknown', '{'.$expr.'}');
+        return '';
     }
 
     /**

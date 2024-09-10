@@ -5,7 +5,7 @@
  * @contributor Laurent Jouanneau
  *
  * @copyright   2006 Loic Mathaud
- * @copyright   2006-2020 Laurent Jouanneau
+ * @copyright   2006-2024 Laurent Jouanneau
  *
  * @link        http://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
@@ -37,18 +37,14 @@ class Castor extends CastorCore
      * include the compiled template file and call one of the generated function.
      *
      * @param string $tpl        template selector
-     * @param string $outputType the type of output (html, text etc..)
      * @param bool   $trusted    says if the template file is trusted or not
      *
      * @return string the suffix name of the function to call
      * @throws Exception
      */
-    protected function getTemplate($tpl, $outputType = '', $trusted = true)
+    protected function getTemplate($tpl, $trusted = true)
     {
         $tpl = $this->config->templatePath.$tpl;
-        if ($outputType == '') {
-            $outputType = 'html';
-        }
 
         $cachefile = dirname($this->_templateName).'/';
         if ($cachefile == './') {
@@ -59,7 +55,7 @@ class Castor extends CastorCore
             throw new Exception('cache path is invalid ! its value is: "'.$this->config->cachePath.'".');
         }
 
-        $cachefile = $this->config->cachePath.$cachefile . $outputType . ($trusted ? '_t' : '') . '_' . basename($tpl);
+        $cachefile = $this->config->cachePath.$cachefile . ($trusted ? '_t' : '') . '_' . basename($tpl);
 
         $mustCompile = $this->config->compilationForce || !file_exists($cachefile);
         if (!$mustCompile) {
@@ -71,17 +67,17 @@ class Castor extends CastorCore
         if ($mustCompile) {
             $compiler = $this->getCompiler();
             $compiler->compile($this->_templateName,
-                               $tpl, $outputType, $trusted,
+                               $tpl, $trusted,
                                $this->userModifiers, $this->userFunctions);
         }
         require_once $cachefile;
 
-        return md5($tpl.'_' . $outputType . ($trusted ? '_t' : ''));
+        return md5($tpl.'_' . ($trusted ? '_t' : ''));
     }
 
-    public function fetch($tpl, $outputType = '', $trusted = true, $callMeta = true)
+    public function fetch($tpl, $trusted = true, $callMeta = true)
     {
-        return $this->_fetch($tpl, $tpl, $outputType, $trusted, $callMeta);
+        return $this->_fetch($tpl, $tpl, $trusted, $callMeta);
     }
 
     protected function getCachePath()

@@ -150,7 +150,7 @@ $template = ' hello
  		{/for}';
 $tpl = new \Jelix\Castor\Castor($config);
 $tpl->assign('value', 'test'); 
-$content = $tpl->fetchFromString($template, 'text');
+$content = $tpl->fetchFromString($template);
 ```
 
 `$content` will be:
@@ -175,17 +175,15 @@ By default, Castor assumes that the template is an html template.
 It's important to indicate what type of content it is, so Castor can use plugins that targets
 this content type specifically. Some plugins may be available only for some content type.
 
-If the content type is not 'html', indicates the type at second parameters to `fetch()`,
-`display()` or `fetchFromString()`.
+You should indicate the content type into the template by setting the `output-type`
+pragma parameter:
 
-
-```php
-  $content = $tpl->fetch('mytemplate.tpl', 'text');
+```
+ {! output-type = text !}
 ```
 
-Note that you can create your own type. You just have to give your
-content type to `fetch()`, `display()` or `fetchFromString()`, and creating some plugins
-for this content (if "common" plugins are not enough).
+Note that you can create your own type. You just have to set this pragma parameter
+and to create some plugins for this content (if "common" plugins are not enough).
 
 
 ## Trusted and untrusted templates
@@ -202,7 +200,7 @@ To indicate to enforce the security in this case, give `false` as third paramete
 `fetch`, `display` or `fetchFromString`.
 
 ```php
-  $content = $tpl->fetch('mytemplate.tpl', 'html', false);
+  $content = $tpl->fetch('mytemplate.tpl', false);
 ```
 
 Among of thing you cannot do in trusted templates:

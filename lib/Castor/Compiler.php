@@ -5,7 +5,7 @@
  * @contributor Laurent Jouanneau
  *
  * @copyright   2006 Loic Mathaud
- * @copyright   2006-2020 Laurent Jouanneau
+ * @copyright   2006-2024 Laurent Jouanneau
  *
  * @link        http://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
@@ -39,14 +39,13 @@ class Compiler extends CompilerCore
      * @return bool true if ok
      * @throws \Exception
      */
-    public function compile($tplName, $tplFile, $outputType, $trusted,
+    public function compile($tplName, $tplFile, $trusted,
                              $userModifiers = array(), $userFunctions = array())
     {
         $this->_sourceFile = $tplFile;
-        $this->outputType = $outputType;
-        $cacheFile = $this->config->cachePath.dirname($tplName).'/'.$this->outputType.($trusted ? '_t' : '').'_'.basename($tplName);
+        $cacheFile = $this->config->cachePath.dirname($tplName).'/'.($trusted ? '_t' : '').'_'.basename($tplName);
         $this->trusted = $trusted;
-        $md5 = md5($tplFile.'_'.$this->outputType.($this->trusted ? '_t' : ''));
+        $md5 = md5($tplFile.'_'.($this->trusted ? '_t' : ''));
 
         if (!file_exists($this->_sourceFile)) {
             $this->doError0('errors.tpl.not.found');
