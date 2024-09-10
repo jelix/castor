@@ -398,6 +398,7 @@ abstract class CompilerCore
                 if ($this->trusted) {
                     $notallowed = array(';','!');
                 } else {
+                    // parenthesis are not allowed to prevent to call functions or methods
                     $notallowed = array(';','!','(');
                 }
 
@@ -418,6 +419,7 @@ abstract class CompilerCore
                 if ($this->trusted) {
                     $notallowed = array();
                 } else {
+                    // parenthesis are not allowed to prevent to call functions or methods
                     $notallowed = array('(');
                 }
                 if (preg_match("/^\s*\((.*)\)\s*$/", $args, $m)) {

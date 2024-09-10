@@ -11,9 +11,9 @@ Castor is composed of three components :
 
 ## Configuration
 
-You must instancy a configuration object. It needs at least the path of a
+You must create a configuration object. It needs at least the path of a
 directory where compiled template will be store. You can also indicate the path
-of the dir where template files can be found. By default they are loaded from
+of the dir where template files can be found. By default, they are loaded from
 the current directory.
 
 Example:
