@@ -4,6 +4,10 @@ Changelog
 next
 -----
 
+1.1.4
+-----
+
+- Compatibility with PHP 8.4
 - deprecate `date_format` as strftime is deprecated into php 8.1. Use the `datetime` modifier instead.
 
 
