@@ -4,6 +4,11 @@ Changelog
 next
 -----
 
+1.1.5
+-----
+
+- Fix deprecation warning (in PHP 8.4) into the `nl2br` plugin
+
 1.1.4
 -----
 
