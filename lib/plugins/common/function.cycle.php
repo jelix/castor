@@ -2,7 +2,8 @@
 
 /**
  * @author      Philippe Schelté (dubphil)
- * @copyright   2008 Philippe Schelté
+ * @contributor Laurent Jouanneau
+ * @copyright   2008 Philippe Schelté, 2025 Laurent Jouanneau
  *
  * @link        http://jelix.org/
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
@@ -23,12 +24,12 @@
  * {cycle}
  * </pre>
  *
- * @param \Jelix\Castor\CastorCore $tpl
+ * @param \Jelix\Castor\RuntimeContainer $tpl
  * @param string,array $param the name of the cycle, or the list of values
  *
  * @return string
  */
-function jtpl_function_common_cycle(\Jelix\Castor\CastorCore $tpl, $param = '')
+function jtpl_function_common_cycle(\Jelix\Castor\RuntimeContainer $tpl, $param = '')
 {
     if (is_array($param)) {
         static $cycle_vars;

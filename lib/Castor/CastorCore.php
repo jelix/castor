@@ -4,60 +4,30 @@
  * @author      Laurent Jouanneau
  * @contributor Dominique Papin
  *
- * @copyright   2005-2024 Laurent Jouanneau, 2007 Dominique Papin
+ * @copyright   2005-2025 Laurent Jouanneau, 2007 Dominique Papin
  *
- * @link        http://www.jelix.org
+ * @link        https://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
  */
 
 namespace Jelix\Castor;
+
+use Jelix\Castor\Compiler\CompilerCore;
 
 /**
  * base class of the template engine.
  */
 abstract class CastorCore
 {
-    /**
-     * all assigned template variables.
-     * It have a public access only for plugins. So you mustn't use directly this property
-     * except from tpl plugins.
-     * See methods of CastorCore to manage template variables.
-     *
-     * @var array
-     */
-    public $_vars = array();
 
-    /**
-     * temporary template variables for plugins.
-     * It have a public access only for plugins. So you mustn't use directly this property
-     * except from tpl plugins.
-     *
-     * @var array
-     */
-    public $_privateVars = array();
-
-    /**
-     * internal use
-     * It have a public access only for plugins. So you mustn't use directly this property
-     * except from tpl plugins.
-     *
-     * @var array
-     */
-    public $_meta = array();
-
-    /**
-     * internal use
-     * list of macro
-     *
-     * See macro and usemacro plugins
-     */
-    public $_macros = array();
-
+    protected RuntimeContainer $container;
 
     public function __construct()
     {
-        $this->_vars['j_datenow'] = date('Y-m-d');
-        $this->_vars['j_timenow'] = date('H:i:s');
+        $this->container = new RuntimeContainer();
+        
+        $this->container->_vars['j_datenow'] = date('Y-m-d');
+        $this->container->_vars['j_timenow'] = date('H:i:s');
     }
 
     /**
@@ -69,9 +39,9 @@ abstract class CastorCore
     public function assign($name, $value = null)
     {
         if (is_array($name)) {
-            $this->_vars = array_merge($this->_vars, $name);
+            $this->container->_vars = array_merge($this->container->_vars, $name);
         } else {
-            $this->_vars[$name] = $value;
+            $this->container->_vars[$name] = $value;
         }
     }
 
@@ -83,7 +53,7 @@ abstract class CastorCore
      */
     public function assignByRef($name, &$value)
     {
-        $this->_vars[$name] = &$value;
+        $this->container->_vars[$name] = &$value;
     }
 
     /**
@@ -96,17 +66,17 @@ abstract class CastorCore
     {
         if (is_array($name)) {
             foreach ($name as $key => $val) {
-                if (isset($this->_vars[$key])) {
-                    $this->_vars[$key] .= $val;
+                if (isset($this->container->_vars[$key])) {
+                    $this->container->_vars[$key] .= $val;
                 } else {
-                    $this->_vars[$key] = $val;
+                    $this->container->_vars[$key] = $val;
                 }
             }
         } else {
-            if (isset($this->_vars[$name])) {
-                $this->_vars[$name] .= $value;
+            if (isset($this->container->_vars[$name])) {
+                $this->container->_vars[$name] .= $value;
             } else {
-                $this->_vars[$name] = $value;
+                $this->container->_vars[$name] = $value;
             }
         }
     }
@@ -121,13 +91,13 @@ abstract class CastorCore
     {
         if (is_array($name)) {
             foreach ($name as $key => $val) {
-                if (!isset($this->_vars[$key])) {
-                    $this->_vars[$key] = $val;
+                if (!isset($this->container->_vars[$key])) {
+                    $this->container->_vars[$key] = $val;
                 }
             }
         } else {
-            if (!isset($this->_vars[$name])) {
-                $this->_vars[$name] = $value;
+            if (!isset($this->container->_vars[$name])) {
+                $this->container->_vars[$name] = $value;
             }
         }
     }
@@ -141,7 +111,7 @@ abstract class CastorCore
      */
     public function isAssigned($name)
     {
-        return isset($this->_vars[$name]);
+        return isset($this->container->_vars[$name]);
     }
 
     /**
@@ -153,8 +123,8 @@ abstract class CastorCore
      */
     public function get($name)
     {
-        if (isset($this->_vars[$name])) {
-            return $this->_vars[$name];
+        if (isset($this->container->_vars[$name])) {
+            return $this->container->_vars[$name];
         }
         return null;
     }
@@ -166,59 +136,48 @@ abstract class CastorCore
      */
     public function getTemplateVars()
     {
-        return $this->_vars;
+        return $this->container->_vars;
     }
 
     /**
      * process all meta instruction of a template.
      *
-     * @param string $tpl        template selector
-     * @param bool   $trusted    says if the template file is trusted or not
+     * @param TemplateContentInterface $tpl        template selector
      */
-    public function meta($tpl, $trusted = true)
+    protected function processMeta(TemplateContentInterface $tpl)
     {
-        if (in_array($tpl, $this->processedMeta)) {
+        $tplName = $tpl->getName();
+        if (in_array($tplName, $this->processedMeta)) {
             // we want to process meta only one time, when a template is included
-            // several time in an other template, or, more important, when a template
+            // several time in another template, or, more important, when a template
             // is included in a recursive manner (in this case, it did cause infinite loop, see #1396).
-            return $this->_meta;
+            return $this->container->_meta;
         }
-        $this->processedMeta[] = $tpl;
-        $md = $this->getTemplate($tpl, $trusted);
+        $this->processedMeta[] = $tplName;
+        $contentGenerator = $this->getTemplate($tpl);
 
-        $fct = 'template_meta_'.$md;
-        $fct($this);
-
-        return $this->_meta;
+        return $contentGenerator->meta($this->container);
     }
 
     /**
      * display the generated content from the given template.
      *
-     * @param string $tpl        template selector
-     * @param bool   $trusted    says if the template file is trusted or not
+     * @param TemplateContentInterface $tpl   template selector
      */
-    public function display($tpl, $trusted = true)
+    protected function processDisplay(TemplateContentInterface $tpl)
     {
-        $previousTpl = $this->_templateName;
-        $this->_templateName = $tpl;
-        $this->recursiveTpl[] = $tpl;
-        $md = $this->getTemplate($tpl, $trusted);
+        $previousTpl = $this->container->_templateName;
+        $this->container->_templateName = $tpl->getName();
+        $this->recursiveTpl[] = $this->container->_templateName;
 
-        $fct = 'template_'.$md;
-        $fct($this);
+        $contentGenerator = $this->getTemplate($tpl);
+
+        $contentGenerator->content($this->container);
+
         array_pop($this->recursiveTpl);
-        $this->_templateName = $previousTpl;
+        $this->container->_templateName = $previousTpl;
     }
 
-    /**
-     * contains the name of the template file
-     * It have a public access only for plugins. So you musn't use directly this property
-     * except from tpl plugins.
-     *
-     * @var string
-     */
-    public $_templateName;
 
     /**
      * @var string[] list of processed included template to check infinite recursion
@@ -232,130 +191,70 @@ abstract class CastorCore
     protected $processedMeta = array();
 
     /**
-     * include the compiled template file and call one of the generated function.
+     * include the compiled template file
      *
-     * @param string $tpl        template selector
-     * @param bool   $trusted    says if the template file is trusted or not
+     * @param TemplateContentInterface $tplLoader   template file
      *
-     * @return string the suffix name of the function to call
+     * @return ContentGeneratorInterface
      */
-    abstract protected function getTemplate($tpl, $trusted = true);
+    protected function getTemplate(TemplateContentInterface $tplLoader)
+    {
+        $compiler = $this->getCompiler();
+        $compiledContent = $compiler->compile($tplLoader, $this->userModifiers, $this->userFunctions);
+
+            $this->cacheManager->saveCompiledTemplate(
+                $tplLoader->getName(),
+                $compiledContent,
+                $tplLoader->cacheTag()
+            );
+
+        return $this->cacheManager->getTemplateContent($tplLoader->getName());
+    }
 
     /**
-     * return the generated content from the given template.
-     *
-     * @param string $tpl        template selector
-     * @param bool   $trusted    says if the template file is trusted or not
-     * @param bool   $callMeta   false if meta should not be called
-     *
-     * @return string the generated content
-     */
-    abstract public function fetch($tpl, $trusted = true, $callMeta = true);
-
-    /**
-     * @param string $tpl        the template name
+     * @param TemplateContentInterface $tpl        the template name
      * @param string $getTemplateArg
-     * @param string $outputType the type of output (html, text etc..)
-     * @param bool   $trusted    says if the template file is trusted or not
      * @param bool   $callMeta   false if meta should not be called
      *
      * @return false|string
      */
-    protected function _fetch($tpl, $getTemplateArg, $trusted = true, $callMeta = true)
+    protected function processFetch(TemplateContentInterface $tplLoader, $callMeta = true)
     {
+        $previousTpl = $this->container->_templateName;
+        $this->container->_templateName = $tplLoader->getName();
+        if ($callMeta) {
+            if (in_array($this->container->_templateName, $this->processedMeta)) {
+                $callMeta = false;
+            } else {
+                $this->processedMeta[] = $this->container->_templateName;
+            }
+        }
+        $this->recursiveTpl[] = $this->container->_templateName;
+
+        $contentGenerator = $this->getTemplate($tplLoader);
+
         ob_start();
         try {
-            $previousTpl = $this->_templateName;
-            $this->_templateName = $tpl;
             if ($callMeta) {
-                if (in_array($tpl, $this->processedMeta)) {
-                    $callMeta = false;
-                } else {
-                    $this->processedMeta[] = $tpl;
-                }
+                $contentGenerator->meta($this->container);
             }
-            $this->recursiveTpl[] = $tpl;
-
-            $md = $this->getTemplate($getTemplateArg, $trusted);
-
-            if ($callMeta) {
-                $fct = 'template_meta_'.$md;
-                $fct($this);
-            }
-            $fct = 'template_'.$md;
-            $fct($this);
+            $contentGenerator->content($this->container);
             array_pop($this->recursiveTpl);
-            $this->_templateName = $previousTpl;
+            $this->container->_templateName = $previousTpl;
             $content = ob_get_clean();
         } catch (\Exception $e) {
             ob_end_clean();
             throw $e;
+        } finally {
+            array_pop($this->recursiveTpl);
+            $this->container->_templateName = $previousTpl;
         }
 
         return $content;
     }
 
-    /**
-     * Return the generated content from the given string template (virtual).
-     *
-     * @param string $tpl        template content
-     * @param string $outputType the type of output (html, text etc..)
-     * @param bool   $trusted    says if the template file is trusted or not
-     * @param bool   $callMeta   false if meta should not be called
-     *
-     * @return string the generated content
-     */
-    public function fetchFromString($tpl, $outputType = '', $trusted = true, $callMeta = true)
-    {
-        ob_start();
-        try {
-            $cachePath = $this->getCachePath().'virtual/';
+    abstract protected function getCompiler() : CompilerCore;
 
-            $previousTpl = $this->_templateName;
-            $md = 'virtual_'.md5($tpl).($trusted ? '_t' : '');
-            $this->_templateName = $md;
-
-            if ($outputType == '') {
-                $outputType = 'html';
-            }
-
-            $cachePath .= $outputType . '_' . $this->_templateName . '.php';
-
-            $mustCompile = $this->compilationNeeded($cachePath);
-
-            if ($mustCompile && !function_exists('template_'.$md)) {
-                $compiler = $this->getCompiler();
-                $compiler->outputType = $outputType;
-                $compiler->trusted = $trusted;
-                $compiler->compileString($tpl,
-                                         $cachePath,
-                                         $this->userModifiers,
-                                         $this->userFunctions,
-                                         $md);
-            }
-            require_once $cachePath;
-
-            if ($callMeta) {
-                $fct = 'template_meta_'.$md;
-                $fct($this);
-            }
-            $fct = 'template_'.$md;
-            $fct($this);
-            $content = ob_get_clean();
-            $this->_templateName = $previousTpl;
-        } catch (\Exception $e) {
-            ob_end_clean();
-            throw $e;
-        }
-
-        return $content;
-    }
-
-    abstract protected function getCachePath();
-
-    abstract protected function getCompiler();
-
-    abstract protected function compilationNeeded($cacheFile);
 
     protected $userModifiers = array();
 
@@ -404,62 +303,6 @@ abstract class CastorCore
         $msg = $this->config->getMessage($messageKey, $parameters);
 
         return new \Exception($msg);
-    }
-
-    /**
-     * @param string $macroName the macro name
-     * @param array $parametersNames parameter names for the macro
-     * @param callable $func the macro itself, as a function accepting a CastorCore engine as a parameter.
-     * @return void
-     */
-    public function declareMacro($macroName, array $parametersNames, callable $func)
-    {
-        $this->_macros[$macroName] = array(
-            $func,
-            $parametersNames
-        );
-    }
-
-    public function isMacroDefined($macroName)
-    {
-        return isset($this->_macros[$macroName]);
-    }
-
-    /**
-     * Call the given macro. Parameters are injected into the template engine as template variables, and removed
-     * after the call of the macro.
-     *
-     * @param string $macroName the macro name to call
-     * @param array $parameters parameters for the macro. This is an associative array, with variables names as keys.
-     * @return void
-     */
-    public function callMacro($macroName, $parameters)
-    {
-        if (!isset($this->_macros[$macroName])) {
-            return;
-        }
-
-        list($func, $paramNames) =  $this->_macros[$macroName];
-        $backupVars = array();
-
-        foreach ($paramNames as $k => $pName) {
-            if (isset($this->_vars[$pName])) {
-                $backupVars[$pName] = $this->_vars[$pName];
-            }
-            $this->_vars[$pName] = $parameters[$k];
-        }
-
-        $func($this);
-
-        // delete or restore parameters
-        foreach ($paramNames as $k => $pName) {
-            if (array_key_exists($pName, $backupVars)) {
-                $this->_vars[$pName] = $backupVars[$pName];
-            }
-            else {
-                unset($this->_vars[$pName]);
-            }
-        }
     }
 
 }

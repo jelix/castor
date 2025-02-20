@@ -5,7 +5,7 @@
  *
  * @contributor Laurent Jouanneau (utf8 compliance)
  *
- * @copyright  2001-2003 ispi of Lincoln, Inc., 2007 Laurent Jouanneau
+ * @copyright  2001-2003 ispi of Lincoln, Inc., 2007-2025 Laurent Jouanneau
  *
  * @link http://smarty.php.net/
  * @link http://jelix.org/
@@ -18,13 +18,13 @@
  * <pre>{$mytext|count_characters}
  * {$mytext|count_characters:true}</pre>
  *
- * @param \Jelix\Castor\CastorCore $tpl The template
+ * @param \Jelix\Castor\RuntimeContainer $tpl The template
  * @param string $string
  * @param bool $include_spaces include whitespace in the character count
  *
  * @return int
  */
-function jtpl_modifier2_common_count_characters(\Jelix\Castor\CastorCore $tpl, $string, $include_spaces = false)
+function jtpl_modifier2_common_count_characters(\Jelix\Castor\RuntimeContainer $tpl, $string, $include_spaces = false)
 {
     if ($include_spaces) {
         return(iconv_strlen($string, $tpl->getEncoding()));

@@ -5,13 +5,17 @@
  * @contributor Laurent Jouanneau
  *
  * @copyright   2006 Loic Mathaud
- * @copyright   2006-2024 Laurent Jouanneau
+ * @copyright   2006-2025 Laurent Jouanneau
  *
- * @link        http://www.jelix.org
+ * @link        https://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
  */
 
 namespace Jelix\Castor;
+
+use Jelix\Castor\CacheManager\TemplateCacheManagerInterface;
+use Jelix\Castor\Compiler\Compiler;
+use Jelix\Castor\Compiler\CompilerCore;
 
 /**
  * Main class of the template engine.
@@ -23,6 +27,9 @@ class Castor extends CastorCore
      */
     protected $config = null;
 
+
+    protected TemplateCacheManagerInterface $cacheManager;
+
     /**
      *
      * @param  Config  $config
@@ -30,69 +37,122 @@ class Castor extends CastorCore
     public function __construct(Config $config)
     {
         $this->config = $config;
+        $this->cacheManager = $config->cacheManager;
         parent::__construct();
     }
 
     /**
-     * include the compiled template file and call one of the generated function.
+     * include the compiled template file
      *
-     * @param string $tpl        template selector
-     * @param bool   $trusted    says if the template file is trusted or not
+     * @param TemplateContentInterface $tplLoader   template file
      *
-     * @return string the suffix name of the function to call
-     * @throws Exception
+     * @return ContentGeneratorInterface
      */
-    protected function getTemplate($tpl, $trusted = true)
+    protected function getTemplate(TemplateContentInterface $tplLoader)
     {
-        $tpl = $this->config->templatePath.$tpl;
-
-        $cachefile = dirname($this->_templateName).'/';
-        if ($cachefile == './') {
-            $cachefile = '';
-        }
-
-        if ($this->config->cachePath == '/' || $this->config->cachePath == '') {
-            throw new Exception('cache path is invalid ! its value is: "'.$this->config->cachePath.'".');
-        }
-
-        $cachefile = $this->config->cachePath.$cachefile . ($trusted ? '_t' : '') . '_' . basename($tpl);
-
-        $mustCompile = $this->config->compilationForce || !file_exists($cachefile);
-        if (!$mustCompile) {
-            if (filemtime($tpl) > filemtime($cachefile)) {
-                $mustCompile = true;
-            }
-        }
-
-        if ($mustCompile) {
+        if ($this->cacheManager->hasToBeCompiled(
+            $tplLoader->getName(),
+            $tplLoader->cacheTag())
+        ) {
             $compiler = $this->getCompiler();
-            $compiler->compile($this->_templateName,
-                               $tpl, $trusted,
-                               $this->userModifiers, $this->userFunctions);
+            $compiledContent = $compiler->compile($tplLoader, $this->userModifiers, $this->userFunctions);
+            $this->cacheManager->saveCompiledTemplate(
+                $tplLoader->getName(),
+                $compiledContent,
+                $tplLoader->cacheTag()
+            );
         }
-        require_once $cachefile;
 
-        return md5($tpl.'_' . ($trusted ? '_t' : ''));
+        return $this->cacheManager->getTemplateContent($tplLoader->getName());
     }
 
-    public function fetch($tpl, $trusted = true, $callMeta = true)
+    /**
+     * Process all meta instructions of a template.
+     *
+     * @param TemplateContentInterface|string $tpl        template selector
+     * @param bool   $trusted    says if the template file is trusted or not. Only relevant if $tpl is a string.
+     */
+    public function meta(TemplateContentInterface|string $tpl, $trusted = true)
     {
-        return $this->_fetch($tpl, $tpl, $trusted, $callMeta);
+        if (is_string($tpl)) {
+            $tpl = new TemplateFile(
+                $tpl,
+                $this->config->templatePath.'/'.$tpl,
+                $trusted
+            );
+        }
+        return $this->processMeta($tpl);
     }
 
-    protected function getCachePath()
+
+    /**
+     * Display the generated content from the given template.
+     *
+     * @param TemplateContentInterface|string $tpl   template selector
+     * @param bool   $trusted    says if the template file is trusted or not. Only relevant if $tpl is a string.
+     */
+    public function display(TemplateContentInterface|string $tpl, $trusted = true)
     {
-        return  $this->config->cachePath.'/virtuals/';
+        if (is_string($tpl)) {
+            $tpl = new TemplateFile(
+                $tpl,
+                $this->config->templatePath.'/'.$tpl,
+                $trusted
+            );
+        }
+
+        $this->processDisplay($tpl);
     }
 
-    protected function getCompiler()
+    /**
+     * return the generated content from the given template.
+     *
+     * @param TemplateContentInterface|string $tpl        template selector
+     * @param bool   $trusted    says if the template file is trusted or not. Only relevant if $tpl is a string.
+     * @param bool   $callMeta   false if meta should not be called
+     *
+     * @return string the generated content
+     */
+    public function fetch(TemplateContentInterface|string $tpl, $trusted = true, $callMeta = true)
+    {
+        if (is_string($tpl)) {
+            $tpl = new TemplateFile(
+                $tpl,
+                $this->config->templatePath.'/'.$tpl,
+                $trusted
+            );
+        }
+
+        return $this->processFetch($tpl, $callMeta);
+    }
+
+
+    /**
+     * Return the generated content from the given string template (virtual).
+     *
+     * @param string $tplContent        template content
+     * @param bool   $trusted    says if the template file is trusted or not
+     * @param bool   $callMeta   false if meta should not be called
+     *
+     * @return string the generated content
+     */
+    public function fetchFromString($tplContent, $trusted = true, $callMeta = true)
+    {
+        $tplName = md5($tplContent);
+
+        $tpl = new TemplateString(
+            $tplName,
+            $tplContent,
+            $tplName,
+            $trusted
+        );
+
+        return $this->processFetch($tpl, $callMeta);
+    }
+
+    protected function getCompiler() : CompilerCore
     {
         return  new Compiler($this->config);
-    }
-
-    protected function compilationNeeded($cacheFile)
-    {
-        return $this->config->compilationForce || !file_exists($cacheFile);
     }
 
     /**

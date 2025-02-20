@@ -1,8 +1,8 @@
 <?php
 /**
  * @author      Laurent Jouanneau
- *
- * @copyright   2022 Laurent Jouanneau
+ * @contributor Laurent Jouanneau
+ * @copyright   2022-2025 Laurent Jouanneau
  *
  * @link        https://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
@@ -17,7 +17,7 @@
  *
  * A macro should be declared with `{macro}`
  *
- * @param \Jelix\Castor\CastorCore $tpl
+ * @param \Jelix\Castor\RuntimeContainer $tpl
  */
 function jtpl_function_common_usemacro($tpl, $blockName, ...$parameters)
 {

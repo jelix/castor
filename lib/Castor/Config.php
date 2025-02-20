@@ -5,13 +5,16 @@
  * @contributor Laurent Jouanneau
  *
  * @copyright   2006 Loic Mathaud
- * @copyright   2006-2015 Laurent Jouanneau
+ * @copyright   2006-2025 Laurent Jouanneau
  *
- * @link        http://www.jelix.org
+ * @link        https://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
  */
 
 namespace Jelix\Castor;
+
+use Jelix\Castor\CacheManager\FileCacheManager;
+use Jelix\Castor\CacheManager\TemplateCacheManagerInterface;
 
 class Config
 {
@@ -81,8 +84,26 @@ class Config
      */
     public $pluginPathList = array();
 
+    public readonly TemplateCacheManagerInterface $cacheManager;
+
+    /**
+     * @param string|TemplateCacheManagerInterface $cachePath
+     * @param $tplPath
+     * @throws \Exception
+     */
     public function __construct($cachePath, $tplPath = '')
     {
+
+        if (is_string($cachePath)) {
+            $this->cacheManager = new FileCacheManager($cachePath, $this->chmodDir, $this->chmodFile, $this->umask);
+        }
+        else if ($cachePath instanceof TemplateCacheManagerInterface) {
+            $this->cacheManager = $cachePath;
+        }
+        else {
+            throw new \InvalidArgumentException('The $cachePath argument must be a string or a TemplateCacheManagerInterface instance');
+        }
+
         $this->cachePath = $cachePath;
         $this->templatePath = $tplPath;
         $this->addPluginsRepository(realpath(__DIR__.'/../plugins/'));

@@ -2,7 +2,8 @@
 
 /**
  * @author      Philippe Schelté (dubphil)
- * @copyright   2008 Philippe Schelté
+ * @contributor Laurent Jouanneau
+ * @copyright   2008 Philippe Schelté, 2025 Laurent Jouanneau
  *
  * @link        http://jelix.org/
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
@@ -22,12 +23,12 @@
  * {cycle_reset}
  * </pre>
  *
- * @param \Jelix\Castor\CastorCore $tpl
+ * @param \Jelix\Castor\RuntimeContainer $tpl
  * @param string $name the name of the cycle
  *
  * @return 1
  */
-function jtpl_function_common_cycle_reset(\Jelix\Castor\CastorCore $tpl, $name = '')
+function jtpl_function_common_cycle_reset(\Jelix\Castor\RuntimeContainer $tpl, $name = '')
 {
     $cycle_name = $name ? $name : 'default';
     if (isset($tpl->_privateVars['cycle'][$cycle_name])) {

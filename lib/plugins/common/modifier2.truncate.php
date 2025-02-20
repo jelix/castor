@@ -6,7 +6,7 @@
  * @contributor Laurent Jouanneau (utf8 compliance)
  * @contributor Yannick Le Guédart
  *
- * @copyright  2001-2003 ispi of Lincoln, Inc., 2007 Laurent Jouanneau
+ * @copyright  2001-2003 ispi of Lincoln, Inc., 2007-2025 Laurent Jouanneau
  * @copyright 2008 Yannick Le Guédart
  *
  * @link http://smarty.php.net/
@@ -25,7 +25,7 @@
  * {$mytext|truncate:60:'...':true}
  * </pre>
  *
- * @param \Jelix\Castor\CastorCore $tpl The template
+ * @param \Jelix\Castor\RuntimeContainer $tpl The template
  * @param string $string the string to truncate
  * @param int $length the number of char to keep
  * @param string $etc the string to append to the truncated string
@@ -33,7 +33,7 @@
  *
  * @return string
  */
-function jtpl_modifier2_common_truncate(\Jelix\Castor\CastorCore $tpl, $string, $length = 80, $etc = '...',
+function jtpl_modifier2_common_truncate(\Jelix\Castor\RuntimeContainer $tpl, $string, $length = 80, $etc = '...',
                                                                   $break_words = false)
 {
     if (function_exists('mb_strlen')) {

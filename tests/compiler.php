@@ -8,7 +8,7 @@
 
 
 
-class testJtplContentCompiler extends \Jelix\Castor\Compiler {
+class testJtplContentCompiler extends \Jelix\Castor\Compiler\Compiler {
 
     public function setUserPlugins($userModifiers, $userFunctions) {
         $this->_modifier = array_merge($this->_modifier, $userModifiers);

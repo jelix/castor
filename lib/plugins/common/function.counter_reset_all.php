@@ -2,7 +2,8 @@
 
 /**
  * @author      Thibault Piront (nuKs)
- * @copyright   2007 Thibault Piront
+ * @contributor Laurent Jouanneau
+ * @copyright   2007 Thibault Piront, 2025 Laurent Jouanneau
  *
  * @link        http://jelix.org/
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
@@ -13,9 +14,9 @@
  *
  * <pre>{counter_reset_all}</pre>
  *
- * @param \Jelix\Castor\CastorCore $tpl The template
+ * @param \Jelix\Castor\RuntimeContainer $tpl The template
  */
-function jtpl_function_common_counter_reset_all(\Jelix\Castor\CastorCore $tpl)
+function jtpl_function_common_counter_reset_all(\Jelix\Castor\RuntimeContainer $tpl)
 {
     if (!isset($tpl->_privateVars['counterArray'])) {
         return;

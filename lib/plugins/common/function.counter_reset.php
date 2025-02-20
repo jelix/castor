@@ -2,7 +2,8 @@
 
 /**
  * @author      Thibault Piront (nuKs)
- * @copyright   2007 Thibault Piront
+ * @contributor Laurent Jouanneau
+ * @copyright   2007 Thibault Piront, 2025 Laurent Jouanneau
  *
  * @link        http://jelix.org/
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
@@ -13,10 +14,10 @@
  *
  * <pre>{counter_reset 'name'}</pre>
  *
- * @param \Jelix\Castor\CastorCore $tpl The template
+ * @param \Jelix\Castor\RuntimeContainer $tpl The template
  * @param string $name The name of the counter
  */
-function jtpl_function_common_counter_reset(\Jelix\Castor\CastorCore $tpl, $name = '')
+function jtpl_function_common_counter_reset(\Jelix\Castor\RuntimeContainer $tpl, $name = '')
 {
     if (empty($name) && $name !== '0') {
         $name = 'default';

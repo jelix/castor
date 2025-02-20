@@ -8,7 +8,7 @@
 
 define('TEST_JTPL_COMPILER_ASSIGN',1);
 
-class testJtplCompiler extends \Jelix\Castor\Compiler
+class testJtplCompiler extends \Jelix\Castor\Compiler\Compiler
 {
 
     public function setUserPlugins($userModifiers, $userFunctions) {

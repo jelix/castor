@@ -13,13 +13,13 @@
  *
  * usage : {lenv 'latex_block_name'} ..here latex content {/lenv}
  *
- * @param \Jelix\Castor\CompilerCore $compiler the template compiler
+ * @param \CompilerCore $compiler the template compiler
  * @param bool $begin true if it is the begin of block, else false
  * @param array $param  1=>latex command
  *
  * @return string the php code corresponding to the begin or end of the block
  */
-function jtpl_block_ltx2pdf_lenv(\Jelix\Castor\CompilerCore $compiler, $begin, $param = array())
+function jtpl_block_ltx2pdf_lenv(\CompilerCore $compiler, $begin, $param = array())
 {
     static $stack = array();
     if ($begin) {

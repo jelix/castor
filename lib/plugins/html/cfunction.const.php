@@ -15,12 +15,12 @@
  *
  * <pre>{const 'foo'}</pre>
  *
- * @param \Jelix\Castor\CompilerCore $compiler the template compiler
+ * @param \Jelix\Castor\Compiler\CompilerCore $compiler the template compiler
  * @param array $param   0=>$string the constant name
  *
  * @return string the php code corresponding to the function content
  */
-function jtpl_cfunction_html_const(\Jelix\Castor\CompilerCore $compiler, $param = array())
+function jtpl_cfunction_html_const(\Jelix\Castor\Compiler\CompilerCore $compiler, $param = array())
 {
     if (!$compiler->trusted) {
         $compiler->doError1('errors.tplplugin.untrusted.not.available', 'const');

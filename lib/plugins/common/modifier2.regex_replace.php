@@ -3,7 +3,8 @@
 /**
  * Plugin from smarty project and adapted for jtpl.
  *
- * @copyright  2001-2003 ispi of Lincoln, Inc.
+ * @contributor Laurent Jouanneau
+ * @copyright  2001-2003 ispi of Lincoln, Inc., 2025 Laurent Jouanneau
  *
  * @link http://smarty.php.net/
  * @link http://jelix.org/
@@ -16,14 +17,14 @@
  * You should provide two arguments, like the first both of preg_replace
  * {$mystring|regex_replace:'/(\w+) (\d+), (\d+)/i':'${1}1,$3'}
  *
- * @param \Jelix\Castor\CastorCore $tpl The template
+ * @param \Jelix\Castor\RuntimeContainer $tpl The template
  * @param string $string
  * @param string|array $search
  * @param string|array $replace
  *
  * @return string
  */
-function jtpl_modifier2_common_regex_replace(\Jelix\Castor\CastorCore $tpl, $string, $search, $replace)
+function jtpl_modifier2_common_regex_replace(\Jelix\Castor\RuntimeContainer $tpl, $string, $search, $replace)
 {
     if (preg_match('!\W(\w+)$!s', $search, $match) &&
             (strpos($match[1], 'e') !== false)) {

@@ -3,11 +3,14 @@
 Castor is composed of three components :
 
 - A configuration object, `Config` that holds some parameters 
+- The main object, `Castor`, which generates the content from the template
+
+And two other internal components you don't manipulate directly:
+
 - A compiler, that translates template file to php file. This operation is
   transparent for you.
-- The main object, `Castor`, which is a container that holds values used to
-  "hydrate" the template, and which generates the content from the template
-  (after calling the compiler).
+- A container that holds values used to "hydrate" the template,
+
 
 ## Configuration
 
@@ -114,7 +117,14 @@ generate the content of the template, and to retrieve it. You give the file name
 template as the first parameter.
 
 ```php
-  $content = $tpl->fetch('mytemplate.tpl');
+
+$content = $tpl->fetch('mytemplate.tpl');
+
+// FIXME
+
+
+
+
 ```
 
 The template is loaded from the directory indicated in the templatePath of the configuration,

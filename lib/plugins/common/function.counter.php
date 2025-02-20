@@ -2,7 +2,8 @@
 
 /**
  * @author      Thibault Piront (nuKs)
- * @copyright   2007 Thibault Piront
+ * @contributor Laurent Jouanneau
+ * @copyright   2007 Thibault Piront, 2025 Laurent Jouanneau
  *
  * @link        http://jelix.org/
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
@@ -13,11 +14,11 @@
  *
  * <pre>{for $i=0;$i<10;$i++}{counter 'name', true}{/for}</pre>
  *
- * @param \Jelix\Castor\CastorCore $tpl The template
+ * @param \Jelix\Castor\RuntimeContainer $tpl The template
  * @param string $name The name of the counter
  * @param bool $print Print the counter or not
  */
-function jtpl_function_common_counter(\Jelix\Castor\CastorCore $tpl, $name = '', $print = true)
+function jtpl_function_common_counter(\Jelix\Castor\RuntimeContainer $tpl, $name = '', $print = true)
 {
     if (!isset($tpl->_privateVars['counterArray'])) {
         $tpl->_privateVars['counterArray'] = array('default' => array('type' => '0', 'start' => 1, 'incr' => 1));

@@ -2,7 +2,7 @@
 /**
  * @author      Laurent Jouanneau
  *
- * @copyright   2022 Laurent Jouanneau
+ * @copyright   2022-2025 Laurent Jouanneau
  *
  * @link        https://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
@@ -14,13 +14,13 @@
  *
  * <pre>{ifdefinedmacro 'themacro} here generated content if the macro exists {/ifdefinedmacro}</pre>
  *
- * @param \Jelix\Castor\CompilerCore $compiler the template compiler
+ * @param \Jelix\Castor\Compiler\CompilerCore $compiler the template compiler
  * @param bool         $begin    true if it is the begin of block, else false
  * @param array        $params   0 => macro name
  *
  * @return string the php code corresponding to the begin or end of the block
  */
-function jtpl_block_common_ifdefinedmacro($compiler, $begin, $params = array())
+function jtpl_block_common_ifdefinedmacro(\Jelix\Castor\Compiler\CompilerCore $compiler, $begin, $params = array())
 {
     if ($begin) {
         if (count($params) != 1) {

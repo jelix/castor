@@ -2,7 +2,7 @@
 /**
  * @author      Laurent Jouanneau
  *
- * @copyright   2022 Laurent Jouanneau
+ * @copyright   2022-2025 Laurent Jouanneau
  *
  * @link        https://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
@@ -10,7 +10,7 @@
 
 
 /**
- * @param \Jelix\Castor\CompilerCore $compiler
+ * @param \Jelix\Castor\Compiler\CompilerCore $compiler
  * @param bool $begin
  * @param array $params  the first value must represent a PHP string, others values must be a variable name
  *          0 => macro name
@@ -18,7 +18,7 @@
  * @return string
  */
 
-function jtpl_block_common_macro($compiler, $begin, $params = array())
+function jtpl_block_common_macro(\Jelix\Castor\Compiler\CompilerCore $compiler, $begin, $params = array())
 {
 
     if (!$begin) {

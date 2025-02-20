@@ -2,7 +2,8 @@
 
 /**
  * @author      Denis Lallement
- * @copyright   2009 Denis Lallement
+ * @contributor Laurent Jouanneau
+ * @copyright   2009 Denis Lallement, 2025 Laurent Jouanneau
  *
  * @link        http://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
@@ -19,7 +20,7 @@
  * {/for}
  * </ul></pre>
  */
-function jtpl_cfunction_common_break($compiler)
+function jtpl_cfunction_common_break(\Jelix\Castor\Compiler\CompilerCore $compiler)
 {
     return ' break;';
 }

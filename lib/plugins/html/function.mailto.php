@@ -24,10 +24,10 @@
  * {mailto array("address"=>"me@domain.com","extra"=>'class="mailto"')}
  * </pre>.
  *
- * @params \Jelix\Castor\CastorCore $tpl
+ * @params \Jelix\Castor\RuntimeContainer $tpl
  * @params array $params
  */
-function jtpl_function_html_mailto(\Jelix\Castor\CastorCore $tpl, $params)
+function jtpl_function_html_mailto(\Jelix\Castor\RuntimeContainer $tpl, $params)
 {
     $extra = '';
 

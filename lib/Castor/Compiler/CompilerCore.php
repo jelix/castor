@@ -4,15 +4,16 @@
  * @author      Laurent Jouanneau
  * @contributor Loic Mathaud (standalone version), Dominique Papin, DSDenes, Christophe Thiriot, Julien Issler, Brice Tence
  *
- * @copyright   2005-2024 Laurent Jouanneau
+ * @copyright   2005-2025 Laurent Jouanneau
  * @copyright   2006 Loic Mathaud, 2007 Dominique Papin, 2009 DSDenes, 2010 Christophe Thiriot
  * @copyright   2010-2016 Julien Issler, 2010 Brice Tence
  *
- * @link        http://www.jelix.org
+ * @link        https://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
  */
+namespace Jelix\Castor\Compiler;
 
-namespace Jelix\Castor;
+use Jelix\Castor\RuntimeContainer;
 
 /**
  * This is the compiler of templates: it converts a template into a php file.
@@ -179,7 +180,7 @@ abstract class CompilerCore
     }
 
 
-    public function compileString($templateContent, $cacheFile, $userModifiers, $userFunctions, $md5, $header = '', $footer = '')
+    public function compileString($templateContent, $userModifiers, $userFunctions, $md5, $header = '', $footer = '')
     {
         $this->_modifier = array_merge($this->_modifier, $userModifiers);
         $this->_userFunctions = $userFunctions;
@@ -190,18 +191,16 @@ abstract class CompilerCore
         foreach ($this->_pluginPath as $path => $ok) {
             $header .= ' require_once(\''.$path."');\n";
         }
-        $header .= 'function template_meta_'.$md5.'($t){';
+        $header .= 'class template_'.$md5.' implements \\Jelix\\Castor\\ContentGeneratorInterface {'."\n";
+        $header .= ' public function meta(\\Jelix\\Castor\\RuntimeContainer $t) {';
         $header .= "\n".$this->_metaBody."\n}\n";
 
-        $header .= 'function template_'.$md5.'($t){'."\n?>";
-        $result = $header.$result."<?php \n}\n".$footer;
-
-        $this->_saveCompiledString($cacheFile, $result);
-
-        return true;
+        $header .= 'public function content(\\Jelix\\Castor\\RuntimeContainer $t) {'."\n?>";
+        return new CompilationResult(
+            'template_'.$md5,
+            $header.$result."<?php \n}\n}\n".$footer
+        );
     }
-
-    abstract protected function _saveCompiledString($cacheFile, $result);
 
     protected function compileContent($tplContent)
     {
