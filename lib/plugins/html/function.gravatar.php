@@ -2,9 +2,9 @@
 
 /**
  * @author      Olivier Demah
- * @contributor Steven Jehannet
+ * @contributor Steven Jehannet, Laurent Jouanneau
  *
- * @copyright   2009 Olivier Demah, 2010 Steven Jehannet
+ * @copyright   2009 Olivier Demah, 2010 Steven Jehannet, 2025 L. Jouanneau
  *
  * @link        http://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
@@ -35,12 +35,11 @@ function jtpl_function_html_gravatar(\Jelix\Castor\CastorCore $tpl, $email, $par
         $params['username'] = '';
     }
 
-    $gravatarUrl = 'http://www.gravatar.com/avatar.php?';
-    $gravatarUrl .= 'gravatar_id='.md5(strtolower($email));
+    $gravatarUrl = "https://www.gravatar.com/avatar/" . hash( "sha256", strtolower( trim( $email ) ));
+    $gravatarUrl .= "?s=" . $params['size'];
     if ($params['default'] != null) {
         $gravatarUrl .= '&amp;default='.urlencode($params['default']);
     }
-    $gravatarUrl .= '&amp;size='.$params['size'];
 
     echo '<img src="'.$gravatarUrl.'" class="gravatar" alt="'.htmlentities($params['username']).'"/>';
 }
