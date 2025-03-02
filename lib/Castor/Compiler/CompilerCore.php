@@ -304,7 +304,7 @@ abstract class CompilerCore
     protected function _parseVariable($expr)
     {
         $tok = explode('|', $expr);
-        $res = $this->_parseFinal(array_shift($tok), $this->_allowedInVar, $this->_excludedInVar);
+        $res = $this->_compileArgs(array_shift($tok), $this->_allowedInVar, $this->_excludedInVar);
 
         $hasEscHtmlModifier = false;
         $hasNoEscModifier = false;
@@ -314,7 +314,7 @@ abstract class CompilerCore
             }
 
             if (isset($m[2])) {
-                $targs = $this->_parseFinal($m[2], $this->_allowedInVar, $this->_excludedInVar, true, ',', ':');
+                $targs = $this->_compileArgs($m[2], $this->_allowedInVar, $this->_excludedInVar, true, ',', ':');
                 array_unshift($targs, $res);
             } else {
                 $targs = array($res);
@@ -373,7 +373,7 @@ abstract class CompilerCore
         $res = '';
         switch ($name) {
             case 'if':
-                $res = 'if('.$this->_parseFinal($args, $this->_allowedInExpr).'):';
+                $res = 'if('.$this->_compileArgs($args, $this->_allowedInExpr).'):';
                 array_push($this->_blockStack, 'if');
                 break;
 
@@ -389,7 +389,7 @@ abstract class CompilerCore
                 if (end($this->_blockStack) != 'if') {
                     $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
                 } else {
-                    $res = 'elseif('.$this->_parseFinal($args, $this->_allowedInExpr).'):';
+                    $res = 'elseif('.$this->_compileArgs($args, $this->_allowedInExpr).'):';
                 }
                 break;
 
@@ -405,12 +405,12 @@ abstract class CompilerCore
                     $args = $m[1];
                 }
 
-                $res = 'foreach('.$this->_parseFinal($args, $this->_allowedInForeach, $notallowed).'):';
+                $res = 'foreach('.$this->_compileArgs($args, $this->_allowedInForeach, $notallowed).'):';
                 array_push($this->_blockStack, 'foreach');
                 break;
 
             case 'while':
-                $res = 'while('.$this->_parseFinal($args, $this->_allowedInExpr).'):';
+                $res = 'while('.$this->_compileArgs($args, $this->_allowedInExpr).'):';
                 array_push($this->_blockStack, 'while');
                 break;
 
@@ -424,7 +424,7 @@ abstract class CompilerCore
                 if (preg_match("/^\s*\((.*)\)\s*$/", $args, $m)) {
                     $args = $m[1];
                 }
-                $res = 'for('.$this->_parseFinal($args, $this->_allowedInExpr, $notallowed).'):';
+                $res = 'for('.$this->_compileArgs($args, $this->_allowedInExpr, $notallowed).'):';
                 array_push($this->_blockStack, 'for');
                 break;
 
@@ -444,7 +444,7 @@ abstract class CompilerCore
             case 'assign':
             case 'set':
             case 'eval':
-                $res = $this->_parseFinal($args, $this->_allowedAssign).';';
+                $res = $this->_compileArgs($args, $this->_allowedAssign).';';
                 break;
 
             case 'literal':
@@ -473,7 +473,7 @@ abstract class CompilerCore
                 break;
 
             case 'meta_if':
-                $metaIfArgs = $this->_parseFinal($args, $this->_allowedInExpr);
+                $metaIfArgs = $this->_compileArgs($args, $this->_allowedInExpr);
                 $this->_metaBody .= 'if('.$metaIfArgs.'):'."\n";
                 array_push($this->_blockStack, 'meta_if');
                 break;
@@ -490,7 +490,7 @@ abstract class CompilerCore
                 if (end($this->_blockStack) != 'meta_if') {
                     $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
                 } else {
-                    $elseIfArgs = $this->_parseFinal($args, $this->_allowedInExpr);
+                    $elseIfArgs = $this->_compileArgs($args, $this->_allowedInExpr);
                     $this->_metaBody .= 'elseif('.$elseIfArgs."):\n";
                 }
                 break;
@@ -529,21 +529,21 @@ abstract class CompilerCore
                     $res = '';
                 } elseif ($path = $this->_getPlugin('block', $name)) {
                     require_once $path[0];
-                    $argfct = $this->_parseFinal($args, $this->_allowedAssign, array(';'), true);
+                    $argfct = $this->_compileArgs($args, $this->_allowedAssign, array(';'), true);
                     $fct = $path[1];
                     $res = $fct($this, true, $argfct);
                     array_push($this->_blockStack, $name);
                 } elseif ($path = $this->_getPlugin('cfunction', $name)) {
                     require_once $path[0];
-                    $argfct = $this->_parseFinal($args, $this->_allowedAssign, array(';'), true);
+                    $argfct = $this->_compileArgs($args, $this->_allowedAssign, array(';'), true);
                     $fct = $path[1];
                     $res = $fct($this, $argfct);
                 } elseif ($path = $this->_getPlugin('function', $name)) {
-                    $argfct = $this->_parseFinal($args, $this->_allowedAssign);
+                    $argfct = $this->_compileArgs($args, $this->_allowedAssign);
                     $res = $path[1].'( $t'.(trim($argfct) != '' ? ','.$argfct : '').');';
                     $this->_pluginPath[$path[0]] = true;
                 } elseif (isset($this->_userFunctions[$name])) {
-                    $argfct = $this->_parseFinal($args, $this->_allowedAssign);
+                    $argfct = $this->_compileArgs($args, $this->_allowedAssign);
                     $res = $this->_userFunctions[$name].'( $t'.(trim($argfct) != '' ? ','.$argfct : '').');';
                 } else {
                     $this->doError1('errors.tpl.tag.function.unknown', $name);
@@ -620,7 +620,7 @@ abstract class CompilerCore
      *
      * @return array|string
      */
-    protected function _parseFinal($string, $allowed = array(), $exceptChar = array(';'),
+    protected function _compileArgs($string, $allowed = array(), $exceptChar = array(';'),
                                     $splitArgIntoArray = false, $sep1 = ',', $sep2 = ',')
     {
         $tokens = token_get_all('<?php '.$string.'?>');
@@ -744,7 +744,7 @@ abstract class CompilerCore
     {
         if (preg_match('/^(\w+)(\s+(.*))?$/', $args, $m)) {
             if (isset($m[3])) {
-                $argfct = $this->_parseFinal($m[3], $this->_allowedInExpr);
+                $argfct = $this->_compileArgs($m[3], $this->_allowedInExpr);
             } else {
                 $argfct = 'null';
             }

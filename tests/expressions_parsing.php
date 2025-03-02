@@ -18,27 +18,27 @@ class testJtplCompiler extends \Jelix\Castor\Compiler\Compiler
 
 
    public function testParseExpr($string, $allowed=array(), $exceptchar=array(';'), $splitArgIntoArray=false){
-        return $this->_parseFinal($string, $allowed, $exceptchar, $splitArgIntoArray);
+        return $this->_compileArgs($string, $allowed, $exceptchar, $splitArgIntoArray);
    }
 
    public function testParseVarExpr($string){
-        return $this->_parseFinal($string,$this->_allowedInVar, $this->_excludedInVar);
+        return $this->_compileArgs($string,$this->_allowedInVar, $this->_excludedInVar);
    }
 
    public function testParseForeachExpr($string){
-        return $this->_parseFinal($string,$this->_allowedInForeach, array(';','!'));
+        return $this->_compileArgs($string,$this->_allowedInForeach, array(';','!'));
    }
 
    public function testParseAnyExpr($string){
-        return $this->_parseFinal($string, $this->_allowedInExpr, array());
+        return $this->_compileArgs($string, $this->_allowedInExpr, array());
    }
 
    public function testParseAssignExpr($string){
-        return $this->_parseFinal($string,$this->_allowedAssign);
+        return $this->_compileArgs($string,$this->_allowedAssign);
    }
 
    public function testParseAssignExpr2($string){
-        return $this->_parseFinal($string,$this->_allowedAssign, array(';'),true);
+        return $this->_compileArgs($string,$this->_allowedAssign, array(';'),true);
    }
 
    public function testParseVariable($string, $outputType = ''){
