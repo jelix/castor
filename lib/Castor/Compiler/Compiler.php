@@ -13,7 +13,7 @@
 
 namespace Jelix\Castor\Compiler;
 use Jelix\Castor\Config;
-use Jelix\Castor\PluginsProvider\LegacyPluginsProvider;
+use Jelix\Castor\PluginsProvider\Legacy\LegacyPluginsProvider;
 use Jelix\Castor\TemplateContentInterface;
 
 class Compiler extends CompilerCore

@@ -6,10 +6,15 @@
  * @link        https://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
  */
-namespace Jelix\Castor\PluginsProvider;
+namespace Jelix\Castor\PluginsProvider\Legacy;
 
 
 use Jelix\Castor\Compiler\CompilerCore;
+use Jelix\Castor\PluginsProvider\BlockPluginInterface;
+use Jelix\Castor\PluginsProvider\MetaPluginInterface;
+use Jelix\Castor\PluginsProvider\ModifierPluginInterface;
+use Jelix\Castor\PluginsProvider\PluginInterface;
+use Jelix\Castor\PluginsProvider\PluginsProviderInterface;
 
 class LegacyPluginsProvider implements PluginsProviderInterface
 {
