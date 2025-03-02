@@ -93,6 +93,26 @@ class LegacyPluginsProvider implements PluginsProviderInterface
     }
 
     /**
+     * @var BlockPluginInterface[]
+     */
+    protected $blockPlugins = [];
+
+    public function getBlockPlugin(CompilerCore $compiler, string $blockName) : ?BlockPluginInterface
+    {
+        if (isset($this->blockPlugins[$blockName]))
+        {
+            return $this->blockPlugins[$blockName];
+        }
+
+        if ($path = $this->_getPlugin($compiler->outputType, 'block', $blockName)) {
+            $plugin = new LegacyBlockPlugin($blockName, $path[0], $path[1]);
+            $this->blockPlugins[$blockName] = $plugin;
+            return $plugin;
+        }
+        return null;
+    }
+
+    /**
      * @var PluginInterface[]
      */
     protected $plugins = [];

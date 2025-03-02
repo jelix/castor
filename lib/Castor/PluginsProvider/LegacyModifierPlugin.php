@@ -29,7 +29,7 @@ class LegacyModifierPlugin implements ModifierPluginInterface
         if ($this->pluginType == 'cmodifier') {
             require_once $this->filePath;
             $fct = $this->functionName;
-            return $fct($this, $compiledTagArgs);
+            return $fct($compiler, $compiledTagArgs);
         }
         if ($this->pluginType == 'modifier2') {
             $compiler->addPathToInclude($this->filePath);

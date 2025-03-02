@@ -16,6 +16,8 @@ interface PluginsProviderInterface
 
     public function getMetaPlugin(CompilerCore $compiler, string $metaName) : ?MetaPluginInterface;
 
+    public function getBlockPlugin(CompilerCore $compiler, string $blockName) : ?BlockPluginInterface;
+
     public function getPlugin(CompilerCore $compiler, string $name) : ?PluginInterface;
 
 }

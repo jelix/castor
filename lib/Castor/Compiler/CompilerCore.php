@@ -13,6 +13,7 @@
  */
 namespace Jelix\Castor\Compiler;
 
+use Jelix\Castor\PluginsProvider\BlockPluginInterface;
 use Jelix\Castor\PluginsProvider\PluginsProviderInterface;
 use Jelix\Castor\RuntimeContainer;
 
@@ -388,6 +389,8 @@ abstract class CompilerCore
                 $currentBlock = $this->getCurrentBlockName();
                 if (!$currentBlock || substr($currentBlock, 0, 2) != 'if') {
                     $this->doError1('errors.tpl.tag.block.end.missing', $currentBlock);
+                } elseif (($plugin = $this->getCurrentBlockPlugin())) {
+                    $res = $plugin->compileElse($this);
                 } else {
                     $res = 'else:';
                 }
@@ -510,14 +513,7 @@ abstract class CompilerCore
 
             default:
                 if (preg_match('!^/(\w+)$!', $name, $m)) {
-                    $this->leaveBlock($m[1]);
-                    if (function_exists($fct = 'jtpl_block_'.$this->outputType.'_'.$m[1])) {
-                        $res = $fct($this, false, null);
-                    } elseif (function_exists($fct = 'jtpl_block_common_'.$m[1])) {
-                        $res = $fct($this, false, null);
-                    } else {
-                        $this->doError1('errors.tpl.tag.block.begin.missing', $m[1]);
-                    }
+                    $res = $this->leaveBlock($m[1]);
                 } elseif (preg_match('/^meta_(\w+)$/', $name, $m)) {
                     $metaName = $m[1];
 
@@ -538,16 +534,10 @@ abstract class CompilerCore
                         $this->doError1('errors.tpl.tag.meta.unknown', $metaName);
                     }
                     $res = '';
-                } elseif ($plugin = $this->pluginsProvider->getPlugin($this, $name)) {
+                } elseif ($plugin = $this->pluginsProvider->getBlockPlugin($this, $name)) {
 
-                    $res = $plugin->compile($this, $name, $args);
+                    $res = $this->enterBlock($name, $plugin, $args);
 
-                } elseif ($path = $this->_getPlugin('block', $name)) {
-                    require_once $path[0];
-                    $argfct = $this->_compileArgs($args, $this->_allowedAssign, array(';'), true);
-                    $fct = $path[1];
-                    $res = $fct($this, true, $argfct);
-                    $this->enterBlock($name);
                 } elseif ($path = $this->_getPlugin('cfunction', $name)) {
                     require_once $path[0];
                     $argfct = $this->_compileArgs($args, $this->_allowedAssign, array(';'), true);
@@ -602,9 +592,20 @@ abstract class CompilerCore
     }
 
 
-    protected function enterBlock($name)
+    protected function enterBlock($name, $plugin = null, $sourceTagArgs = null)
     {
-        array_push($this->_blockStack, $name);
+        array_push($this->_blockStack, [$name, $plugin]);
+
+        if ($plugin) {
+            if ($sourceTagArgs) {
+                $args = $this->_compileArgs($sourceTagArgs, $this->_allowedAssign, array(';'), true);
+            }
+            else {
+                $args = '';
+            }
+            return $plugin->compileBegin($this, $name, $args);
+        }
+        return '';
     }
 
     /**
@@ -622,10 +623,10 @@ abstract class CompilerCore
         }
 
         if ($onlyUpper) {
-            return (end($this->_blockStack) == $blockName);
+            return (end($this->_blockStack)[0] == $blockName);
         }
         for ($i = count($this->_blockStack) - 1; $i >= 0; --$i) {
-            if ($this->_blockStack[$i] == $blockName) {
+            if ($this->_blockStack[$i][0] == $blockName) {
                 return true;
             }
         }
@@ -636,7 +637,15 @@ abstract class CompilerCore
     public function getCurrentBlockName()
     {
         if (count($this->_blockStack)) {
-            return end($this->_blockStack);
+            return end($this->_blockStack)[0];
+        }
+        return null;
+    }
+
+    public function getCurrentBlockPlugin()
+    {
+        if (count($this->_blockStack)) {
+            return end($this->_blockStack)[1];
         }
         return null;
     }
@@ -647,8 +656,13 @@ abstract class CompilerCore
         if ($currentBlock != $name) {
             $this->doError1('errors.tpl.tag.block.end.missing', $currentBlock);
         } else {
-            array_pop($this->_blockStack);
+            /** @var BlockPluginInterface $plugin */
+            list($bName, $plugin) = array_pop($this->_blockStack);
+            if ($plugin) {
+                return $plugin->compileEnd($this, $bName);
+            }
         }
+        return '';
     }
 
 
