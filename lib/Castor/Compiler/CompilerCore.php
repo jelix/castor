@@ -13,6 +13,7 @@
  */
 namespace Jelix\Castor\Compiler;
 
+use Jelix\Castor\PluginsProvider\PluginsProviderInterface;
 use Jelix\Castor\RuntimeContainer;
 
 /**
@@ -20,6 +21,7 @@ use Jelix\Castor\RuntimeContainer;
  */
 abstract class CompilerCore
 {
+
     protected $_literals;
     protected $_verbatims;
 
@@ -141,11 +143,15 @@ abstract class CompilerCore
 
     protected $removeASPtags = true;
 
+
+    protected PluginsProviderInterface $pluginsProvider;
+
     /**
      * Initialize some properties.
      */
-    public function __construct($encoding = 'UTF-8')
+    public function __construct(PluginsProviderInterface $pluginsProvider, $encoding = 'UTF-8')
     {
+        $this->pluginsProvider = $pluginsProvider;
         $this->encoding = $encoding;
 
         if (defined('T_CHARACTER')) {
@@ -179,6 +185,11 @@ abstract class CompilerCore
         return $this->_autoescape;
     }
 
+
+    public function addPathToInclude($path)
+    {
+        $this->_pluginPath[$path] = true;
+    }
 
     public function compileString($templateContent, $userModifiers, $userFunctions, $md5, $header = '', $footer = '')
     {
@@ -313,6 +324,8 @@ abstract class CompilerCore
                 $this->doError2('errors.tpl.tag.modifier.invalid', $this->_currentTag, $modifier);
             }
 
+            $modifierName = $m[1];
+
             if (isset($m[2])) {
                 $targs = $this->_compileArgs($m[2], $this->_allowedInVar, $this->_excludedInVar, true, ',', ':');
                 array_unshift($targs, $res);
@@ -320,28 +333,21 @@ abstract class CompilerCore
                 $targs = array($res);
             }
 
-            if ($path = $this->_getPlugin('cmodifier', $m[1])) {
-                require_once $path[0];
-                $fct = $path[1];
-                $res = $fct($this, $targs);
-            } elseif ($path = $this->_getPlugin('modifier2', $m[1])) {
-                $res = $path[1].'($t, '.implode(',', $targs).')';
-                $this->_pluginPath[$path[0]] = true;
-            } elseif ($path = $this->_getPlugin('modifier', $m[1])) {
-                $res = $path[1].'('.implode(',', $targs).')';
-                $this->_pluginPath[$path[0]] = true;
+            $plugin = $this->pluginsProvider->getModifierPlugin($this, $modifierName);
+            if ($plugin) {
+                $res = $plugin->compile($this, $modifierName, $targs);
             } else {
-                if ($m[1] == 'noesc' || $m[1] == 'raw') {
+                if ($modifierName == 'noesc' || $modifierName == 'raw') {
                     $hasNoEscModifier = true;
                 }
-                elseif ($m[1] == 'eschtml' || $m[1] == 'escxml') {
+                elseif ($modifierName == 'eschtml' || $modifierName == 'escxml') {
                     $hasEscHtmlModifier = true;
                     $res = 'htmlspecialchars('.$res.', ENT_QUOTES | ENT_SUBSTITUTE, "'.$this->encoding.'")';
                 }
-                elseif (isset($this->_modifier[$m[1]])) {
-                    $res = $this->_modifier[$m[1]].'('.$res.')';
+                elseif (isset($this->_modifier[$modifierName])) {
+                    $res = $this->_modifier[$modifierName].'('.$res.')';
                 } else {
-                    $this->doError2('errors.tpl.tag.modifier.unknown', $this->_currentTag, $m[1]);
+                    $this->doError2('errors.tpl.tag.modifier.unknown', $this->_currentTag, $modifierName);
                 }
             }
         }
@@ -520,13 +526,29 @@ abstract class CompilerCore
                         }
                     }
                 } elseif (preg_match('/^meta_(\w+)$/', $name, $m)) {
-                    if ($path = $this->_getPlugin('meta', $m[1])) {
-                        $this->_parseMeta($args, $path[1]);
-                        $this->_pluginPath[$path[0]] = true;
+                    $metaName = $m[1];
+
+                    if ($plugin = $this->pluginsProvider->getMetaPlugin($this, $metaName)) {
+
+                        if (preg_match('/^(\w+)(\s+(.*))?$/', $args, $m)) {
+                            if (isset($m[3])) {
+                                $argfct = $this->_compileArgs($m[3], $this->_allowedInExpr);
+                            } else {
+                                $argfct = 'null';
+                            }
+
+                            $this->_metaBody .= $plugin->compileForMeta($this, $metaName, $m[1], $argfct);
+                        } else {
+                            $this->doError1('errors.tpl.tag.meta.invalid', $this->_currentTag);
+                        }
                     } else {
-                        $this->doError1('errors.tpl.tag.meta.unknown', $m[1]);
+                        $this->doError1('errors.tpl.tag.meta.unknown', $metaName);
                     }
                     $res = '';
+                } elseif ($plugin = $this->pluginsProvider->getPlugin($this, $name)) {
+
+                    $res = $plugin->compile($this, $name, $args);
+
                 } elseif ($path = $this->_getPlugin('block', $name)) {
                     require_once $path[0];
                     $argfct = $this->_compileArgs($args, $this->_allowedAssign, array(';'), true);

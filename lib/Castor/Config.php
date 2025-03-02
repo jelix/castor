@@ -84,6 +84,8 @@ class Config
      */
     public $pluginPathList = array();
 
+    public $pluginsRepositories = array();
+
     public readonly TemplateCacheManagerInterface $cacheManager;
 
     /**
@@ -147,25 +149,6 @@ class Config
 
     public function addPluginsRepository($path)
     {
-        if (trim($path) == '') {
-            return;
-        }
-
-        if (!file_exists($path)) {
-            throw new \Exception('The given path, '.$path.' doesn\'t exists');
-        }
-
-        if (substr($path, -1) != '/') {
-            $path .= '/';
-        }
-
-        if ($handle = opendir($path)) {
-            while (false !== ($f = readdir($handle))) {
-                if ($f[0] != '.' && is_dir($path.$f)) {
-                    $this->pluginPathList[$f][] = $path.$f.'/';
-                }
-            }
-            closedir($handle);
-        }
+        $this->pluginsRepositories[] = $path;
     }
 }

@@ -13,6 +13,7 @@
 
 namespace Jelix\Castor\Compiler;
 use Jelix\Castor\Config;
+use Jelix\Castor\PluginsProvider\LegacyPluginsProvider;
 use Jelix\Castor\TemplateContentInterface;
 
 class Compiler extends CompilerCore
@@ -27,16 +28,18 @@ class Compiler extends CompilerCore
      */
     public function __construct(Config $config)
     {
-        parent::__construct($config->charset);
+        $plugins = new LegacyPluginsProvider($config->pluginsRepositories);
+
+        parent::__construct($plugins, $config->charset);
         $this->config = $config;
     }
 
     /**
      * Launch the compilation of a template.
      *
-     * Store the result (a php content) into a cache file indicated by $tplFile
+     * returns the compiled template
      *
-     * @param  TemplateContentInterface $tplContent  the file name that contains the template
+     * @param  TemplateContentInterface $tplContent  information about the template content
      *
      * @return CompilationResult true if ok
      * @throws \Exception
