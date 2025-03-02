@@ -197,19 +197,7 @@ abstract class CastorCore
      *
      * @return ContentGeneratorInterface
      */
-    protected function getTemplate(TemplateContentInterface $tplLoader)
-    {
-        $compiler = $this->getCompiler();
-        $compiledContent = $compiler->compile($tplLoader, $this->userModifiers, $this->userFunctions);
-
-            $this->cacheManager->saveCompiledTemplate(
-                $tplLoader->getName(),
-                $compiledContent,
-                $tplLoader->cacheTag()
-            );
-
-        return $this->cacheManager->getTemplateContent($tplLoader->getName());
-    }
+    abstract protected function getTemplate(TemplateContentInterface $tplLoader);
 
     /**
      * @param TemplateContentInterface $tpl        the template name
