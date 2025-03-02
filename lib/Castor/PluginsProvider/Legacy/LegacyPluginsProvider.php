@@ -11,9 +11,9 @@ namespace Jelix\Castor\PluginsProvider\Legacy;
 
 use Jelix\Castor\Compiler\CompilerCore;
 use Jelix\Castor\PluginsProvider\BlockPluginInterface;
+use Jelix\Castor\PluginsProvider\FunctionPluginInterface;
 use Jelix\Castor\PluginsProvider\MetaPluginInterface;
 use Jelix\Castor\PluginsProvider\ModifierPluginInterface;
-use Jelix\Castor\PluginsProvider\PluginInterface;
 use Jelix\Castor\PluginsProvider\PluginsProviderInterface;
 
 class LegacyPluginsProvider implements PluginsProviderInterface
@@ -118,19 +118,26 @@ class LegacyPluginsProvider implements PluginsProviderInterface
     }
 
     /**
-     * @var PluginInterface[]
+     * @var FunctionPluginInterface[]
      */
     protected $plugins = [];
-    public function getPlugin(CompilerCore $compiler, string $name) : ?PluginInterface
+    public function getFunctionPlugin(CompilerCore $compiler, string $funcName) : ?FunctionPluginInterface
     {
-        if (isset($this->plugins[$name]))
+        if (isset($this->plugins[$funcName]))
         {
-            return $this->plugins[$name];
+            return $this->plugins[$funcName];
         }
 
-        //TODO implement
-
-        return null;
+        if ($path = $this->_getPlugin($compiler->outputType, 'cfunction', $funcName)) {
+            $plugin = new LegacyFunctionPlugin('cfunction', $path[0], $path[1]);
+        } elseif ($path = $this->_getPlugin($compiler->outputType, 'function', $funcName)) {
+            $plugin = new LegacyFunctionPlugin('function', $path[0], $path[1]);
+        }
+        else {
+            return null;
+        }
+        $this->plugins[$funcName] = $plugin;
+        return $plugin;
     }
 
 

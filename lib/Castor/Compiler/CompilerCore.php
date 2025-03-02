@@ -538,15 +538,11 @@ abstract class CompilerCore
 
                     $res = $this->enterBlock($name, $plugin, $args);
 
-                } elseif ($path = $this->_getPlugin('cfunction', $name)) {
-                    require_once $path[0];
+                } elseif ($plugin = $this->pluginsProvider->getFunctionPlugin($this, $name)) {
+
                     $argfct = $this->_compileArgs($args, $this->_allowedAssign, array(';'), true);
-                    $fct = $path[1];
-                    $res = $fct($this, $argfct);
-                } elseif ($path = $this->_getPlugin('function', $name)) {
-                    $argfct = $this->_compileArgs($args, $this->_allowedAssign);
-                    $res = $path[1].'( $t'.(trim($argfct) != '' ? ','.$argfct : '').');';
-                    $this->_pluginPath[$path[0]] = true;
+                    $res = $plugin->compile($this, $name, $argfct);
+
                 } elseif (isset($this->_userFunctions[$name])) {
                     $argfct = $this->_compileArgs($args, $this->_allowedAssign);
                     $res = $this->_userFunctions[$name].'( $t'.(trim($argfct) != '' ? ','.$argfct : '').');';

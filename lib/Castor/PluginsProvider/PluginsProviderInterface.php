@@ -18,6 +18,6 @@ interface PluginsProviderInterface
 
     public function getBlockPlugin(CompilerCore $compiler, string $blockName) : ?BlockPluginInterface;
 
-    public function getPlugin(CompilerCore $compiler, string $name) : ?PluginInterface;
+    public function getFunctionPlugin(CompilerCore $compiler, string $funcName) : ?FunctionPluginInterface;
 
 }

@@ -9,8 +9,11 @@
 namespace Jelix\Castor\PluginsProvider;
 use \Jelix\Castor\Compiler\CompilerCore;
 
-interface PluginInterface
+interface FunctionPluginInterface
 {
-    public function compile(CompilerCore $compiler, $name, string $tagArgs) : string;
+    public function compile(
+        CompilerCore $compiler,
+        string $funcName,
+        array $compiledTagArgs) : string;
 
 }
