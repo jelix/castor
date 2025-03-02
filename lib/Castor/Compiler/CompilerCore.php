@@ -253,8 +253,9 @@ abstract class CompilerCore
 
         $tplContent = preg_replace('/<\?php\\s+\?>/', '', $tplContent);
 
-        if (count($this->_blockStack)) {
-            $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
+        $currentBlock = $this->getCurrentBlockName();
+        if ($currentBlock) {
+            $this->doError1('errors.tpl.tag.block.end.missing', $currentBlock);
         }
 
         return $tplContent;
@@ -380,20 +381,22 @@ abstract class CompilerCore
         switch ($name) {
             case 'if':
                 $res = 'if('.$this->_compileArgs($args, $this->_allowedInExpr).'):';
-                array_push($this->_blockStack, 'if');
+                $this->enterBlock('if');
                 break;
 
             case 'else':
-                if (substr(end($this->_blockStack), 0, 2) != 'if') {
-                    $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
+                $currentBlock = $this->getCurrentBlockName();
+                if (!$currentBlock || substr($currentBlock, 0, 2) != 'if') {
+                    $this->doError1('errors.tpl.tag.block.end.missing', $currentBlock);
                 } else {
                     $res = 'else:';
                 }
                 break;
 
             case 'elseif':
-                if (end($this->_blockStack) != 'if') {
-                    $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
+                $currentBlock = $this->getCurrentBlockName();
+                if (!$currentBlock ||$currentBlock != 'if') {
+                    $this->doError1('errors.tpl.tag.block.end.missing', $currentBlock);
                 } else {
                     $res = 'elseif('.$this->_compileArgs($args, $this->_allowedInExpr).'):';
                 }
@@ -412,12 +415,12 @@ abstract class CompilerCore
                 }
 
                 $res = 'foreach('.$this->_compileArgs($args, $this->_allowedInForeach, $notallowed).'):';
-                array_push($this->_blockStack, 'foreach');
+                $this->enterBlock('foreach');
                 break;
 
             case 'while':
                 $res = 'while('.$this->_compileArgs($args, $this->_allowedInExpr).'):';
-                array_push($this->_blockStack, 'while');
+                $this->enterBlock('while');
                 break;
 
             case 'for':
@@ -431,7 +434,7 @@ abstract class CompilerCore
                     $args = $m[1];
                 }
                 $res = 'for('.$this->_compileArgs($args, $this->_allowedInExpr, $notallowed).'):';
-                array_push($this->_blockStack, 'for');
+                $this->enterBlock('for');
                 break;
 
             case '/foreach':
@@ -439,12 +442,8 @@ abstract class CompilerCore
             case '/if':
             case '/while':
                 $short = substr($name, 1);
-                if (end($this->_blockStack) != $short) {
-                    $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
-                } else {
-                    array_pop($this->_blockStack);
-                    $res = 'end'.$short.';';
-                }
+                $this->leaveBlock($short);
+                $res = 'end'.$short.';';
                 break;
 
             case 'assign':
@@ -481,20 +480,22 @@ abstract class CompilerCore
             case 'meta_if':
                 $metaIfArgs = $this->_compileArgs($args, $this->_allowedInExpr);
                 $this->_metaBody .= 'if('.$metaIfArgs.'):'."\n";
-                array_push($this->_blockStack, 'meta_if');
+                $this->enterBlock('meta_if');
                 break;
 
             case 'meta_else':
-                if (substr(end($this->_blockStack), 0, 7) != 'meta_if') {
-                    $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
+                $currentBlock = $this->getCurrentBlockName();
+                if (substr($currentBlock, 0, 7) != 'meta_if') {
+                    $this->doError1('errors.tpl.tag.block.end.missing', $currentBlock);
                 } else {
                     $this->_metaBody .= "else:\n";
                 }
                 break;
 
             case 'meta_elseif':
-                if (end($this->_blockStack) != 'meta_if') {
-                    $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
+                $currentBlock = $this->getCurrentBlockName();
+                if ($currentBlock != 'meta_if') {
+                    $this->doError1('errors.tpl.tag.block.end.missing', $currentBlock);
                 } else {
                     $elseIfArgs = $this->_compileArgs($args, $this->_allowedInExpr);
                     $this->_metaBody .= 'elseif('.$elseIfArgs."):\n";
@@ -503,27 +504,19 @@ abstract class CompilerCore
 
             case '/meta_if':
                 $short = substr($name, 1);
-                if (end($this->_blockStack) != $short) {
-                    $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
-                } else {
-                    array_pop($this->_blockStack);
-                    $this->_metaBody .= "endif;\n";
-                }
+                $this->leaveBlock($short);
+                $this->_metaBody .= "endif;\n";
                 break;
 
             default:
                 if (preg_match('!^/(\w+)$!', $name, $m)) {
-                    if (end($this->_blockStack) != $m[1]) {
-                        $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
+                    $this->leaveBlock($m[1]);
+                    if (function_exists($fct = 'jtpl_block_'.$this->outputType.'_'.$m[1])) {
+                        $res = $fct($this, false, null);
+                    } elseif (function_exists($fct = 'jtpl_block_common_'.$m[1])) {
+                        $res = $fct($this, false, null);
                     } else {
-                        array_pop($this->_blockStack);
-                        if (function_exists($fct = 'jtpl_block_'.$this->outputType.'_'.$m[1])) {
-                            $res = $fct($this, false, null);
-                        } elseif (function_exists($fct = 'jtpl_block_common_'.$m[1])) {
-                            $res = $fct($this, false, null);
-                        } else {
-                            $this->doError1('errors.tpl.tag.block.begin.missing', $m[1]);
-                        }
+                        $this->doError1('errors.tpl.tag.block.begin.missing', $m[1]);
                     }
                 } elseif (preg_match('/^meta_(\w+)$/', $name, $m)) {
                     $metaName = $m[1];
@@ -554,7 +547,7 @@ abstract class CompilerCore
                     $argfct = $this->_compileArgs($args, $this->_allowedAssign, array(';'), true);
                     $fct = $path[1];
                     $res = $fct($this, true, $argfct);
-                    array_push($this->_blockStack, $name);
+                    $this->enterBlock($name);
                 } elseif ($path = $this->_getPlugin('cfunction', $name)) {
                     require_once $path[0];
                     $argfct = $this->_compileArgs($args, $this->_allowedAssign, array(';'), true);
@@ -608,6 +601,12 @@ abstract class CompilerCore
         return '';
     }
 
+
+    protected function enterBlock($name)
+    {
+        array_push($this->_blockStack, $name);
+    }
+
     /**
      * for plugins, it says if the plugin is inside the given block.
      *
@@ -618,6 +617,10 @@ abstract class CompilerCore
      */
     public function isInsideBlock($blockName, $onlyUpper = false)
     {
+        if (count($this->_blockStack) === 0) {
+            return false;
+        }
+
         if ($onlyUpper) {
             return (end($this->_blockStack) == $blockName);
         }
@@ -629,6 +632,25 @@ abstract class CompilerCore
 
         return false;
     }
+
+    public function getCurrentBlockName()
+    {
+        if (count($this->_blockStack)) {
+            return end($this->_blockStack);
+        }
+        return null;
+    }
+
+    protected function leaveBlock($name)
+    {
+        $currentBlock = $this->getCurrentBlockName();
+        if ($currentBlock != $name) {
+            $this->doError1('errors.tpl.tag.block.end.missing', $currentBlock);
+        } else {
+            array_pop($this->_blockStack);
+        }
+    }
+
 
     /**
      * sub-function which analyse an expression.
