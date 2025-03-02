@@ -79,12 +79,7 @@ class Config
      */
     protected $localizedMessages = array();
 
-    /**
-     * @internal
-     */
-    public $pluginPathList = array();
-
-    public $pluginsRepositories = array();
+    protected $pluginsRepositories = array();
 
     public readonly TemplateCacheManagerInterface $cacheManager;
 
@@ -149,6 +144,16 @@ class Config
 
     public function addPluginsRepository($path)
     {
-        $this->pluginsRepositories[] = $path;
+        if (is_array($path)) {
+            $this->pluginsRepositories = array_merge($this->pluginsRepositories, $path);
+        }
+        else {
+            $this->pluginsRepositories[] = $path;
+        }
+    }
+
+    public function getPluginsRepositories()
+    {
+        return $this->pluginsRepositories;
     }
 }

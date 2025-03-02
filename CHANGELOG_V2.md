@@ -23,6 +23,9 @@ Breaking changes
   these variables are not anymore into the `CastorCore` properties.
 - `meta()` and `display()` methods are moved from `CastorCore` to `Castor`
 - parameters of `Castor::fetch()` have changed
+- no more `Config::$pluginPathList` property
+- no more `CompilerCore::_getPlugin()` to override. This is replaced by the new plugin system
+  and components implementing `PluginsProviderInterface`.
 
 Internal changes
 ----------------

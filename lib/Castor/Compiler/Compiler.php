@@ -28,7 +28,7 @@ class Compiler extends CompilerCore
      */
     public function __construct(Config $config)
     {
-        $plugins = new LegacyPluginsProvider($config->pluginsRepositories);
+        $plugins = new LegacyPluginsProvider($config->getPluginsRepositories());
 
         parent::__construct($plugins, $config->charset);
         $this->config = $config;
@@ -63,29 +63,6 @@ class Compiler extends CompilerCore
     protected function getCompiledLocaleRetriever($locale)
     {
         return '$t->getLocaleString(\''.$locale.'\')';
-    }
-
-    protected function _getPlugin($type, $name)
-    {
-        if (isset($this->config->pluginPathList[$this->outputType])) {
-            foreach ($this->config->pluginPathList[$this->outputType] as $path) {
-                $foundPath = $path.$type.'.'.$name.'.php';
-
-                if (file_exists($foundPath)) {
-                    return array($foundPath, 'jtpl_'.$type.'_'.$this->outputType.'_'.$name);
-                }
-            }
-        }
-        if (isset($this->config->pluginPathList['common'])) {
-            foreach ($this->config->pluginPathList['common'] as $path) {
-                $foundPath = $path.$type.'.'.$name.'.php';
-                if (file_exists($foundPath)) {
-                    return array($foundPath, 'jtpl_'.$type.'_common_'.$name);
-                }
-            }
-        }
-
-        return false;
     }
 
     public function doError0($err)

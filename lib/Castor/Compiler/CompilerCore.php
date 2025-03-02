@@ -818,17 +818,6 @@ abstract class CompilerCore
     }
 
     /**
-     * Try to find a plugin.
-     *
-     * @param string $type type of plugin (function, modifier...)
-     * @param string $name the plugin name
-     *
-     * @return array|bool an array containing the path of the plugin
-     *                    and the name of the plugin function, or false if not found
-     */
-    abstract protected function _getPlugin($type, $name);
-
-    /**
      * @param string $err the error message code
      * @throws \Exception
      */
