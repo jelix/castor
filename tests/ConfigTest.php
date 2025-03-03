@@ -1,8 +1,8 @@
 <?php
 /**
 * @author      Laurent Jouanneau
-* @copyright   2015 Laurent Jouanneau
-* @link        http://www.jelix.org
+* @copyright   2015-2025 Laurent Jouanneau
+* @link        https://www.jelix.org
 * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
 */
 

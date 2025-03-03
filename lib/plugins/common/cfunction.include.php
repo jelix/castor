@@ -29,9 +29,9 @@ function jtpl_cfunction_common_include(\Jelix\Castor\Compiler\CompilerCore $comp
         return '';
     }
     if (count($param) == 1) {
-        $compiler->addMetaContent('$t->meta('.$param[0].');');
+        $compiler->addMetaContent('$castor->meta('.$param[0].');');
 
-        return '$t->display('.$param[0].');';
+        return '$castor->display('.$param[0].');';
     } else {
         $compiler->doError2('errors.tplplugin.cfunction.bad.argument.number', 'include', '1');
 

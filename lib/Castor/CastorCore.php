@@ -156,7 +156,7 @@ abstract class CastorCore
         $this->processedMeta[] = $tplName;
         $contentGenerator = $this->getTemplate($tpl);
 
-        return $contentGenerator->meta($this->container);
+        return $contentGenerator->meta($this, $this->container);
     }
 
     /**
@@ -172,7 +172,7 @@ abstract class CastorCore
 
         $contentGenerator = $this->getTemplate($tpl);
 
-        $contentGenerator->content($this->container);
+        $contentGenerator->content($this, $this->container);
 
         array_pop($this->recursiveTpl);
         $this->container->_templateName = $previousTpl;
@@ -224,9 +224,9 @@ abstract class CastorCore
         ob_start();
         try {
             if ($callMeta) {
-                $contentGenerator->meta($this->container);
+                $contentGenerator->meta($this, $this->container);
             }
-            $contentGenerator->content($this->container);
+            $contentGenerator->content($this, $this->container);
             array_pop($this->recursiveTpl);
             $this->container->_templateName = $previousTpl;
             $content = ob_get_clean();

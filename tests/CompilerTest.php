@@ -1,33 +1,11 @@
 <?php
 /**
 * @author      Laurent Jouanneau
-* @copyright   2007-2022 Laurent Jouanneau
-* @link        http://www.jelix.org
+* @copyright   2007-2025 Laurent Jouanneau
+* @link        https://www.jelix.org
 * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
 */
 
-
-
-class testJtplContentCompiler extends \Jelix\Castor\Compiler\Compiler {
-
-    public function setUserPlugins($userModifiers, $userFunctions) {
-        $this->_modifier = array_merge($this->_modifier, $userModifiers);
-        $this->_userFunctions = $userFunctions;
-    }
-
-    public function compileContent2($content){
-        return $this->compileContent($content);
-    }
-
-    public function setRemoveASPTags($b) {
-        $this->removeASPtags = $b;
-    }
-    
-}
-
-function testjtplcontentUserFunction($t,$a,$b) {
-
-}
 
 
 class CompilerTest extends \PHPUnit\Framework\TestCase {
@@ -275,7 +253,7 @@ function toto() {
      */
     function testCompileContent($template, $expectedResult)
     {
-        $compil = new testJtplContentCompiler(self::$castorConfig);
+        $compil = new ContentCompilerForTests(self::$castorConfig);
         $compil->outputType = 'html';
         $compil->trusted = true;
         $compil->setUserPlugins(array(), array('bla' => 'testjtplcontentUserFunction'));
@@ -286,7 +264,7 @@ function toto() {
 
     function testCompileContentWithASPTags()
     {
-        $compil = new testJtplContentCompiler(self::$castorConfig);
+        $compil = new ContentCompilerForTests(self::$castorConfig);
         $compil->outputType = 'html';
         $compil->trusted = true;
         $compil->setUserPlugins(array(), array('bla' => 'testjtplcontentUserFunction'));
@@ -318,7 +296,7 @@ function toto() {
      * @return void
      */
     function testCompileContentUntrusted($template, $expectedResult) {
-        $compil = new testJtplContentCompiler(self::$castorConfig);
+        $compil = new ContentCompilerForTests(self::$castorConfig);
         $compil->outputType = 'html';
         $compil->trusted = false;
         $compil->setUserPlugins(array(), array('bla'=>'testjtplcontentUserFunction'));
@@ -358,7 +336,7 @@ function toto() {
      */
     function testCompilePlugins($template, $expectedResult)
     {
-        $compil = new testJtplContentCompiler(self::$castorConfig);
+        $compil = new ContentCompilerForTests(self::$castorConfig);
         $compil->outputType = 'html';
         $compil->trusted = true;
 
@@ -387,7 +365,7 @@ function toto() {
      */
     function testCompileErrors($template, $expectedResult) {
 
-            $compil = new testJtplContentCompiler(self::$castorConfig);
+            $compil = new ContentCompilerForTests(self::$castorConfig);
             $compil->outputType = 'html';
             $compil->trusted = true;
             $ok = true;
@@ -418,7 +396,7 @@ function toto() {
      */
     function testCompileErrorsUntrusted($template, $expectedResult) {
 
-            $compil = new testJtplContentCompiler(self::$castorConfig);
+            $compil = new ContentCompilerForTests(self::$castorConfig);
             $compil->outputType = 'html';
             $compil->trusted = false;
             $ok = true;

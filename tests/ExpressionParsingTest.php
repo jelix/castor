@@ -1,54 +1,11 @@
 <?php
 /**
 * @author      Laurent Jouanneau
-* @copyright   2007-2022 Laurent Jouanneau
-* @link        http://www.jelix.org
+* @copyright   2007-2025 Laurent Jouanneau
+* @link        https://www.jelix.org
 * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
 */
 
-define('TEST_JTPL_COMPILER_ASSIGN',1);
-
-class testJtplCompiler extends \Jelix\Castor\Compiler\Compiler
-{
-
-    public function setUserPlugins($userModifiers, $userFunctions) {
-        $this->_modifier = array_merge($this->_modifier, $userModifiers);
-        $this->_userFunctions = $userFunctions;
-    }
-
-
-   public function testParseExpr($string, $allowed=array(), $exceptchar=array(';'), $splitArgIntoArray=false){
-        return $this->_compileArgs($string, $allowed, $exceptchar, $splitArgIntoArray);
-   }
-
-   public function testParseVarExpr($string){
-        return $this->_compileArgs($string,$this->_allowedInVar, $this->_excludedInVar);
-   }
-
-   public function testParseForeachExpr($string){
-        return $this->_compileArgs($string,$this->_allowedInForeach, array(';','!'));
-   }
-
-   public function testParseAnyExpr($string){
-        return $this->_compileArgs($string, $this->_allowedInExpr, array());
-   }
-
-   public function testParseAssignExpr($string){
-        return $this->_compileArgs($string,$this->_allowedAssign);
-   }
-
-   public function testParseAssignExpr2($string){
-        return $this->_compileArgs($string,$this->_allowedAssign, array(';'),true);
-   }
-
-   public function testParseVariable($string, $outputType = ''){
-        $this->outputType = $outputType;
-        return $this->_parseVariable($string);
-   }
-
-}
-
-function testjtplcontentUserModifier($s){}
 
 
 class ExpressionParsingTest extends \PHPUnit\Framework\TestCase {
@@ -122,7 +79,7 @@ class ExpressionParsingTest extends \PHPUnit\Framework\TestCase {
      * @return void
      */
     function testTrustedModeVarExpr($expression, $expectedResult) {
-        $compil = new testJtplCompiler(self::$castorConfig);
+        $compil = new ContentCompilerForTests(self::$castorConfig);
         $compil->trusted = true;
         $res = $compil->testParseVarExpr($expression);
         $this->assertEquals($expectedResult, $res);
@@ -133,7 +90,7 @@ class ExpressionParsingTest extends \PHPUnit\Framework\TestCase {
      * @return void
      */
     function testTrustedModeVarExprWithTrustedExpression($expression, $expectedResult) {
-        $compil = new testJtplCompiler(self::$castorConfig);
+        $compil = new ContentCompilerForTests(self::$castorConfig);
         $compil->trusted = true;
         $res = $compil->testParseVarExpr($expression);
         $this->assertEquals($expectedResult, $res);
@@ -143,7 +100,7 @@ class ExpressionParsingTest extends \PHPUnit\Framework\TestCase {
      * @dataProvider getExpressionVars
      */
     function testUnTrustedModeVarExpr($expression, $expectedResult) {
-        $compil = new testJtplCompiler(self::$castorConfig);
+        $compil = new ContentCompilerForTests(self::$castorConfig);
         $compil->trusted = false;
         $res = $compil->testParseVarExpr($expression);
         $this->assertEquals($expectedResult, $res);
@@ -153,7 +110,7 @@ class ExpressionParsingTest extends \PHPUnit\Framework\TestCase {
      * @dataProvider getExpressionVarsForTrustedMode
      */
     function testUnTrustedModeVarExprWithTrustedExpression($expression, $expectedResult) {
-        $compil = new testJtplCompiler(self::$castorConfig);
+        $compil = new ContentCompilerForTests(self::$castorConfig);
         $compil->trusted = false;
         $this->expectException('Exception');
         $compil->testParseVarExpr($expression);
@@ -213,7 +170,7 @@ class ExpressionParsingTest extends \PHPUnit\Framework\TestCase {
      */
     function testTrustedModeBadVarExpr($expression, $errMessage)
     {
-        $compil = new testJtplCompiler(self::$castorConfig);
+        $compil = new ContentCompilerForTests(self::$castorConfig);
         $compil->trusted = true;
         $this->expectExceptionMessage($errMessage);
         $compil->testParseVarExpr($expression);
@@ -225,7 +182,7 @@ class ExpressionParsingTest extends \PHPUnit\Framework\TestCase {
      */
     function testTrustedModeBadVarExprForTrustMode($expression, $errMessage)
     {
-        $compil = new testJtplCompiler(self::$castorConfig);
+        $compil = new ContentCompilerForTests(self::$castorConfig);
         $compil->trusted = true;
         $res = $compil->testParseVarExpr($expression);
         $this->assertNotEquals('', $res);
@@ -236,7 +193,7 @@ class ExpressionParsingTest extends \PHPUnit\Framework\TestCase {
      * @return void
      */
     function testUnTrustedModeBadVarExpr($expression, $errMessage) {
-        $compil = new testJtplCompiler(self::$castorConfig);
+        $compil = new ContentCompilerForTests(self::$castorConfig);
         $compil->trusted = false;
         $this->expectExceptionMessage($errMessage);
         $compil->testParseVarExpr($expression);
@@ -247,7 +204,7 @@ class ExpressionParsingTest extends \PHPUnit\Framework\TestCase {
      * @return void
      */
     function testUnTrustedModeBadVarExprForTrustMode($expression, $errMessage) {
-        $compil = new testJtplCompiler(self::$castorConfig);
+        $compil = new ContentCompilerForTests(self::$castorConfig);
         $compil->trusted = false;
         $this->expectExceptionMessage($errMessage);
         $compil->testParseVarExpr($expression);
@@ -270,7 +227,7 @@ class ExpressionParsingTest extends \PHPUnit\Framework\TestCase {
      * @return void
      */
     function testVarTag($tag, $expectedResult) {
-        $compil = new testJtplCompiler(self::$castorConfig);
+        $compil = new ContentCompilerForTests(self::$castorConfig);
         $compil->trusted = true;
         $compil->setUserPlugins(array('bla'=>'testjtplcontentUserModifier'),array());
 
@@ -303,7 +260,7 @@ class ExpressionParsingTest extends \PHPUnit\Framework\TestCase {
      */
     function testVarTagAutoescape($tag, $autoescape, $outputType, $expectedResult)
     {
-        $compil = new testJtplCompiler(self::$castorConfig);
+        $compil = new ContentCompilerForTests(self::$castorConfig);
         $compil->setAutoEscape($autoescape);
         $compil->trusted = true;
         $res = $compil->testParseVariable($tag, $outputType);
@@ -329,7 +286,7 @@ class ExpressionParsingTest extends \PHPUnit\Framework\TestCase {
      */
     function testAssign($expression, $expectedResult)
     {
-        $compil = new testJtplCompiler(self::$castorConfig);
+        $compil = new ContentCompilerForTests(self::$castorConfig);
         $compil->trusted = true;
         $res = $compil->testParseAssignExpr($expression);
         $this->assertEquals($expectedResult, $res);
@@ -348,7 +305,7 @@ class ExpressionParsingTest extends \PHPUnit\Framework\TestCase {
      */
     function testAssignUntrustedMode($expression, $errMessage)
     {
-        $compil = new testJtplCompiler(self::$castorConfig);
+        $compil = new ContentCompilerForTests(self::$castorConfig);
         $compil->trusted = false;
         $this->expectExceptionMessage($errMessage);
         $compil->testParseAssignExpr($expression);

@@ -1,8 +1,8 @@
 <?php
 /**
 * @author      Laurent Jouanneau
-* @copyright   2015-2022 Laurent Jouanneau
-* @link        http://www.jelix.org
+* @copyright   2015-2025 Laurent Jouanneau
+* @link        https://www.jelix.org
 * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
 */
 
@@ -13,23 +13,10 @@ class EngineTest extends \PHPUnit\Framework\TestCase {
 
     function setUp() : void {
         $cachePath = realpath(__DIR__.'/temp/') . '/';
+        \Jelix\FileUtilities\Directory::removeExcept($cachePath, ['.dummy']);
         $templatePath = __DIR__.'/';
         self::$castorConfig = new \Jelix\Castor\Config($cachePath, $templatePath);
         self::$castorConfig->addPluginsRepository(__DIR__.'/plugins');
-        $this->clearDir($cachePath);
-    }
-
-    protected function clearDir($path) {
-        $dir = new DirectoryIterator($path);
-        foreach ($dir as $dirContent) {
-            if ($dirContent->isFile() || $dirContent->isLink()) {
-                if ($dirContent->getBasename() != '.dummy') {
-                    unlink($dirContent->getPathName());
-                }
-            }
-        }
-        unset($dir);
-        unset($dirContent);
     }
 
     function testCountries() {
@@ -61,6 +48,7 @@ class EngineTest extends \PHPUnit\Framework\TestCase {
         $json = json_encode(['foo'=>'foo value', 'bar'=>'bar value']);
         $tpl->assign('myjson', $json);
         $tpl->assign('mydate', '2024-08-25');
+        $tpl->assign('texte', "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit.");
 
         $result = $tpl->fetch('assets/modifiers.tpl');
         $this->assertEquals(file_get_contents(__DIR__.'/assets/modifiers.txt'), $result);
@@ -69,7 +57,9 @@ class EngineTest extends \PHPUnit\Framework\TestCase {
 
     function testContentType() {
         $tpl = new \Jelix\Castor\Castor(self::$castorConfig);
-
+        $tpl->assign('foo', 'FOO');
+        $tpl->assign('bar', 'BAR');
+        $tpl->assign('baz', 'BAZ');
         $result = $tpl->fetch('assets/content_html.tpl');
         $this->assertEquals(file_get_contents(__DIR__.'/assets/content_html.txt'), $result);
 
