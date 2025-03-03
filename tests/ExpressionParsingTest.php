@@ -51,7 +51,7 @@ class testJtplCompiler extends \Jelix\Castor\Compiler\Compiler
 function testjtplcontentUserModifier($s){}
 
 
-class jtplCompilerExpressionTest extends \PHPUnit\Framework\TestCase {
+class ExpressionParsingTest extends \PHPUnit\Framework\TestCase {
 
     protected static $castorConfig;
 

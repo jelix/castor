@@ -7,7 +7,7 @@
 */
 
 
-class configTest extends \PHPUnit\Framework\TestCase {
+class ConfigTest extends \PHPUnit\Framework\TestCase {
     
     
     function testLang() {

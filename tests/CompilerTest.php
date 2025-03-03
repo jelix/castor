@@ -30,7 +30,7 @@ function testjtplcontentUserFunction($t,$a,$b) {
 }
 
 
-class jtplCompilerTest extends \PHPUnit\Framework\TestCase {
+class CompilerTest extends \PHPUnit\Framework\TestCase {
 
     protected static $castorConfig;
 
@@ -343,7 +343,7 @@ function toto() {
                 '{usemacro \'foo\'}',
                 '<?php jtpl_function_common_usemacro( $t,\'foo\');?>'
             ),
-            3 => array(
+            4 => array(
                 '{usemacro \'foo\', $arg1, $arg2 }',
                 '<?php jtpl_function_common_usemacro( $t,\'foo\', $t->_vars[\'arg1\'], $t->_vars[\'arg2\'] );?>'
             ),

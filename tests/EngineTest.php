@@ -7,7 +7,7 @@
 */
 
 
-class CastorTest extends \PHPUnit\Framework\TestCase {
+class EngineTest extends \PHPUnit\Framework\TestCase {
 
     protected static $castorConfig;
 
