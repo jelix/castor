@@ -17,7 +17,7 @@ class CompilerTest extends \PHPUnit\Framework\TestCase {
         $templatePath = __DIR__.'/';
         
         self::$castorConfig = new \Jelix\Castor\Config($cachePath, $templatePath);
-        self::$castorConfig->setLang('fr');
+        self::$castorConfig->messages->setLang('fr');
     }
 
 

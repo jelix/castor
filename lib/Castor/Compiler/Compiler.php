@@ -67,16 +67,16 @@ class Compiler extends CompilerCore
 
     public function doError0($err)
     {
-        throw new \Exception($this->config->getMessage($err, array($this->_sourceFile)));
+        throw new \Exception($this->config->messages->getMessage($err, array($this->_sourceFile)));
     }
 
     public function doError1($err, $arg)
     {
-        throw new \Exception($this->config->getMessage($err, array($arg, $this->_sourceFile)));
+        throw new \Exception($this->config->messages->getMessage($err, array($arg, $this->_sourceFile)));
     }
 
     public function doError2($err, $arg1, $arg2)
     {
-        throw new \Exception($this->config->getMessage($err, array($arg1, $arg2, $this->_sourceFile)));
+        throw new \Exception($this->config->messages->getMessage($err, array($arg1, $arg2, $this->_sourceFile)));
     }
 }

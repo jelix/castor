@@ -15,8 +15,8 @@ class ConfigTest extends \PHPUnit\Framework\TestCase {
         $templatePath = __DIR__.'/';
         $config = new \Jelix\Castor\Config($cachePath, $templatePath);
 
-        $this->assertEquals('en', $config->getLang());
+        $this->assertEquals('en', $config->messages->getLang());
 
-        $this->assertEquals('In the template %2$s, invalid syntax on tag %1$s', $config->getMessage('errors.tpl.tag.syntax.invalid'));
+        $this->assertEquals('In the template %2$s, invalid syntax on tag %1$s', $config->messages->getMessage('errors.tpl.tag.syntax.invalid'));
     }
 }

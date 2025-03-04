@@ -22,9 +22,9 @@ abstract class CastorCore
 
     protected RuntimeContainer $container;
 
-    public function __construct()
+    public function __construct(LocalizedMessagesInterface $messages)
     {
-        $this->container = new RuntimeContainer();
+        $this->container = new RuntimeContainer($messages);
         
         $this->container->_vars['j_datenow'] = date('Y-m-d');
         $this->container->_vars['j_timenow'] = date('H:i:s');
@@ -282,15 +282,4 @@ abstract class CastorCore
     {
         return '';
     }
-
-    /**
-     * @return \Exception
-     */
-    public function getInternalException($messageKey, $parameters)
-    {
-        $msg = $this->config->getMessage($messageKey, $parameters);
-
-        return new \Exception($msg);
-    }
-
 }

@@ -59,12 +59,14 @@ class RuntimeContainer
      */
     public $_templateName;
 
+    public readonly LocalizedMessagesInterface $messages;
 
     protected $charset;
 
-    public function __construct($charset = 'UTF-8')
+    public function __construct(LocalizedMessagesInterface $messages, $charset = 'UTF-8')
     {
         $this->charset = $charset;
+        $this->messages = $messages;
     }
 
     /**
@@ -121,5 +123,15 @@ class RuntimeContainer
                 unset($this->_vars[$pName]);
             }
         }
+    }
+
+    /**
+     * @return \Exception
+     */
+    public function getInternalException($messageKey, $parameters)
+    {
+        $msg = $this->messages->getMessage($messageKey, $parameters);
+
+        return new \Exception($msg);
     }
 }

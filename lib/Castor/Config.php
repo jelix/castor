@@ -31,11 +31,6 @@ class Config
     public $compilationForce = false;
 
     /**
-     * the lang activated in the templates.
-     */
-    protected $lang = 'en';
-
-    /**
      * the charset used in the templates.
      */
     public $charset = 'UTF-8';
@@ -53,12 +48,6 @@ class Config
     public $cachePath = '';
 
     /**
-     * the path of the directory which contains the localized error messages
-     * of the template engine. The path should have a / at the end.
-     */
-    protected $localizedMessagesPath = '';
-
-    /**
      * umask for directories created in the cache directory.
      */
     public $umask = 0000;
@@ -73,22 +62,18 @@ class Config
      */
     public $chmodFile = 0644;
 
-    /**
-     * @internal
-     * @var \Jelix\SimpleLocalization\Container[]
-     */
-    protected $localizedMessages = array();
-
     protected $pluginsRepositories = array();
 
     public readonly TemplateCacheManagerInterface $cacheManager;
+
+    public readonly LocalizedMessagesInterface $messages;
 
     /**
      * @param string|TemplateCacheManagerInterface $cachePath
      * @param $tplPath
      * @throws \Exception
      */
-    public function __construct($cachePath, $tplPath = '')
+    public function __construct($cachePath, $tplPath = '', $localizedMessagesPath = '')
     {
 
         if (is_string($cachePath)) {
@@ -104,42 +89,11 @@ class Config
         $this->cachePath = $cachePath;
         $this->templatePath = $tplPath;
         $this->addPluginsRepository(realpath(__DIR__.'/../plugins/'));
-        $this->localizedMessagesPath = realpath(__DIR__.'/locales/').'/%LANG%.php';
-        $this->setLang($this->lang);
-    }
 
-    public function setLang($lang)
-    {
-        $this->lang = $lang;
-        if (!isset($this->localizedMessages[$lang])) {
-            $this->localizedMessages[$lang] = new \Jelix\SimpleLocalization\Container($this->localizedMessagesPath, $lang);
+        if ($localizedMessagesPath == '') {
+            $localizedMessagesPath = realpath(__DIR__.'/locales/').'/%LANG%.php';
         }
-    }
-
-    public function getLang()
-    {
-        return $this->lang;
-    }
-
-    public function getMessage($key, $params = null)
-    {
-        if (isset($this->localizedMessages[$this->lang])) {
-            try {
-                $str = $this->localizedMessages[$this->lang]->get($key, $params);
-            } catch (\Jelix\SimpleLocalization\Exception $e) {
-                $str = $key;
-            }
-        } else {
-            $str = $key;
-        }
-
-        return $str;
-    }
-
-    public function setLocalizedMessagesPath($path)
-    {
-        $this->localizedMessagesPath = rtrim($path, '/').'/%LANG%.php';
-        $this->setLang($this->lang);
+        $this->messages = new LocalizedMessages($localizedMessagesPath);
     }
 
     public function addPluginsRepository($path)

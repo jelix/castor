@@ -16,7 +16,7 @@ class ExpressionParsingTest extends \PHPUnit\Framework\TestCase {
         $cachePath = realpath(__DIR__.'/temp/') . '/';
         $templatePath = __DIR__.'/';
         self::$castorConfig = new \Jelix\Castor\Config($cachePath, $templatePath);
-        self::$castorConfig->setLang('fr');
+        self::$castorConfig->messages->setLang('fr');
     }
 
     public function getExpressionVars()
