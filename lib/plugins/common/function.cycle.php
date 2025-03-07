@@ -44,7 +44,7 @@ function jtpl_function_common_cycle(\Jelix\Castor\RuntimeContainer $tpl, $param 
             ++$cycle_vars['index'];
         }
     } else {
-        $cycle_name = $param ? $param : 'default';
+        $cycle_name = $param ?: 'default';
         if (isset($tpl->_privateVars['cycle'][$cycle_name]['values'])) {
             $cycle_array = $tpl->_privateVars['cycle'][$cycle_name]['values'];
         } else {

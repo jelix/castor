@@ -32,3 +32,16 @@ Counter 1 : {for $i=0;$i<5;$i++} {counter 'first'}{/for}
 Counter 2 :  {counter 'second'} {counter 'second'} {counter 'second'}
 
 counter reset : {counter_reset 'second'} {counter 'second'} {counter 'second'}
+
+Cycle simple : {for $i=0;$i<5;$i++} {cycle array('a','e', 'i')}{/for}
+
+{cycle_init array('c', 'd', 'f')}
+Cycle default : {for $i=0;$i<5;$i++} {cycle}{/for}
+
+{cycle_init 'foo', array('g', 'h', 'i')}
+Cycle named : {for $i=0;$i<5;$i++} {cycle 'foo'}{/for}
+
+
+{repeat_string 'mystring',4}
+
+

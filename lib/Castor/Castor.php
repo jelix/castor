@@ -38,6 +38,7 @@ class Castor extends CastorCore
     {
         $this->config = $config;
         $this->cacheManager = $config->cacheManager;
+        $this->container = new RuntimeContainer($config->messages, $config->charset);
         parent::__construct($config->messages);
     }
 

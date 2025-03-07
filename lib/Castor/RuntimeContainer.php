@@ -61,7 +61,7 @@ class RuntimeContainer
 
     public readonly LocalizedMessagesInterface $messages;
 
-    protected $charset;
+    public readonly string $charset;
 
     public function __construct(LocalizedMessagesInterface $messages, $charset = 'UTF-8')
     {

@@ -24,8 +24,11 @@ abstract class CastorCore
 
     public function __construct(LocalizedMessagesInterface $messages)
     {
-        $this->container = new RuntimeContainer($messages);
-        
+        if (!$this->container) {
+            // it may have been already instancied by a child class
+            $this->container = new RuntimeContainer($messages);
+        }
+
         $this->container->_vars['j_datenow'] = date('Y-m-d');
         $this->container->_vars['j_timenow'] = date('H:i:s');
     }

@@ -48,7 +48,14 @@ class EngineTest extends \PHPUnit\Framework\TestCase {
         $json = json_encode(['foo'=>'foo value', 'bar'=>'bar value']);
         $tpl->assign('myjson', $json);
         $tpl->assign('mydate', '2024-08-25');
-        $tpl->assign('texte', "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit.");
+        $tpl->assign('mynumber', 123.456);
+        $tpl->assign('myarray', ['abc', 'def', 'ghi']);
+        $tpl->assign('mystring', 'Lorem ipsum dolor sit amet');
+        $tpl->assign('mystrip', 'Lorem     ipsum      dolor   sit amet');
+        $tpl->assign('myutf8string', 'abcd éàçÉ ~');
+
+        $tpl->assign('mytext', "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit.");
+        $tpl->assign('myhtml', "<p>Lorem ipsum <strong>dolor sit</strong> amet,<br/><a href='#foo'>consectetur adipiscing</a> elit.</p>");
 
         $result = $tpl->fetch('assets/modifiers.tpl');
         $this->assertEquals(file_get_contents(__DIR__.'/assets/modifiers.txt'), $result);

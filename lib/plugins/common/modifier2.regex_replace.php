@@ -12,7 +12,7 @@
  */
 
 /**
- * modifier plugin : regular epxression search/replace.
+ * modifier plugin : regular expression search/replace.
  *
  * You should provide two arguments, like the first both of preg_replace
  * {$mystring|regex_replace:'/(\w+) (\d+), (\d+)/i':'${1}1,$3'}
@@ -29,7 +29,7 @@ function jtpl_modifier2_common_regex_replace(\Jelix\Castor\RuntimeContainer $tpl
     if (preg_match('!\W(\w+)$!s', $search, $match) &&
             (strpos($match[1], 'e') !== false)) {
         /* remove eval-modifier from $search */
-        $search = substr($search, 0, -iconv_strlen($match[1], $tpl->getEncoding())).
+        $search = substr($search, 0, -iconv_strlen($match[1], $tpl->charset)).
             str_replace('e', '', $match[1]);
     }
 

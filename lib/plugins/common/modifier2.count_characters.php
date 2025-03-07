@@ -27,8 +27,7 @@
 function jtpl_modifier2_common_count_characters(\Jelix\Castor\RuntimeContainer $tpl, $string, $include_spaces = false)
 {
     if ($include_spaces) {
-        return(iconv_strlen($string, $tpl->getEncoding()));
+        return(iconv_strlen($string, $tpl->charset));
     }
-
-    return preg_match_all("/[^\s]/", $string, $match);
+    return(iconv_strlen(preg_replace('/\s+/u', '', $string), $tpl->charset));
 }

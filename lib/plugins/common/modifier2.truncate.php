@@ -51,7 +51,7 @@ function jtpl_modifier2_common_truncate(\Jelix\Castor\RuntimeContainer $tpl, $st
     if ($length == 0) {
         return '';
     }
-    $charset = $tpl->getEncoding();
+    $charset = $tpl->charset;
 
     if ($f_strlen ($string, $charset) > $length) {
         $length -= $f_strlen($etc, $charset);
