@@ -5,7 +5,7 @@
  *
  * @contributor Laurent Jouanneau (utf8 compliance)
  *
- * @copyright  2001-2003 ispi of Lincoln, Inc., 2007 Laurent Jouanneau
+ * @copyright  2001-2003 ispi of Lincoln, Inc., 2007-2025 Laurent Jouanneau
  *
  * @link http://smarty.php.net/
  * @link http://jelix.org/
@@ -30,5 +30,5 @@ function jtpl_modifier2_common_count_characters(\Jelix\Castor\CastorCore $tpl, $
         return(iconv_strlen($string, $tpl->getEncoding()));
     }
 
-    return preg_match_all("/[^\s]/", $string, $match);
+    return(iconv_strlen(preg_replace('/\s+/u', '', $string), $tpl->getEncoding()));
 }
