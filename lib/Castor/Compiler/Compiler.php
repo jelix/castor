@@ -28,9 +28,7 @@ class Compiler extends CompilerCore
      */
     public function __construct(Config $config)
     {
-        $plugins = new LegacyPluginsProvider($config->getPluginsRepositories());
-
-        parent::__construct($plugins, $config->charset);
+        parent::__construct($config->getPluginsProvider(), $config->charset);
         $this->config = $config;
     }
 

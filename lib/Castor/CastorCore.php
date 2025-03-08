@@ -143,6 +143,16 @@ abstract class CastorCore
     }
 
     /**
+     * For plugins
+     * @internal
+     * @return RuntimeContainer
+     */
+    public function getRuntimeContainer() : RuntimeContainer
+    {
+        return $this->container;
+    }
+
+    /**
      * process all meta instruction of a template.
      *
      * @param TemplateContentInterface $tpl        template selector

@@ -15,6 +15,10 @@ namespace Jelix\Castor;
 
 use Jelix\Castor\CacheManager\FileCacheManager;
 use Jelix\Castor\CacheManager\TemplateCacheManagerInterface;
+use Jelix\Castor\PluginsProvider\CorePluginsProvider;
+use Jelix\Castor\PluginsProvider\Legacy\LegacyPluginsProvider;
+use Jelix\Castor\PluginsProvider\PluginsProviderGroup;
+use Jelix\Castor\PluginsProvider\PluginsProviderInterface;
 
 class Config
 {
@@ -62,7 +66,15 @@ class Config
      */
     public $chmodFile = 0644;
 
+    /**
+     * @var string[]
+     */
     protected $pluginsRepositories = array();
+
+    /**
+     * @var PluginsProviderInterface[]
+     */
+    protected $pluginsProviders = array();
 
     public readonly TemplateCacheManagerInterface $cacheManager;
 
@@ -89,6 +101,7 @@ class Config
         $this->cachePath = $cachePath;
         $this->templatePath = $tplPath;
         $this->addPluginsRepository(realpath(__DIR__.'/../plugins/'));
+        $this->addPluginsProvider(new CorePluginsProvider());
 
         if ($localizedMessagesPath == '') {
             $localizedMessagesPath = realpath(__DIR__.'/locales/').'/%LANG%.php';
@@ -96,6 +109,25 @@ class Config
         $this->messages = new LocalizedMessages($localizedMessagesPath);
     }
 
+    public function getPluginsProvider() : PluginsProviderInterface
+    {
+        $list = $this->pluginsProviders;
+        if (count($this->pluginsRepositories)) {
+            $list[] = new LegacyPluginsProvider($this->pluginsRepositories);
+        }
+        if (count($list) == 1) {
+            return $list[0];
+        }
+        return new PluginsProviderGroup($list);
+    }
+
+    /**
+     * Register a Castor V1 plugins repository
+     *
+     * @param string $path the path to the repository
+     * @return void
+     * @deprecated
+     */
     public function addPluginsRepository($path)
     {
         if (is_array($path)) {
@@ -106,8 +138,8 @@ class Config
         }
     }
 
-    public function getPluginsRepositories()
+    public function addPluginsProvider(PluginsProviderInterface $provider)
     {
-        return $this->pluginsRepositories;
+        $this->pluginsProviders[] = $provider;
     }
 }
