@@ -186,6 +186,10 @@ abstract class CompilerCore
         return $this->_autoescape;
     }
 
+    public function getEncoding()
+    {
+        return $this->encoding;
+    }
 
     public function addPathToInclude($path)
     {

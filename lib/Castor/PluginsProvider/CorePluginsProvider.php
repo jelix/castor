@@ -40,6 +40,7 @@ class CorePluginsProvider extends GenericPluginsProvider
         'cycle_init' => 'Jelix\Castor\Plugins\CyclePlugin',
         'cycle' => 'Jelix\Castor\Plugins\CyclePlugin',
         'cycle_reset' => 'Jelix\Castor\Plugins\CyclePlugin',
+        'const' => 'Jelix\Castor\Plugins\ConstPlugin'
     ];
 
 }

@@ -168,7 +168,7 @@ function toto() {
             ),
             array(
                 '<p>ok {const $foo}</p>',
-                '<p>ok <?php echo htmlspecialchars(constant($t->_vars[\'foo\']));?></p>',
+                '<p>ok <?php echo htmlspecialchars(constant($t->_vars[\'foo\']), ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8");?></p>',
             ),
             array(
                 '<p>ok{=$foo.($truc.$bbb)}</p>',
