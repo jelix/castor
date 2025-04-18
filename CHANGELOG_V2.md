@@ -27,6 +27,9 @@ Breaking changes
 - no more `CompilerCore::_getPlugin()` to override. This is replaced by the new plugin system
   and components implementing `PluginsProviderInterface`.
 
+- remove plugins swf, swfbiscuit, ltx2pdf
+
+
 Internal changes
 ----------------
 
