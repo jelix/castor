@@ -29,6 +29,11 @@ class CorePluginsProvider extends GenericPluginsProvider
 
     /** @var  array  key: plugin name, value : plugin class */
     protected $functionPlugins = [
-        'usemacro' => 'Jelix\Castor\Plugins\Macros\CallMacro'
+        'usemacro' => 'Jelix\Castor\Plugins\Macros\CallMacro',
+        'counter_init' => 'Jelix\Castor\Plugins\CounterPlugin',
+        'counter' => 'Jelix\Castor\Plugins\CounterPlugin',
+        'counter_reset' => 'Jelix\Castor\Plugins\CounterPlugin',
+        'counter_reset_all' => 'Jelix\Castor\Plugins\CounterPlugin',
     ];
+
 }
