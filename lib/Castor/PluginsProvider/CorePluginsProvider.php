@@ -34,6 +34,9 @@ class CorePluginsProvider extends GenericPluginsProvider
         'counter' => 'Jelix\Castor\Plugins\CounterPlugin',
         'counter_reset' => 'Jelix\Castor\Plugins\CounterPlugin',
         'counter_reset_all' => 'Jelix\Castor\Plugins\CounterPlugin',
+        'cycle_init' => 'Jelix\Castor\Plugins\CyclePlugin',
+        'cycle' => 'Jelix\Castor\Plugins\CyclePlugin',
+        'cycle_reset' => 'Jelix\Castor\Plugins\CyclePlugin',
     ];
 
 }
