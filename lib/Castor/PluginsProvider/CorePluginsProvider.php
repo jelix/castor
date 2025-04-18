@@ -12,7 +12,10 @@ class CorePluginsProvider extends GenericPluginsProvider
 {
     /** @var  array  key: plugin name, value : plugin class */
     protected $modifierPlugins = [
-
+        'count_paragraphs' => 'Jelix\Castor\Plugins\TextCountPlugin',
+        'count_sentences' => 'Jelix\Castor\Plugins\TextCountPlugin',
+        'count_words' => 'Jelix\Castor\Plugins\TextCountPlugin',
+        'count_characters' => 'Jelix\Castor\Plugins\TextCountPlugin',
     ];
 
     /** @var  array  key: plugin name, value : plugin class */

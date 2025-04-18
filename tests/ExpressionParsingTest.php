@@ -215,9 +215,9 @@ class ExpressionParsingTest extends \PHPUnit\Framework\TestCase {
         return array(
             array('$aaa|escxml', 'htmlspecialchars($t->_vars[\'aaa\'], ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8")'),
             array('$aaa|bla', 'testjtplcontentUserModifier($t->_vars[\'aaa\'])'),
-            array('$aaa|count_words', 'jtpl_modifier_common_count_words($t->_vars[\'aaa\'])'),
-            array('$aaa|count_words|number_format:2|upper', 'strtoupper(jtpl_modifier_common_number_format(jtpl_modifier_common_count_words($t->_vars[\'aaa\']),2))'),
-            array('$aaa|truncate:50|count_words|number_format:2', 'jtpl_modifier_common_number_format(jtpl_modifier_common_count_words(jtpl_modifier2_common_truncate($t, $t->_vars[\'aaa\'],50)),2)'),
+            array('$aaa|count_words', 'count(preg_grep(\'/\w/\',  preg_split(\'/\s+/\', $t->_vars[\'aaa\'])))'),
+            array('$aaa|count_words|number_format:2|upper', 'strtoupper(jtpl_modifier_common_number_format(count(preg_grep(\'/\w/\',  preg_split(\'/\s+/\', $t->_vars[\'aaa\']))),2))'),
+            array('$aaa|truncate:50|count_words|number_format:2', 'jtpl_modifier_common_number_format(count(preg_grep(\'/\w/\',  preg_split(\'/\s+/\', jtpl_modifier2_common_truncate($t, $t->_vars[\'aaa\'],50)))),2)'),
 
         );
     }
