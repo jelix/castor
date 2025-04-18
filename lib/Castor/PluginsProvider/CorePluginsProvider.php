@@ -22,11 +22,13 @@ class CorePluginsProvider extends GenericPluginsProvider
 
     /** @var  array  key: plugin name, value : plugin class */
     protected $blockPlugins = [
-
+        'ifdefinedmacro' => 'Jelix\Castor\Plugins\Macros\IfDefinedMacro',
+        'ifundefinedmacro' => 'Jelix\Castor\Plugins\Macros\IfDefinedMacro',
+        'macro' => 'Jelix\Castor\Plugins\Macros\DefineMacro'
     ];
 
     /** @var  array  key: plugin name, value : plugin class */
     protected $functionPlugins = [
-
+        'usemacro' => 'Jelix\Castor\Plugins\Macros\CallMacro'
     ];
 }

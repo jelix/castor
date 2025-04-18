@@ -309,21 +309,21 @@ function toto() {
         return array(
             1 => array(
                 '{macro \'foo\'}<p>ok</p>{/macro}',
-                '<?php $t->declareMacro(\'foo\', array(),  function($t) {' . "\n" .
+                '<?php $t->declareMacro(\'foo\', array(),  function($engine, $t) {' . "\n" .
                 '?><p>ok</p><?php ' . "\n});\n?>"
             ),
             2 => array(
                 '{macro \'foo\', $arg1, $arg2}<p>ok {$arg1}</p>{/macro}',
-                '<?php $t->declareMacro(\'foo\', array(\'arg1\',\'arg2\'),  function($t) {' . "\n" .
+                '<?php $t->declareMacro(\'foo\', array(\'arg1\',\'arg2\'),  function($engine, $t) {' . "\n" .
                 '?><p>ok <?php echo $t->_vars[\'arg1\']; ?></p><?php ' . "\n});\n?>"
             ),
             3 => array(
                 '{usemacro \'foo\'}',
-                '<?php jtpl_function_common_usemacro( $t,\'foo\');?>'
+                '<?php $t->callMacro($engine, \'foo\', []);?>'
             ),
             4 => array(
                 '{usemacro \'foo\', $arg1, $arg2 }',
-                '<?php jtpl_function_common_usemacro( $t,\'foo\', $t->_vars[\'arg1\'], $t->_vars[\'arg2\'] );?>'
+                '<?php $t->callMacro($engine, \'foo\', [ $t->_vars[\'arg1\'], $t->_vars[\'arg2\'] ]);?>'
             ),
         );
     }

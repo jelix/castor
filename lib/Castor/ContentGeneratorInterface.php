@@ -12,7 +12,7 @@ namespace Jelix\Castor;
 
 interface ContentGeneratorInterface
 {
-    public function meta(CastorCore $castor, RuntimeContainer $t);
+    public function meta(CastorCore $engine, RuntimeContainer $t);
 
-    public function content(CastorCore $castor, RuntimeContainer $t);
+    public function content(CastorCore $engine, RuntimeContainer $t);
 }

@@ -204,10 +204,10 @@ abstract class CompilerCore
             $header .= ' require_once(\''.$path."');\n";
         }
         $header .= 'class template_'.$md5.' implements \\Jelix\\Castor\\ContentGeneratorInterface {'."\n";
-        $header .= ' public function meta(\\Jelix\\Castor\\CastorCore $castor, \\Jelix\\Castor\\RuntimeContainer $t) {';
+        $header .= ' public function meta(\\Jelix\\Castor\\CastorCore $engine, \\Jelix\\Castor\\RuntimeContainer $t) {';
         $header .= "\n".$this->_metaBody."\n}\n";
 
-        $header .= 'public function content(\\Jelix\\Castor\\CastorCore $castor, \\Jelix\\Castor\\RuntimeContainer $t) {'."\n?>";
+        $header .= 'public function content(\\Jelix\\Castor\\CastorCore $engine, \\Jelix\\Castor\\RuntimeContainer $t) {'."\n?>";
         return new CompilationResult(
             'template_'.$md5,
             $header.$result."<?php \n}\n}\n".$footer
