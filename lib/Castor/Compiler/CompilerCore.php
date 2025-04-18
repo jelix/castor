@@ -444,6 +444,12 @@ abstract class CompilerCore
                 $this->enterBlock('for');
                 break;
 
+            case 'break':
+                $res= ' break;';
+                break;
+            case 'continue':
+                $res= ' continue;';
+                break;
             case '/foreach':
             case '/for':
             case '/if':

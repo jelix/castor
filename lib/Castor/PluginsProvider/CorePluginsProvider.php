@@ -27,7 +27,9 @@ class CorePluginsProvider extends GenericPluginsProvider
     protected $blockPlugins = [
         'ifdefinedmacro' => 'Jelix\Castor\Plugins\Macros\IfDefinedMacro',
         'ifundefinedmacro' => 'Jelix\Castor\Plugins\Macros\IfDefinedMacro',
-        'macro' => 'Jelix\Castor\Plugins\Macros\DefineMacro'
+        'macro' => 'Jelix\Castor\Plugins\Macros\DefineMacro',
+        'stripws' => 'Jelix\Castor\Plugins\StripWhitespacePlugin',
+        'jscompress' => 'Jelix\Castor\Plugins\JsCompressPlugin',
     ];
 
     /** @var  array  key: plugin name, value : plugin class */
@@ -40,7 +42,8 @@ class CorePluginsProvider extends GenericPluginsProvider
         'cycle_init' => 'Jelix\Castor\Plugins\CyclePlugin',
         'cycle' => 'Jelix\Castor\Plugins\CyclePlugin',
         'cycle_reset' => 'Jelix\Castor\Plugins\CyclePlugin',
-        'const' => 'Jelix\Castor\Plugins\ConstPlugin'
+        'const' => 'Jelix\Castor\Plugins\ConstPlugin',
+        'include' => 'Jelix\Castor\Plugins\IncludePlugin',
     ];
 
 }
