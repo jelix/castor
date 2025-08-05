@@ -152,7 +152,7 @@ then you can generate the content into a string.
 A simple example :
 
 ```php
-$template = ' hello 
+$template = '{! output-type = text !} hello 
  		{$value} 
  		world 
  		{for $i=1;$i<=5;$i++} 
@@ -182,7 +182,7 @@ You can have template that contain HTML, or other containing raw text, or XML.
 
 By default, Castor assumes that the template is an html template.
 
-It's important to indicate what type of content it is, so Castor can use plugins that targets
+It's important to indicate what type of content it is, so Castor can use plugins that target
 this content type specifically. Some plugins may be available only for some content type.
 
 You should indicate the content type into the template by setting the `output-type`

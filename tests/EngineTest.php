@@ -17,6 +17,20 @@ class EngineTest extends \PHPUnit\Framework\TestCase {
         $templatePath = __DIR__.'/';
         self::$castorConfig = new \Jelix\Castor\Config($cachePath, $templatePath);
         self::$castorConfig->addPluginsRepository(__DIR__.'/plugins');
+        $this->clearDir($cachePath);
+    }
+
+    protected function clearDir($path) {
+        $dir = new DirectoryIterator($path);
+        foreach ($dir as $dirContent) {
+            if ($dirContent->isFile() || $dirContent->isLink()) {
+                if ($dirContent->getBasename() != '.dummy') {
+                    unlink($dirContent->getPathName());
+                }
+            }
+        }
+        unset($dir);
+        unset($dirContent);
     }
 
     function testCountries() {
@@ -74,5 +88,4 @@ class EngineTest extends \PHPUnit\Framework\TestCase {
         $result = $tpl->fetch('assets/content_text.tpl');
         $this->assertEquals(file_get_contents(__DIR__.'/assets/content_text.txt'), $result);
     }
-
 }

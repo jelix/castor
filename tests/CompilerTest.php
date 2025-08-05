@@ -353,7 +353,7 @@ function toto() {
             3 => array('{for ($i=0;$i<$p;$i++} A {/for}',
                 'Dans le tag for ($i=0;$i<$p;$i++ du template , il y a des erreurs au niveau des parenthèses'),
             5 => array('{($aaa)}',
-                'Dans le template  La syntaxe de balise ($aaa) est invalide'),
+                'Dans le template , la syntaxe de balise ($aaa) est invalide'),
         );
     }
 
