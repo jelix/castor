@@ -4,6 +4,14 @@ Changelog
 next
 -----
 
+
+1.2.0
+-----
+
+- New way to indicate the output type. You can indicate the output type directly into the template with a pragma
+  instruction: `{! output-type = text !}`. It overrides the `$outputType` parameter given to Castor.
+- The `$outputType` parameter of methods `Castor::fetch()`, `Castor::display()`, `Castor::meta()`, `CastorCore::getTemplate()`, `Compiler::compile()`, is deprecated.
+
 1.1.5
 -----
 

@@ -140,6 +140,7 @@ abstract class CompilerCore
 
     protected $removeASPtags = true;
 
+    protected $generatedContentStarted = false;
     /**
      * Initialize some properties.
      */
@@ -181,6 +182,7 @@ abstract class CompilerCore
 
     public function compileString($templateContent, $cacheFile, $userModifiers, $userFunctions, $md5, $header = '', $footer = '')
     {
+        $this->generatedContentStarted = false;
         $this->_modifier = array_merge($this->_modifier, $userModifiers);
         $this->_userFunctions = $userFunctions;
 
@@ -214,6 +216,7 @@ abstract class CompilerCore
         $tplContent = preg_replace("!{\*(.*?)\*}!s", '', $tplContent);
         $tplContent = preg_replace("!{#(.*?)#}!s", '', $tplContent);
 
+        // output content `<? ... ? >` as is...
         $tplContent = preg_replace_callback("!(<\?.*\?>)!sm", function ($matches) {
             return '<?php echo \''.str_replace("'", "\\'", $matches[1]).'\'?>';
         }, $tplContent);
@@ -223,14 +226,17 @@ abstract class CompilerCore
           $tplContent = preg_replace('!<%.*%>!s', '', $tplContent);
         }
 
+        // replace literal content by a specific tag, that will be replaced by original content
         preg_match_all('!{literal}(.*?){/literal}!s', $tplContent, $_match);
         $this->_literals = $_match[1];
         $tplContent = preg_replace('!{literal}(.*?){/literal}!s', '{literal}', $tplContent);
 
+        // replace verbatim content (which is equivalent to literal) by a specific tag, that will be replaced by original content
         preg_match_all('!{verbatim}(.*?){/verbatim}!s', $tplContent, $_match);
         $this->_verbatims = $_match[1];
         $tplContent = preg_replace('!{verbatim}(.*?){/verbatim}!s', '{verbatim}', $tplContent);
 
+        // remove \n after all tags except for variable output instructions
         $tplContent = preg_replace_callback("/{((.).*?)}(\n)/sm", function ($matches) {
                 list($full, , $firstCar, $lastcar) = $matches;
                 if ($firstCar == '=' || $firstCar == '$' || $firstCar == '@') {
@@ -239,8 +245,11 @@ abstract class CompilerCore
                     return $full;
                 }
             }, $tplContent);
+
+        // process every template instruction
         $tplContent = preg_replace_callback('/{((.).*?)}/sm', array($this, '_callback'), $tplContent);
 
+        // remove empty php tags
         $tplContent = preg_replace('/<\?php\\s+\?>/', '', $tplContent);
 
         if (count($this->_blockStack)) {
@@ -269,12 +278,15 @@ abstract class CompilerCore
 
         $this->_currentTag = $tag;
         if ($firstcar == '=') {
+            $this->generatedContentStarted = true;
             return  '<?php echo '.$this->_parseVariable(substr($tag, 1)).'; ?>';
         } elseif ($firstcar == '$' || $firstcar == '@') {
+            $this->generatedContentStarted = true;
             return '<?php echo ' . $this->_parseVariable($tag) . '; ?>';
         } elseif ($firstcar == '!') {
             return $this->_parsePragma($tag);
         } else {
+            $this->generatedContentStarted = true;
             if (!preg_match('/^(\/?[a-zA-Z0-9_]+)(?:(?:\s+(.*))|(?:\((.*)\)))?$/ms', $tag, $m)) {
                 $this->doError1('errors.tpl.tag.function.invalid', $tag);
             }
@@ -561,21 +573,35 @@ abstract class CompilerCore
      */
     protected function _parsePragma($expr)
     {
-        if (!preg_match('/^\!\s*([a-z0-9_]+)\s*(?:=\s*([a-z0-9_]+)\s*)?\!$/', $expr, $m)) {
+        if (!preg_match('/^\!\s*([a-z0-9_\-]+)\s*(?:=\s*([a-z0-9_]+)\s*)?\!$/', $expr, $m)) {
             $this->doError1('errors.tpl.tag.syntax.invalid', '{'.$expr.'}');
         }
-
-        switch($m[1]) {
+        $parameter = $m[1];
+        $value = $m[2] ?? null;
+        switch($parameter) {
             case 'autoescape':
-                if (isset($m[2])) {
-                    $this->_autoescape = in_array(strtolower($m[2]), array('true', 'on', '1'));
+                if ($value !== null) {
+                    $this->_autoescape = in_array(strtolower($value), array('true', 'on', '1'));
                 }
                 else {
                     $this->_autoescape = true;
                 }
-                return '';
+                break;
+            case 'output-type':
+                if ($this->generatedContentStarted) {
+                    $this->doError1('errors.tpl.tag.pragma.too.late', '{'.$expr.'}');
+                }
+                if ($value !== null) {
+                    $this->outputType = $value;
+                }
+                else {
+                    $this->doError1('errors.tpl.tag.pragma.missing.value', '{'.$expr.'}');
+                }
+                break;
+            default:
+                $this->doError1('errors.tpl.tag.pragma.unknown', '{'.$expr.'}');
         }
-        $this->doError1('errors.tpl.tag.pragma.unknown', '{'.$expr.'}');
+        return '';
     }
 
     /**

@@ -173,7 +173,7 @@ abstract class CastorCore
      * process all meta instruction of a template.
      *
      * @param string $tpl        template selector
-     * @param string $outputType the type of output (html, text etc..)
+     * @param string $outputType the type of output (html, text etc..) (deprecated)
      * @param bool   $trusted    says if the template file is trusted or not
      */
     public function meta($tpl, $outputType = '', $trusted = true)
@@ -197,7 +197,7 @@ abstract class CastorCore
      * display the generated content from the given template.
      *
      * @param string $tpl        template selector
-     * @param string $outputType the type of output (html, text etc..)
+     * @param string $outputType the type of output (html, text etc..) (deprecated)
      * @param bool   $trusted    says if the template file is trusted or not
      */
     public function display($tpl, $outputType = '', $trusted = true)
@@ -237,7 +237,7 @@ abstract class CastorCore
      * include the compiled template file and call one of the generated function.
      *
      * @param string $tpl        template selector
-     * @param string $outputType the type of output (html, text etc..)
+     * @param string $outputType the type of output (html, text etc..) (deprecated)
      * @param bool   $trusted    says if the template file is trusted or not
      *
      * @return string the suffix name of the function to call
@@ -248,7 +248,7 @@ abstract class CastorCore
      * return the generated content from the given template.
      *
      * @param string $tpl        template selector
-     * @param string $outputType the type of output (html, text etc..)
+     * @param string $outputType the type of output (html, text etc..) (deprecated)
      * @param bool   $trusted    says if the template file is trusted or not
      * @param bool   $callMeta   false if meta should not be called
      *
@@ -259,7 +259,7 @@ abstract class CastorCore
     /**
      * @param string $tpl        the template name
      * @param string $getTemplateArg
-     * @param string $outputType the type of output (html, text etc..)
+     * @param string $outputType the type of output (html, text etc..) (deprecated)
      * @param bool   $trusted    says if the template file is trusted or not
      * @param bool   $callMeta   false if meta should not be called
      *
@@ -303,7 +303,7 @@ abstract class CastorCore
      * Return the generated content from the given string template (virtual).
      *
      * @param string $tpl        template content
-     * @param string $outputType the type of output (html, text etc..)
+     * @param string $outputType the type of output (html, text etc..) (deprecated)
      * @param bool   $trusted    says if the template file is trusted or not
      * @param bool   $callMeta   false if meta should not be called
      *

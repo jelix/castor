@@ -29,8 +29,8 @@ You can write an instruction on several lines:
 ```
 
 
-If you want to include curly braces in your template, outside of a Castor instruction, you
-can use `{ldelim}` for "{", or `{rdelim}` for "}".
+If you want to include curly braces in your template, outside a Castor instruction, you
+can use `{ldelim}` for `{`, or `{rdelim}` for `}`.
 
 If you have a block with several curly braces, like in a piece of code of javascript, you
 can use `{literal}` instead of `{ldelim}` or `{rdelim}`.
@@ -54,7 +54,14 @@ content.
    {# this is an other comment #}
 ```
 
+## Pragma parameters
 
+These are parameters for the compiler. They are indicated between `{!` and `!}`.
+
+Supported parameters:
+
+- `{! autoescape !}`, to escape automatically strings. See below the "escaping content" section.
+- `{! output-type = <type> !}` to indicate the content type of the template (since 1.2.0). Replace `<type>` by `html`, `text`, `xml` or whatever. BY default, type is html.
 
 ## Expressions
 

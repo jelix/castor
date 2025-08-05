@@ -37,7 +37,7 @@ class Castor extends CastorCore
      * include the compiled template file and call one of the generated function.
      *
      * @param string $tpl        template selector
-     * @param string $outputType the type of output (html, text etc..)
+     * @param string $outputType the type of output (html, text etc..) (deprecated)
      * @param bool   $trusted    says if the template file is trusted or not
      *
      * @return string the suffix name of the function to call
@@ -79,6 +79,14 @@ class Castor extends CastorCore
         return md5($tpl.'_' . $outputType . ($trusted ? '_t' : ''));
     }
 
+    /**
+     * @param string $tpl template selector
+     * @param string $outputType the type of output (html, text etc..) (deprecated)
+     * @param bool $trusted says if the template file is trusted or not
+     * @param bool $callMeta
+     * @return false|string
+     * @throws \Exception
+     */
     public function fetch($tpl, $outputType = '', $trusted = true, $callMeta = true)
     {
         return $this->_fetch($tpl, $tpl, $outputType, $trusted, $callMeta);
