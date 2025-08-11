@@ -374,7 +374,7 @@ abstract class CompilerCore
     }
 
     /**
-     * analyse the tag which have a name.
+     * analyse the tag that have a name.
      *
      * @param string $name the name of the tag
      * @param string $args the content that follow the name in the tag
@@ -596,6 +596,23 @@ abstract class CompilerCore
                 }
                 else {
                     $this->doError1('errors.tpl.tag.pragma.missing.value', '{'.$expr.'}');
+                }
+                break;
+            case 'trusted':
+                if ($this->generatedContentStarted) {
+                    $this->doError1('errors.tpl.tag.pragma.too.late', '{'.$expr.'}');
+                }
+                if ($value !== null) {
+                    // "trusted" value given to the api has priority over the pragma instruction, because of potential
+                    // security issue. In case of untrusted template, we cannot trust the pragma instruction.
+                    // So if the API indicates an untrusted template, we should ignore the pragma instruction, else
+                    // this instruction may set "trusted" as true whereas the template must be considered as untrusted.
+                    if ($this->trusted === true) {
+                        $this->trusted = in_array(strtolower($value), array('true', 'on', '1'));
+                    }
+                }
+                else {
+                    $this->trusted = true;
                 }
                 break;
             default:

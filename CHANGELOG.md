@@ -10,6 +10,8 @@ next
 
 - New way to indicate the output type. You can indicate the output type directly into the template with a pragma
   instruction: `{! output-type = text !}`. It overrides the `$outputType` parameter given to Castor.
+- New way to indicate the level of trust: support of the pragma instruction `{! trusted = false !}` in templates.
+  However, the `$trusted` parameter has priority over the value of this instruction to avoid security issues.
 - The `$outputType` parameter of methods `Castor::fetch()`, `Castor::display()`, `Castor::meta()`, `CastorCore::getTemplate()`, `Compiler::compile()`, is deprecated.
 
 1.1.5
