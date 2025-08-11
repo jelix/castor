@@ -5,7 +5,7 @@
  * @contributor Laurent Jouanneau
  *
  * @copyright   2006 Loic Mathaud
- * @copyright   2006-2020 Laurent Jouanneau
+ * @copyright   2006-2025 Laurent Jouanneau
  *
  * @link        http://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
@@ -59,7 +59,17 @@ class Castor extends CastorCore
             throw new Exception('cache path is invalid ! its value is: "'.$this->config->cachePath.'".');
         }
 
-        $cachefile = $this->config->cachePath.$cachefile . $outputType . ($trusted ? '_t' : '') . '_' . basename($tpl);
+        if ($outputType == 'html') {
+            // no prefix for default outputType and trust level.
+            // outputType and trust level may be defined with pragma instruction
+            // so the prefix may not correspond to the real output / trust level
+            $prefixFileName = ($trusted ? '' : 'nt_');
+        }
+        else {
+            $prefixFileName = $outputType.($trusted ? '' : '_nt').'_';
+        }
+
+        $cachefile = $this->config->cachePath.$cachefile . $prefixFileName . basename($tpl);
 
         $mustCompile = $this->config->compilationForce || !file_exists($cachefile);
         if (!$mustCompile) {
@@ -76,7 +86,7 @@ class Castor extends CastorCore
         }
         require_once $cachefile;
 
-        return md5($tpl.'_' . $outputType . ($trusted ? '_t' : ''));
+        return md5($prefixFileName.$tpl);
     }
 
     /**

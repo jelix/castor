@@ -4,7 +4,7 @@
  * @author      Laurent Jouanneau
  * @contributor Dominique Papin
  *
- * @copyright   2005-2022 Laurent Jouanneau, 2007 Dominique Papin
+ * @copyright   2005-2025 Laurent Jouanneau, 2007 Dominique Papin
  *
  * @link        http://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
@@ -302,28 +302,37 @@ abstract class CastorCore
     /**
      * Return the generated content from the given string template (virtual).
      *
-     * @param string $tpl        template content
+     * @param string $templateContent        template content
      * @param string $outputType the type of output (html, text etc..) (deprecated)
      * @param bool   $trusted    says if the template file is trusted or not
      * @param bool   $callMeta   false if meta should not be called
      *
      * @return string the generated content
      */
-    public function fetchFromString($tpl, $outputType = '', $trusted = true, $callMeta = true)
+    public function fetchFromString($templateContent, $outputType = '', $trusted = true, $callMeta = true)
     {
         ob_start();
         try {
-            $cachePath = $this->getCachePath().'virtual/';
-
             $previousTpl = $this->_templateName;
-            $md = 'virtual_'.md5($tpl).($trusted ? '_t' : '');
-            $this->_templateName = $md;
 
             if ($outputType == '') {
                 $outputType = 'html';
             }
 
-            $cachePath .= $outputType . '_' . $this->_templateName . '.php';
+            if ($outputType == 'html') {
+                // no prefix for default outputType and trust level.
+                // outputType and trust level may be defined with pragma instruction
+                // so the prefix may not correspond to the real output / trust level
+                $prefixFileName = ($trusted ? '' : 'nt_');
+            }
+            else {
+                $prefixFileName = $outputType.($trusted ? '' : '_nt').'_';
+            }
+
+            $md = 'virtual_'.md5($prefixFileName.$templateContent);
+            $this->_templateName = $md;
+            $cachePath = $this->getCachePath().'virtual/';
+            $cachePath .= $prefixFileName . $this->_templateName . '.php';
 
             $mustCompile = $this->compilationNeeded($cachePath);
 
@@ -331,7 +340,7 @@ abstract class CastorCore
                 $compiler = $this->getCompiler();
                 $compiler->outputType = $outputType;
                 $compiler->trusted = $trusted;
-                $compiler->compileString($tpl,
+                $compiler->compileString($templateContent,
                                          $cachePath,
                                          $this->userModifiers,
                                          $this->userFunctions,
