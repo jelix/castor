@@ -188,6 +188,7 @@ abstract class CompilerCore
         return $this->_autoescape;
     }
 
+
     public function getEncoding()
     {
         return $this->encoding;
@@ -198,7 +199,40 @@ abstract class CompilerCore
         $this->_pluginPath[$path] = true;
     }
 
-    public function compileString($templateContent, $userModifiers, $userFunctions, $md5, $header = '', $footer = '')
+    /**
+     * Compile a template and save the result into the given file
+     *
+     * @param string  $templateContent  the template content
+     * @param array   $userModifiers    list of modifiers to declare (deprecated)
+     * @param array   $userFunctions    list of template function to declare (deprecated)
+     * @param string  $uniqIdentifier   identifier of the template. Used as suffix of generated PHP functions
+     * @param string  $header           PHP content to add as header of the generated template
+     * @param string  $footer           PHP content to add as footer of the generated template
+     *
+     * @return CompilationResult
+     */
+    public function compileString($templateContent, $userModifiers, $userFunctions, $uniqIdentifier, $header = '', $footer = '')
+    {
+
+        $result = $this->_compileString($templateContent, $userModifiers, $userFunctions, $uniqIdentifier);
+
+        return new CompilationResult(
+            $result->getClassName(),
+            "<?php\n".$header.$result->getTemplateClassSource().$footer
+        );
+    }
+
+    /**
+     * Compile a template: generate the full PHP code
+     *
+     * @param string  $templateContent  the template content
+     * @param array   $userModifiers    list of modifiers to declare (deprecated)
+     * @param array   $userFunctions    list of template function to declare (deprecated)
+     * @param string  $uniqIdentifier   identifier of the template. Used as suffix of generated PHP functions
+     *
+     * @return CompilationResult the PHP code of the template, without php start tag and php end tag
+     */
+    protected function _compileString($templateContent, $userModifiers, $userFunctions, $uniqIdentifier)
     {
         $this->generatedContentStarted = false;
         $this->_modifier = array_merge($this->_modifier, $userModifiers);
@@ -206,18 +240,18 @@ abstract class CompilerCore
 
         $result = $this->compileContent($templateContent);
 
-        $header = "<?php \n".$header;
+        $header = '';
         foreach ($this->_pluginPath as $path => $ok) {
             $header .= ' require_once(\''.$path."');\n";
         }
-        $header .= 'class template_'.$md5.' implements \\Jelix\\Castor\\ContentGeneratorInterface {'."\n";
+        $header .= 'class template_'.$uniqIdentifier.' implements \\Jelix\\Castor\\ContentGeneratorInterface {'."\n";
         $header .= ' public function meta(\\Jelix\\Castor\\CastorCore $engine, \\Jelix\\Castor\\RuntimeContainer $t) {';
         $header .= "\n".$this->_metaBody."\n}\n";
 
         $header .= 'public function content(\\Jelix\\Castor\\CastorCore $engine, \\Jelix\\Castor\\RuntimeContainer $t) {'."\n?>";
         return new CompilationResult(
-            'template_'.$md5,
-            $header.$result."<?php \n}\n}\n".$footer
+            'template_'.$uniqIdentifier,
+            $header.$result."<?php \n}\n}\n"
         );
     }
 
