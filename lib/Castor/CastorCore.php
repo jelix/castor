@@ -391,7 +391,7 @@ abstract class CastorCore
      * register a user function. The function should accept at least a CastorCore object
      * as first parameter.
      *
-     * @param string $name         the name of the modifier in a template
+     * @param string $name         the name of the function in a template
      * @param string $functionName the corresponding PHP function
      */
     public function registerFunction($name, $functionName)

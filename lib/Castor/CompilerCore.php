@@ -179,8 +179,43 @@ abstract class CompilerCore
         return $this->_autoescape;
     }
 
+    /**
+     * Compile a template and save the result into the given file
+     *
+     * @param string  $templateContent  the template content
+     * @param string  $cacheFile        the filename where to store the result
+     * @param array   $userModifiers    list of modifiers to declare (deprecated)
+     * @param array   $userFunctions    list of template function to declare (deprecated)
+     * @param string  $uniqIdentifier   identifier of the template. Used as suffix of generated PHP functions
+     * @param string  $header           PHP content to add as header of the generated template
+     * @param string  $footer           PHP content to add as footer of the generated template
+     */
+    public function compileString($templateContent, $cacheFile, $userModifiers, $userFunctions, $uniqIdentifier, $header = '', $footer = '')
+    {
 
-    public function compileString($templateContent, $cacheFile, $userModifiers, $userFunctions, $md5, $header = '', $footer = '')
+        $result = $this->_compileString($templateContent, $userModifiers, $userFunctions, $uniqIdentifier);
+
+        $result = "<?php\n".$header.$result.$footer;
+
+        $this->_saveCompiledString($cacheFile, $result);
+
+        return true;
+    }
+
+    /**
+     * Compile a template: generate the full PHP code
+     *
+     * @param string  $templateContent  the template content
+     * @param string  $cacheFile        the filename where to store the result
+     * @param array   $userModifiers    list of modifiers to declare (deprecated)
+     * @param array   $userFunctions    list of template function to declare (deprecated)
+     * @param string  $uniqIdentifier   identifier of the template. Used as suffix of generated PHP functions
+     * @param string  $header           PHP content to add as header of the generated template
+     * @param string  $footer           PHP content to add as footer of the generated template
+     *
+     * @return string the PHP code of the template, without php start tag and php end tag
+     */
+    protected function _compileString($templateContent, $userModifiers, $userFunctions, $md5)
     {
         $this->generatedContentStarted = false;
         $this->_modifier = array_merge($this->_modifier, $userModifiers);
@@ -188,7 +223,7 @@ abstract class CompilerCore
 
         $result = $this->compileContent($templateContent);
 
-        $header = "<?php \n".$header;
+        $header = '';
         foreach ($this->_pluginPath as $path => $ok) {
             $header .= ' require_once(\''.$path."');\n";
         }
@@ -196,11 +231,9 @@ abstract class CompilerCore
         $header .= "\n".$this->_metaBody."\n}\n";
 
         $header .= 'function template_'.$md5.'($t){'."\n?>";
-        $result = $header.$result."<?php \n}\n".$footer;
+        $result = $header.$result."<?php \n}\n";
 
-        $this->_saveCompiledString($cacheFile, $result);
-
-        return true;
+        return $result;
     }
 
     abstract protected function _saveCompiledString($cacheFile, $result);
