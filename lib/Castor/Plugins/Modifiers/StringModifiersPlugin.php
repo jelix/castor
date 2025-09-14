@@ -163,6 +163,14 @@ class StringModifiersPlugin implements ModifierPluginInterface
              */
             case 'nl2br':
                 return 'nl2br('.$compiledExpression.')';
+
+            /**
+             * format strings via sprintf.
+             *
+             *  <pre>{$mytext|sprintf:'my format %s'}</pre>
+             */
+            case 'sprintf':
+                return 'sprintf('.$compiledModifierArgs[0].', '.$compiledExpression.')';
         }
         return '';
     }

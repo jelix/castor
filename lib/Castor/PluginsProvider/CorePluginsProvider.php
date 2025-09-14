@@ -26,10 +26,13 @@ class CorePluginsProvider extends GenericPluginsProvider
         'regex_replace' => 'Jelix\Castor\Plugins\Modifiers\StringModifiersPlugin',
         'truncatehtml' => 'Jelix\Castor\Plugins\Modifiers\StringModifiersPlugin',
         'nl2br' => 'Jelix\Castor\Plugins\Modifiers\StringModifiersPlugin',
+        'sprintf' => 'Jelix\Castor\Plugins\Modifiers\StringModifiersPlugin',
         'implode' => 'Jelix\Castor\Plugins\Modifiers\ArrayModifiersPlugin',
         'count_array' => 'Jelix\Castor\Plugins\Modifiers\ArrayModifiersPlugin',
         'round' => 'Jelix\Castor\Plugins\Modifiers\NumberModifiersPlugin',
         'number_format' => 'Jelix\Castor\Plugins\Modifiers\NumberModifiersPlugin',
+        'datetime' => 'Jelix\Castor\Plugins\Modifiers\DateModifiersPlugin',
+        'json_decode' => 'Jelix\Castor\Plugins\Modifiers\JsonDecodeModifierPlugin',
     ];
 
     /** @var  array  key: plugin name, value : plugin class */
