@@ -216,8 +216,8 @@ class ExpressionParsingTest extends \PHPUnit\Framework\TestCase {
             array('$aaa|escxml', 'htmlspecialchars($t->_vars[\'aaa\'], ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8")'),
             array('$aaa|bla', 'testjtplcontentUserModifier($t->_vars[\'aaa\'])'),
             array('$aaa|count_words', 'count(preg_grep(\'/\w/\',  preg_split(\'/\s+/\', $t->_vars[\'aaa\'])))'),
-            array('$aaa|count_words|number_format:2|upper', 'strtoupper(jtpl_modifier_common_number_format(count(preg_grep(\'/\w/\',  preg_split(\'/\s+/\', $t->_vars[\'aaa\']))),2))'),
-            array('$aaa|truncate:50|count_words|number_format:2', 'jtpl_modifier_common_number_format(count(preg_grep(\'/\w/\',  preg_split(\'/\s+/\', Jelix\Castor\Plugins\Modifiers\StringModifiersPlugin::truncateModifier($t->_vars[\'aaa\'],\'UTF-8\',50)))),2)'),
+            array('$aaa|count_words|number_format:2|upper', 'strtoupper(Jelix\Castor\Plugins\Modifiers\NumberModifiersPlugin::numberFormatModifier(count(preg_grep(\'/\w/\',  preg_split(\'/\s+/\', $t->_vars[\'aaa\']))),2))'),
+            array('$aaa|truncate:50|count_words|number_format:2', 'Jelix\Castor\Plugins\Modifiers\NumberModifiersPlugin::numberFormatModifier(count(preg_grep(\'/\w/\',  preg_split(\'/\s+/\', Jelix\Castor\Plugins\Modifiers\StringModifiersPlugin::truncateModifier($t->_vars[\'aaa\'],\'UTF-8\',50)))),2)'),
 
         );
     }

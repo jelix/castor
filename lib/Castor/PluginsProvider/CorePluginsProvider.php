@@ -28,6 +28,8 @@ class CorePluginsProvider extends GenericPluginsProvider
         'nl2br' => 'Jelix\Castor\Plugins\Modifiers\StringModifiersPlugin',
         'implode' => 'Jelix\Castor\Plugins\Modifiers\ArrayModifiersPlugin',
         'count_array' => 'Jelix\Castor\Plugins\Modifiers\ArrayModifiersPlugin',
+        'round' => 'Jelix\Castor\Plugins\Modifiers\NumberModifiersPlugin',
+        'number_format' => 'Jelix\Castor\Plugins\Modifiers\NumberModifiersPlugin',
     ];
 
     /** @var  array  key: plugin name, value : plugin class */
