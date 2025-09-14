@@ -1,13 +1,13 @@
 <?php
 /**
 * @author      Laurent Jouanneau
-* @copyright   2015-2022 Laurent Jouanneau
+* @copyright   2025 Laurent Jouanneau
 * @link        http://www.jelix.org
 * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
 */
 
 
-class CastorTest extends \PHPUnit\Framework\TestCase {
+class CastorTestSyntax2 extends \PHPUnit\Framework\TestCase {
 
     protected static $castorConfig;
 
@@ -34,7 +34,6 @@ class CastorTest extends \PHPUnit\Framework\TestCase {
 
     function testCountries() {
         $tpl = new \Jelix\Castor\Castor(self::$castorConfig);
-        
         $tpl->assign('countries', array());
         $tpl->assign('titre', 'This is a test !');
         $result = $tpl->fetch('assets/countries.tpl');

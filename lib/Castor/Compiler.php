@@ -5,7 +5,7 @@
  * @contributor Laurent Jouanneau
  *
  * @copyright   2006 Loic Mathaud
- * @copyright   2006-2020 Laurent Jouanneau
+ * @copyright   2006-2025 Laurent Jouanneau
  *
  * @link        http://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
@@ -44,9 +44,20 @@ class Compiler extends CompilerCore
     {
         $this->_sourceFile = $tplFile;
         $this->outputType = $outputType;
-        $cacheFile = $this->config->cachePath.dirname($tplName).'/'.$this->outputType.($trusted ? '_t' : '').'_'.basename($tplName);
+
+        if ($outputType == 'html') {
+            // no prefix for default outputType and trust level.
+            // outputType and trust level may be defined with pragma instruction
+            // so the prefix may not correspond to the real output / trust level
+            $prefixFileName = ($trusted ? '' : 'nt_');
+        }
+        else {
+            $prefixFileName = $outputType.($trusted ? '' : '_nt').'_';
+        }
+
+        $cacheFile = $this->config->cachePath.dirname($tplName).'/'.$prefixFileName.basename($tplName).'.php';
         $this->trusted = $trusted;
-        $md5 = md5($tplFile.'_'.$this->outputType.($this->trusted ? '_t' : ''));
+        $md5 = md5($prefixFileName.$tplFile);
 
         if (!file_exists($this->_sourceFile)) {
             $this->doError0('errors.tpl.not.found');

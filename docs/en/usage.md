@@ -41,7 +41,7 @@ The `Castor` object is meant to generate the content specified in a template
 file. This content contains tags and instructions that processes data you give
 to `Castor`.
 
-After writing a template file (see templates.md), you can call `Castor` to generate the result.
+After writing a template file (see [templates.md]), you can call `Castor` to generate the result.
 
 ```php
    $tpl = new \Jelix\Castor\Castor($config);
@@ -142,7 +142,7 @@ then you can generate the content into a string.
 A simple example :
 
 ```php
-$template = ' hello 
+$template = '{! output-type = text !} hello 
  		{$value} 
  		world 
  		{for $i=1;$i<=5;$i++} 
@@ -150,7 +150,7 @@ $template = ' hello
  		{/for}';
 $tpl = new \Jelix\Castor\Castor($config);
 $tpl->assign('value', 'test'); 
-$content = $tpl->fetchFromString($template, 'text');
+$content = $tpl->fetchFromString($template);
 ```
 
 `$content` will be:
@@ -172,10 +172,20 @@ You can have template that contain HTML, or other containing raw text, or XML.
 
 By default, Castor assumes that the template is an html template.
 
-It's important to indicate what type of content it is, so Castor can use plugins that targets
+It's important to indicate what type of content it is, so Castor can use plugins that target
 this content type specifically. Some plugins may be available only for some content type.
 
-If the content type is not 'html', indicates the type at second parameters to `fetch()`,
+If the content type is not 'html', indicates the type into the template with the pragma instruction `output-type`.
+
+Example in a template that generate simple text:
+
+```
+`{! output-type = text !}`
+
+here is a content.
+```
+
+Another (deprecated) way is to give the content type to at second parameters to `fetch()`,
 `display()` or `fetchFromString()`.
 
 
@@ -184,7 +194,7 @@ If the content type is not 'html', indicates the type at second parameters to `f
 ```
 
 Note that you can create your own type. You just have to give your
-content type to `fetch()`, `display()` or `fetchFromString()`, and creating some plugins
+content type into the template or to `fetch()`, `display()` or `fetchFromString()`, and creating some plugins
 for this content (if "common" plugins are not enough).
 
 
@@ -202,7 +212,7 @@ To indicate to enforce the security in this case, give `false` as third paramete
 `fetch`, `display` or `fetchFromString`.
 
 ```php
-  $content = $tpl->fetch('mytemplate.tpl', 'html', false);
+  $content = $tpl->fetch('mytemplate.tpl', '', false);
 ```
 
 Among of thing you cannot do in trusted templates:
