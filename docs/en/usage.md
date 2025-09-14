@@ -44,7 +44,7 @@ The `Castor` object is meant to generate the content specified in a template
 file. This content contains tags and instructions that processes data you give
 to `Castor`.
 
-After writing a template file (see templates.md), you can call `Castor` to generate the result.
+After writing a template file (see [templates.md]), you can call `Castor` to generate the result.
 
 ```php
    $tpl = new \Jelix\Castor\Castor($config);

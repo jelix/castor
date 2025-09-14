@@ -2,13 +2,13 @@
 /**
 * @author      Laurent Jouanneau
 * @copyright   2007-2025 Laurent Jouanneau
-* @link        https://www.jelix.org
+* @link        http://www.jelix.org
 * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
 */
 
 require_once(__DIR__.'/libtests.php');
 
-class CompilerTest extends \PHPUnit\Framework\TestCase {
+class CompilerSyntax2Test extends \PHPUnit\Framework\TestCase {
 
     protected static $castorConfig;
 
@@ -38,10 +38,10 @@ class CompilerTest extends \PHPUnit\Framework\TestCase {
             ),
             array(
                 '<p>ok</p>
-<script>{literal}
+<script>{%literal%}
 function toto() {
 }
-{/literal}
+{%/literal%}
 </script>
 <p>ko</p>',
                 '<p>ok</p>
@@ -54,10 +54,10 @@ function toto() {
             ),
             array(
                 '<p>ok</p>
-<script>{verbatim}
+<script>{%verbatim%}
 function toto() {
 }
-{/verbatim}
+{% /verbatim %}
 </script>
 <p>ko</p>',
                 '<p>ok</p>
@@ -131,52 +131,60 @@ function toto() {
             ),
             array(
                 '<p>ok{if $foo} {/if}</p>',
+                '<p>ok{if $foo} {/if}</p>',
+            ),
+            array(
+                '<p>ok{% if $foo %} {% /if %}</p>',
                 '<p>ok<?php if($t->_vars[\'foo\']):?> <?php endif;?></p>',
             ),
             array(
-                '<p>ok{if ($foo)} {/if}</p>',
+                '<p>ok{% if ($foo)%} {%/if%}</p>',
                 '<p>ok<?php if(($t->_vars[\'foo\'])):?> <?php endif;?></p>',
             ),
             array(
-                '<p>ok{while ($foo)} {/while}</p>',
+                '<p>ok{%while ($foo)%} {%/while%}</p>',
                 '<p>ok<?php while(($t->_vars[\'foo\'])):?> <?php endwhile;?></p>',
             ),
             array(
-                '<p>ok{while $foo} {/while}</p>',
+                '<p>ok{%while $foo%} {%/while%}</p>',
                 '<p>ok<?php while($t->_vars[\'foo\']):?> <?php endwhile;?></p>',
             ),
             array(
-                '<p>ok{$foo.($truc.$bbb)}</p>',
+                '<p>ok{{$foo.($truc.$bbb)}}</p>',
                 '<p>ok<?php echo $t->_vars[\'foo\'].($t->_vars[\'truc\'].$t->_vars[\'bbb\']); ?></p>',
             ),
             array(
-                '<p>ok{if ($foo || $bar) && $baz} {/if}</p>',
+                '<p>ok{%if ($foo || $bar) && $baz%} {%/if%}</p>',
                 '<p>ok<?php if(($t->_vars[\'foo\'] || $t->_vars[\'bar\']) && $t->_vars[\'baz\']):?> <?php endif;?></p>',
             ),
             array(
-                '<p>ok{bla $foo, $params}</p>',
+                '<p>ok{%bla $foo, $params%}</p>',
                 '<p>ok<?php testjtplcontentUserFunction( $t,$t->_vars[\'foo\'], $t->_vars[\'params\']);?></p>',
             ),
-            array('{for ($i=0;$i<$p;$i++)} A {/for}',
+            array('{%for ($i=0;$i<$p;$i++)%} A {%/for%}',
                 '<?php for($t->_vars[\'i\']=0;$t->_vars[\'i\']<$t->_vars[\'p\'];$t->_vars[\'i\']++):?> A <?php endfor;?>'
             ),
-            array('{for $i=0;$i<$p;$i++} A {/for}',
+            array('{%for $i=0;$i<$p;$i++%} A {%/for%}',
                 '<?php for($t->_vars[\'i\']=0;$t->_vars[\'i\']<$t->_vars[\'p\'];$t->_vars[\'i\']++):?> A <?php endfor;?>'
             ),
-            array('{for $i=count($o);$i<$p;$i++} A {/for}',
+            array('{%for $i=count($o);$i<$p;$i++%} A {%/for%}',
                 '<?php for($t->_vars[\'i\']=count($t->_vars[\'o\']);$t->_vars[\'i\']<$t->_vars[\'p\'];$t->_vars[\'i\']++):?> A <?php endfor;?>'
             ),
             array(
-                '<p>ok {const $foo}</p>',
+                '<p>ok {% const $foo %}</p>',
                 '<p>ok <?php echo htmlspecialchars(constant($t->_vars[\'foo\']), ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8");?></p>',
             ),
             array(
-                '<p>ok{=$foo.($truc.$bbb)}</p>',
+                '<p>ok{{ $foo.($truc.$bbb)}}</p>',
                 '<p>ok<?php echo $t->_vars[\'foo\'].($t->_vars[\'truc\'].$t->_vars[\'bbb\']); ?></p>',
             ),
             array(
-                '<p>ok{=intval($foo.($truc.$bbb))}</p>',
+                '<p>ok{{ intval($foo.($truc.$bbb))}}</p>',
                 '<p>ok<?php echo intval($t->_vars[\'foo\'].($t->_vars[\'truc\'].$t->_vars[\'bbb\'])); ?></p>',
+            ),
+            array(
+                '<p>ok{{ intval($foo.($truc.$bbb)) | upper}}</p>',
+                '<p>ok<?php echo strtoupper(intval($t->_vars[\'foo\'].($t->_vars[\'truc\'].$t->_vars[\'bbb\']))); ?></p>',
             ),
             array(
                 '<p>ok<? echo $toto ?></p>',
@@ -206,24 +214,24 @@ function toto() {
             ),
 
             array(
-                '<p>{assign $foo = \'bar\'}ok{$foo}</p>',
+                '<p>{%assign $foo = \'bar\'%}ok{{$foo}}</p>',
                 '<p><?php $t->_vars[\'foo\'] = \'bar\';?>ok<?php echo $t->_vars[\'foo\']; ?></p>',
             ),
 
             array(
-                '<p>{set $foo = \'bar\'}ok{$foo}</p>',
+                '<p>{%set $foo = \'bar\'%}ok{{$foo}}</p>',
                 '<p><?php $t->_vars[\'foo\'] = \'bar\';?>ok<?php echo $t->_vars[\'foo\']; ?></p>',
             ),
 
             array(
-                '<p>{set $foo += 50}ok{$foo}</p>',
+                '<p>{%set $foo += 50%}ok{{$foo}}</p>',
                 '<p><?php $t->_vars[\'foo\'] += 50;?>ok<?php echo $t->_vars[\'foo\']; ?></p>',
             ),
 
             array(
-                '<p>{$foo}</p>
-<p>{$foo|raw}</p>
-<p>{$foo|eschtml}</p>
+                '<p>{{$foo}}</p>
+<p>{{$foo|raw}}</p>
+<p>{{$foo|eschtml}}</p>
 ',
                 '<p><?php echo $t->_vars[\'foo\']; ?></p>
 <p><?php echo $t->_vars[\'foo\']; ?></p>
@@ -232,9 +240,9 @@ function toto() {
             ),
             array(
                 '{! autoescape !}
-<p>{$foo}</p>
-<p>{$foo|raw}</p>
-<p>{$foo|eschtml}</p>
+<p>{{$foo}}</p>
+<p>{{$foo|raw}}</p>
+<p>{{$foo|eschtml}}</p>
 ',
                 '
 <p><?php echo htmlspecialchars($t->_vars[\'foo\'], ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8"); ?></p>
@@ -253,9 +261,10 @@ function toto() {
      */
     function testCompileContent($template, $expectedResult)
     {
-        $compil = new ContentCompilerForTests(self::$castorConfig);
+        $compil = new testJtplContentCompiler(self::$castorConfig);
         $compil->outputType = 'html';
         $compil->trusted = true;
+        $compil->setSyntaxVersion(2);
         $compil->setUserPlugins(array(), array('bla' => 'testjtplcontentUserFunction'));
         $compil->setRemoveASPtags(false);
 
@@ -264,9 +273,10 @@ function toto() {
 
     function testCompileContentWithASPTags()
     {
-        $compil = new ContentCompilerForTests(self::$castorConfig);
+        $compil = new testJtplContentCompiler(self::$castorConfig);
         $compil->outputType = 'html';
         $compil->trusted = true;
+        $compil->setSyntaxVersion(2);
         $compil->setUserPlugins(array(), array('bla' => 'testjtplcontentUserFunction'));
         $compil->setRemoveASPtags(false);
         $this->assertEquals('<p>ok<?php echo \'<?xml version="truc"?>\'?></p>', $compil->compileContent2('<p>ok<?xml version="truc"?></p>'));
@@ -282,10 +292,10 @@ function toto() {
     public function getUntrustedContent()
     {
         return array(
-            0 => array('{for ($i=0;$i<$p;$i++)} A {/for}',
+            0 => array('{%for ($i=0;$i<$p;$i++)%} A {%/for%}',
                 '<?php for($t->_vars[\'i\']=0;$t->_vars[\'i\']<$t->_vars[\'p\'];$t->_vars[\'i\']++):?> A <?php endfor;?>'
             ),
-            1 => array('{for $i=0;$i<$p;$i++} A {/for}',
+            1 => array('{%for $i=0;$i<$p;$i++%} A {%/for%}',
                 '<?php for($t->_vars[\'i\']=0;$t->_vars[\'i\']<$t->_vars[\'p\'];$t->_vars[\'i\']++):?> A <?php endfor;?>'
             ),
         );
@@ -296,9 +306,10 @@ function toto() {
      * @return void
      */
     function testCompileContentUntrusted($template, $expectedResult) {
-        $compil = new ContentCompilerForTests(self::$castorConfig);
+        $compil = new testJtplContentCompiler(self::$castorConfig);
         $compil->outputType = 'html';
         $compil->trusted = false;
+        $compil->setSyntaxVersion(2);
         $compil->setUserPlugins(array(), array('bla'=>'testjtplcontentUserFunction'));
         $this->assertEquals($expectedResult, $compil->compileContent2($template));
     }
@@ -308,22 +319,22 @@ function toto() {
     {
         return array(
             1 => array(
-                '{macro \'foo\'}<p>ok</p>{/macro}',
+                '{%macro \'foo\'%}<p>ok</p>{%endmacro%}',
                 '<?php $t->declareMacro(\'foo\', array(),  function($engine, $t) {' . "\n" .
                 '?><p>ok</p><?php ' . "\n});\n?>"
             ),
             2 => array(
-                '{macro \'foo\', $arg1, $arg2}<p>ok {$arg1}</p>{/macro}',
+                '{%macro \'foo\', $arg1, $arg2%}<p>ok {{$arg1}}</p>{%/macro%}',
                 '<?php $t->declareMacro(\'foo\', array(\'arg1\',\'arg2\'),  function($engine, $t) {' . "\n" .
                 '?><p>ok <?php echo $t->_vars[\'arg1\']; ?></p><?php ' . "\n});\n?>"
             ),
             3 => array(
-                '{usemacro \'foo\'}',
-                '<?php $t->callMacro($engine, \'foo\', []);?>'
+                '{%usemacro \'foo\'%}',
+                '<?php $t->callMacro($engine,\'foo\');?>'
             ),
-            4 => array(
-                '{usemacro \'foo\', $arg1, $arg2 }',
-                '<?php $t->callMacro($engine, \'foo\', [ $t->_vars[\'arg1\'], $t->_vars[\'arg2\'] ]);?>'
+            3 => array(
+                '{%usemacro \'foo\', $arg1, $arg2 %}',
+                '<?php $t->callMacro($engine, \'foo\', [ $t->_vars[\'arg1\'], $t->_vars[\'arg2\']]);?>'
             ),
         );
     }
@@ -336,9 +347,10 @@ function toto() {
      */
     function testCompilePlugins($template, $expectedResult)
     {
-        $compil = new ContentCompilerForTests(self::$castorConfig);
+        $compil = new testJtplContentCompiler(self::$castorConfig);
         $compil->outputType = 'html';
         $compil->trusted = true;
+        $compil->setSyntaxVersion(2);
 
         $this->assertEquals($expectedResult, $compil->compileContent2($template));
     }
@@ -346,14 +358,12 @@ function toto() {
     public function getTemplateErrors()
     {
         return array(
-            0 => array('{if $foo}',
+            0 => array('{%if $foo%}',
                 'Dans le template , la fin d\'un bloc if est manquant'),
-            2 => array('{foreach ($t=>$a);} A {/foreach}',
+            2 => array('{%foreach ($t=>$a);%} A {%/foreach%}',
                 'Dans le tag foreach ($t=>$a); du template , le caractère  ; n\'est pas autorisé'),
-            3 => array('{for ($i=0;$i<$p;$i++} A {/for}',
+            3 => array('{%for ($i=0;$i<$p;$i++%} A {%/for%}',
                 'Dans le tag for ($i=0;$i<$p;$i++ du template , il y a des erreurs au niveau des parenthèses'),
-            5 => array('{($aaa)}',
-                'Dans le template , la syntaxe de balise ($aaa) est invalide'),
         );
     }
 
@@ -365,25 +375,26 @@ function toto() {
      */
     function testCompileErrors($template, $expectedResult) {
 
-            $compil = new ContentCompilerForTests(self::$castorConfig);
-            $compil->outputType = 'html';
-            $compil->trusted = true;
-            $ok = true;
-            try{
-                $compil->compileContent2($template);
-                $ok = false;
-            }catch(Exception $e){
-                $this->assertEquals($expectedResult, $e->getMessage());
-            }
-            $this->assertTrue($ok);
+        $compil = new testJtplContentCompiler(self::$castorConfig);
+        $compil->outputType = 'html';
+        $compil->trusted = true;
+        $compil->setSyntaxVersion(2);
+        $ok = true;
+        try{
+            $compil->compileContent2($template);
+            $ok = false;
+        }catch(Exception $e){
+            $this->assertEquals($expectedResult, $e->getMessage());
+        }
+        $this->assertTrue($ok);
     }
 
     public function getTplErrors2()
     {
         return array(
-            0 => array('{for $i=count($a);$i<$p;$i++} A {/for}',
+            0 => array('{%for $i=count($a);$i<$p;$i++%} A {%/for%}',
                 'Dans le tag for $i=count($a);$i<$p;$i++ du template , le caractère  ( n\'est pas autorisé'),
-            1 => array('{const \'fff\'}',
+            1 => array('{% const \'fff\'%}',
                 'Le tag const dans le template  n\'est pas autorisé dans un template sans confiance'),
         );
     }
@@ -396,17 +407,18 @@ function toto() {
      */
     function testCompileErrorsUntrusted($template, $expectedResult) {
 
-            $compil = new ContentCompilerForTests(self::$castorConfig);
-            $compil->outputType = 'html';
-            $compil->trusted = false;
-            $ok = true;
-            try{
-                $compil->compileContent2($template);
-                $ok = false;
-            }catch(Exception $e){
-                $this->assertEquals($expectedResult, $e->getMessage());
-            }
-            $this->assertTrue($ok);
+        $compil = new testJtplContentCompiler(self::$castorConfig);
+        $compil->outputType = 'html';
+        $compil->trusted = false;
+        $compil->setSyntaxVersion(2);
+        $ok = true;
+        try{
+            $compil->compileContent2($template);
+            $ok = false;
+        }catch(Exception $e){
+            $this->assertEquals($expectedResult, $e->getMessage());
+        }
+        $this->assertTrue($ok);
     }
 
 }

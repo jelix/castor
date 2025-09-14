@@ -1,0 +1,7 @@
+<h1>THIS IS A TEST !</h1>
+<ul>
+<li>France (6)</li>
+<li>Italie (6)</li>
+<li>Espagne (7)</li>
+<li>Belgique (8)</li>
+</ul>

@@ -26,6 +26,11 @@ interface TemplateContentInterface
     public function isTrusted() : bool;
 
     /**
+     * @return int the syntax version used into the template
+     */
+    public function getSyntaxVersion() : int;
+
+    /**
      * @return string content of the template
      */
     public function getContent() : string;

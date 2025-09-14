@@ -19,12 +19,15 @@ class TemplateString implements TemplateContentInterface
     protected $cacheTag;
     protected $_isTrusted = true;
 
-    public function __construct($tplName, $content, $cacheTag = '', $isTrusted = true)
+    protected $syntaxVersion;
+
+    public function __construct($tplName, $content, $cacheTag = '', $syntaxVersion = 1, $isTrusted = true)
     {
         $this->tplName = $tplName;
         $this->content = $content;
         $this->cacheTag = $cacheTag;
         $this->_isTrusted = $isTrusted;
+        $this->syntaxVersion = $syntaxVersion;
     }
 
     public function getName() : string
@@ -35,6 +38,11 @@ class TemplateString implements TemplateContentInterface
     public function isTrusted() : bool
     {
         return $this->_isTrusted;
+    }
+
+    public function getSyntaxVersion() : int
+    {
+        return $this->syntaxVersion;
     }
 
     public function getContent() : string

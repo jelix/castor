@@ -17,12 +17,16 @@ class TemplateFile implements TemplateContentInterface
     protected $tplName;
     protected $tplFilePath;
     protected $_isTrusted = true;
+    protected $syntaxVersion = 1;
 
     public function __construct($tplName, $tplFilePath, $isTrusted = true)
     {
         $this->tplName = $tplName;
         $this->tplFilePath = $tplFilePath;
         $this->_isTrusted = $isTrusted;
+        if (preg_match('/\\.ctpl$/', $tplFilePath)) {
+            $this->syntaxVersion = 2;
+        }
     }
 
     public function getName() : string
@@ -33,6 +37,11 @@ class TemplateFile implements TemplateContentInterface
     public function isTrusted() : bool
     {
         return $this->_isTrusted;
+    }
+
+    public function getSyntaxVersion() : int
+    {
+        return $this->syntaxVersion;
     }
 
     public function getContent() : string
@@ -46,6 +55,9 @@ class TemplateFile implements TemplateContentInterface
 
     public function cacheTag() : string
     {
+        if (!file_exists($this->tplFilePath)) {
+            return '';
+        }
         return (string) filemtime($this->tplFilePath);
     }
 }

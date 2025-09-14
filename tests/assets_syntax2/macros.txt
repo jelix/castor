@@ -1,0 +1,19 @@
+
+
+
+<div class="box">
+        <p>This is my block toto realValueOfExistingVar</p>
+
+        <p>This is my block test 2 without parameters, and displaying existingVar=realValueOfExistingVar </p>
+
+        <p>This is my block test 3 with a parameter having the same name of a variable.
+        arg existingVar=tata </p>
+    Real existingVar=realValueOfExistingVar</div>
+
+<div class="box">
+mytest is defined
+
+
+
+there is no macro 'unknown'
+</div>

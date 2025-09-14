@@ -1,0 +1,39 @@
+{% macro 'mytest', $arg1 %}
+    <p>This is my block {{$arg1}} {{$existingVar}}</p>
+{% endmacro %}
+
+{% macro 'mytest2'%}
+    <p>This is my block test 2 without parameters, and displaying existingVar={{$existingVar}} </p>
+{% endmacro %}
+
+{% macro 'mytest3', $existingVar %}
+    <p>This is my block test 3 with a parameter having the same name of a variable.
+        arg existingVar={{$existingVar}} </p>
+{% endmacro %}
+
+<div class="box">
+    {%usemacro 'mytest', 'toto'%}
+
+    {%usemacro 'mytest2'%}
+
+    {%usemacro 'mytest3', 'tata'%}
+    Real existingVar={{$existingVar}}
+</div>
+
+<div class="box">
+{% ifdefinedmacro 'mytest'%}
+mytest is defined
+{% endifdefinedmacro %}
+
+{% ifdefinedmacro 'unknown'%}
+unknown is defined
+{% endifdefinedmacro %}
+
+{% ifundefinedmacro 'mytest' %}
+there is no macro 'mytest'
+{% endifundefinedmacro %}
+
+{% ifundefinedmacro 'unknown' %}
+there is no macro 'unknown'
+{% endifundefinedmacro %}
+</div>

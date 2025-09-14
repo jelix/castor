@@ -11,8 +11,5 @@ function testjtplcontentUserModifier($s) {
 
 }
 
-function testjtplcontentUserFunction($t,$a,$b) {
-
-}
 
 define('TEST_JTPL_COMPILER_ASSIGN', 'myconst');

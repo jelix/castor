@@ -56,6 +56,7 @@ class Castor extends CastorCore
             $tplLoader->cacheTag())
         ) {
             $compiler = $this->getCompiler();
+            $compiler->setSyntaxVersion($tplLoader->getSyntaxVersion());
             $compiledContent = $compiler->compile($tplLoader, $this->userModifiers, $this->userFunctions);
             $this->cacheManager->saveCompiledTemplate(
                 $tplLoader->getName(),
@@ -137,7 +138,7 @@ class Castor extends CastorCore
      *
      * @return string the generated content
      */
-    public function fetchFromString($tplContent, $trusted = true, $callMeta = true)
+    public function fetchFromString($tplContent, $trusted = true, $callMeta = true, $syntaxVersion = 1)
     {
         $tplName = md5($tplContent);
 
@@ -145,6 +146,7 @@ class Castor extends CastorCore
             $tplName,
             $tplContent,
             $tplName,
+            $syntaxVersion,
             $trusted
         );
 
