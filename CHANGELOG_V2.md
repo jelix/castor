@@ -29,7 +29,7 @@ Breaking changes
 - no more `CompilerCore::_getPlugin()` to override. This is replaced by the new plugin system
   and components implementing `PluginsProviderInterface`.
 
-- remove plugins swf, swfbiscuit, ltx2pdf, date_format
+- remove plugins swf, swfbiscuit, ltx2pdf, date_format, mailto, gravatar
 
 
 Internal changes

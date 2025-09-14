@@ -100,7 +100,6 @@ class Config
 
         $this->cachePath = $cachePath;
         $this->templatePath = $tplPath;
-        $this->addPluginsRepository(realpath(__DIR__.'/../plugins/'));
         $this->addPluginsProvider(new CorePluginsProvider());
 
         if ($localizedMessagesPath == '') {
