@@ -13,6 +13,8 @@ Summary
 - new way to indicate untrusted templates: this information is given by the object implementing the `TemplateContentInterface`. 
 - `Config` has now a property `$cacheManager` for the `TemplateCacheManagerInterface` object
 - new methods `Castor::fetchFromString()`
+- Fix the truncatehtml modifier: it cuts the text at the exact given position.
+
 
 Breaking changes
 ----------------

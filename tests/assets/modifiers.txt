@@ -31,9 +31,14 @@ sprintf: date is 2024-08-25
 
 strip: Lorem ipsum dolor sit amet
 
-truncathtml 30: <p>Lorem ipsum <strong>dolor...</strong></p>
+truncathtml 200: <p>Lorem ipsum <strong>dolor&eacute; sit</strong> amet,<a href='#foo'>consectetur adipiscing</a> elit.</p>
+truncathtml 10: <p>Lorem ipsu</p>
+truncathtml 15: <p>Lorem ipsum <strong>dol</strong></p>
+truncathtml 18: <p>Lorem ipsum <strong>dolor&eacute;</strong></p>
+truncathtml 31: <p>Lorem ipsum <strong>dolor&eacute; sit</strong> amet,<a href='#foo'>con</a></p>
 
-truncathtml 80: <p>Lorem ipsum <strong>dolor sit</strong> amet,<br/><a href='#foo'>consectetur...</a></p>
+truncathtml 12: Lorem <p> ipsum</p>
+
 
 wordwrap 30: Lorem ipsum dolor
 sit amet,

@@ -334,14 +334,13 @@ abstract class CompilerCore
 
             if (isset($m[2])) {
                 $targs = $this->_compileArgs($m[2], $this->_allowedInVar, $this->_excludedInVar, true, ',', ':');
-                array_unshift($targs, $res);
             } else {
-                $targs = array($res);
+                $targs = [];
             }
 
             $plugin = $this->pluginsProvider->getModifierPlugin($this, $modifierName);
             if ($plugin) {
-                $res = $plugin->compile($this, $modifierName, $targs);
+                $res = $plugin->compile($this, $modifierName, $targs, $res);
             } else {
                 if ($modifierName == 'noesc' || $modifierName == 'raw') {
                     $hasNoEscModifier = true;

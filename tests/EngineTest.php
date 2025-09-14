@@ -55,7 +55,8 @@ class EngineTest extends \PHPUnit\Framework\TestCase {
         $tpl->assign('myutf8string', 'abcd éàçÉ ~');
 
         $tpl->assign('mytext', "Lorem ipsum dolor sit amet,\nconsectetur adipiscing elit.");
-        $tpl->assign('myhtml', "<p>Lorem ipsum <strong>dolor sit</strong> amet,<br/><a href='#foo'>consectetur adipiscing</a> elit.</p>");
+        $tpl->assign('myhtml', "<p>Lorem \n\nipsum <strong>dolor&eacute; sit</strong> amet,<br/><a href='#foo'>consectetur adipiscing</a> elit.</p>");
+        $tpl->assign('myhtml2', "Lorem    <p> \n\nipsum <strong>dolor&eacute; sit</strong> </p> amet");
 
         $result = $tpl->fetch('assets/modifiers.tpl');
         $this->assertEquals(file_get_contents(__DIR__.'/assets/modifiers.txt'), $result);

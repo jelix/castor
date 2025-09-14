@@ -25,8 +25,10 @@ class LegacyModifierPlugin implements ModifierPluginInterface
         $this->functionName = $functionName;
     }
 
-    public function compile(CompilerCore $compiler, $name, array $compiledTagArgs): string
+    public function compile(CompilerCore $compiler, $name, array $compiledModifierArgs, $compiledExpression): string
     {
+        $compiledTagArgs = $compiledModifierArgs;
+        array_unshift($compiledTagArgs, $compiledExpression);
         if ($this->pluginType == 'cmodifier') {
             require_once $this->filePath;
             $fct = $this->functionName;

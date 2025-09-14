@@ -12,10 +12,19 @@ class CorePluginsProvider extends GenericPluginsProvider
 {
     /** @var  array  key: plugin name, value : plugin class */
     protected $modifierPlugins = [
-        'count_paragraphs' => 'Jelix\Castor\Plugins\TextCountPlugin',
-        'count_sentences' => 'Jelix\Castor\Plugins\TextCountPlugin',
-        'count_words' => 'Jelix\Castor\Plugins\TextCountPlugin',
-        'count_characters' => 'Jelix\Castor\Plugins\TextCountPlugin',
+        'count_paragraphs' => 'Jelix\Castor\Plugins\Modifiers\TextCountPlugin',
+        'count_sentences' => 'Jelix\Castor\Plugins\Modifiers\TextCountPlugin',
+        'count_words' => 'Jelix\Castor\Plugins\Modifiers\TextCountPlugin',
+        'count_characters' => 'Jelix\Castor\Plugins\Modifiers\TextCountPlugin',
+        'cat' => 'Jelix\Castor\Plugins\Modifiers\StringModifiersPlugin',
+        'indent' => 'Jelix\Castor\Plugins\Modifiers\StringModifiersPlugin',
+        'replace' => 'Jelix\Castor\Plugins\Modifiers\StringModifiersPlugin',
+        'spacify' => 'Jelix\Castor\Plugins\Modifiers\StringModifiersPlugin',
+        'strip' => 'Jelix\Castor\Plugins\Modifiers\StringModifiersPlugin',
+        'truncate' => 'Jelix\Castor\Plugins\Modifiers\StringModifiersPlugin',
+        'wordwrap' => 'Jelix\Castor\Plugins\Modifiers\StringModifiersPlugin',
+        'regex_replace' => 'Jelix\Castor\Plugins\Modifiers\StringModifiersPlugin',
+        'truncatehtml' => 'Jelix\Castor\Plugins\Modifiers\StringModifiersPlugin',
     ];
 
     /** @var  array  key: plugin name, value : plugin class */

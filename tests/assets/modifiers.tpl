@@ -30,9 +30,14 @@ sprintf: {$mydate|sprintf:'date is %s'}
 
 strip: {$mystrip|strip}
 
-truncathtml 30: {$myhtml|truncatehtml:30}
+truncathtml 200: {$myhtml|truncatehtml:200}
+truncathtml 10: {$myhtml|truncatehtml:10}
+truncathtml 15: {$myhtml|truncatehtml:15}
+truncathtml 18: {$myhtml|truncatehtml:18}
+truncathtml 31: {$myhtml|truncatehtml:31}
 
-truncathtml 80: {$myhtml|truncatehtml:80}
+truncathtml 12: {$myhtml2|truncatehtml:12}
+
 
 wordwrap 30: {$mytext|wordwrap:20}
 

@@ -11,6 +11,6 @@ use \Jelix\Castor\Compiler\CompilerCore;
 
 interface ModifierPluginInterface
 {
-    public function compile(CompilerCore $compiler, $name, array $compiledTagArgs) : string;
+    public function compile(CompilerCore $compiler, $name, array $compiledModifierArgs, $compiledExpression) : string;
 
 }
