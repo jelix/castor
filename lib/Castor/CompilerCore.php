@@ -133,6 +133,8 @@ abstract class CompilerCore
 
     protected $_autoescape = false;
 
+    protected $_syntaxVersion = 1;
+
     /**
      * list of user functions.
      */
@@ -177,6 +179,17 @@ abstract class CompilerCore
     public function isAutoEscapeEnabled()
     {
         return $this->_autoescape;
+    }
+
+
+    public function setSyntaxVersion($syntaxVersion)
+    {
+        $this->_syntaxVersion = $syntaxVersion;
+    }
+
+    public function getSyntaxVersion()
+    {
+        return $this->_syntaxVersion;
     }
 
     /**
@@ -259,18 +272,18 @@ abstract class CompilerCore
           $tplContent = preg_replace('!<%.*%>!s', '', $tplContent);
         }
 
-        // replace literal content by a specific tag, that will be replaced by original content
-        preg_match_all('!{literal}(.*?){/literal}!s', $tplContent, $_match);
-        $this->_literals = $_match[1];
-        $tplContent = preg_replace('!{literal}(.*?){/literal}!s', '{literal}', $tplContent);
+        if ($this->_syntaxVersion == 1) {
+            // replace literal content by a specific tag, that will be replaced by original content
+            preg_match_all('!{literal}(.*?){/literal}!s', $tplContent, $_match);
+            $this->_literals = $_match[1];
+            $tplContent = preg_replace('!{literal}(.*?){/literal}!s', '{literal}', $tplContent);
 
-        // replace verbatim content (which is equivalent to literal) by a specific tag, that will be replaced by original content
-        preg_match_all('!{verbatim}(.*?){/verbatim}!s', $tplContent, $_match);
-        $this->_verbatims = $_match[1];
-        $tplContent = preg_replace('!{verbatim}(.*?){/verbatim}!s', '{verbatim}', $tplContent);
-
-        // remove \n after all tags except for variable output instructions
-        $tplContent = preg_replace_callback("/{((.).*?)}(\n)/sm", function ($matches) {
+            // replace verbatim content (which is equivalent to literal) by a specific tag, that will be replaced by original content
+            preg_match_all('!{verbatim}(.*?){/verbatim}!s', $tplContent, $_match);
+            $this->_verbatims = $_match[1];
+            $tplContent = preg_replace('!{verbatim}(.*?){/verbatim}!s', '{verbatim}', $tplContent);
+            // remove \n after all tags except for variable output instructions
+            $tplContent = preg_replace_callback("/{((.).*?)}(\n)/sm", function ($matches) {
                 list($full, , $firstCar, $lastcar) = $matches;
                 if ($firstCar == '=' || $firstCar == '$' || $firstCar == '@') {
                     return "$full\n";
@@ -279,8 +292,30 @@ abstract class CompilerCore
                 }
             }, $tplContent);
 
-        // process every template instruction
-        $tplContent = preg_replace_callback('/{((.).*?)}/sm', array($this, '_callback'), $tplContent);
+            // process every template instruction
+            $tplContent = preg_replace_callback('/{((.).*?)}/sm', array($this, '_callbackV1'), $tplContent);
+        }
+        else {
+            // replace literal content by a specific tag, that will be replaced by original content
+            preg_match_all('!\\{\\%\s*literal\s*\\%\\}(.*?)\\{\\%\s*/literal\s*\\%\\}!s', $tplContent, $_match);
+            $this->_literals = $_match[1];
+            $tplContent = preg_replace('!\\{\\%\s*literal\s*\\%\\}(.*?)\\{\\%\s*/literal\s*\\%\\}!s', '{%literal%}', $tplContent);
+
+            // replace verbatim content (which is equivalent to literal) by a specific tag, that will be replaced by original content
+            preg_match_all('!\\{\\%\s*verbatim\s*\\%\\}(.*?)\\{\\%\s*/verbatim\s*\\%\\}!s', $tplContent, $_match);
+            $this->_verbatims = $_match[1];
+            $tplContent = preg_replace('!\\{\\%\s*verbatim\s*\\%\\}(.*?)\\{\\%\s*/verbatim\s*\\%\\}!s', '{%verbatim%}', $tplContent);
+
+            // remove \n after all tags except for variable output instructions
+            $tplContent = preg_replace_callback("/\\{[\\!\\%](.+)[\\!\\%]\\}(\n)/Usm", function ($matches) {
+                return $matches[0];
+            }, $tplContent);
+
+            // process every template instruction
+            $tplContent = preg_replace_callback('/\\{(\\!.+\\!)\\}/Usm', array($this, '_callbackV2Pragma'), $tplContent);
+            $tplContent = preg_replace_callback('/\\{\\{(.+)\\}\\}/Usm', array($this, '_callbackV2OutputInstruction'), $tplContent);
+            $tplContent = preg_replace_callback('/\\{\\%(.+)\\%\\}/Usm', array($this, '_callbackV2Instruction'), $tplContent);
+        }
 
         // remove empty php tags
         $tplContent = preg_replace('/<\?php\\s+\?>/', '', $tplContent);
@@ -300,7 +335,7 @@ abstract class CompilerCore
      *
      * @return string the corresponding php code of the tag (with php tag).
      */
-    public function _callback($matches)
+    public function _callbackV1($matches)
     {
         list(, $tag, $firstcar) = $matches;
 
@@ -336,8 +371,41 @@ abstract class CompilerCore
                 return '}';
             }
 
-            return '<?php '.$this->_parseFunction($m[1], $m[2]).'?>';
+            return '<?php '.$this->_parseInstruction($m[1], $m[2]).'?>';
         }
+    }
+
+    public function _callbackV2Pragma($matches)
+    {
+        $tag = $matches[1];
+        return $this->_parsePragma($tag);
+    }
+
+    public function _callbackV2OutputInstruction($matches)
+    {
+
+        $tag = trim($matches[1]);
+        $this->generatedContentStarted = true;
+        $this->_currentTag = $tag;
+        return '<?php echo ' . $this->_parseVariable($tag) . '; ?>';
+    }
+
+    public function _callbackV2Instruction($matches)
+    {
+        $tag = trim($matches[1]);
+        $this->_currentTag = $tag;
+        $this->generatedContentStarted = true;
+        if (!preg_match('/^(\/?[a-zA-Z0-9_]+)(?:(?:\s+(.*))|(?:\((.*)\)))?$/ms', $tag, $m)) {
+            $this->doError1('errors.tpl.tag.function.invalid', $tag);
+        }
+        if (count($m) == 4) {
+            $m[2] = $m[3];
+        }
+        if (!isset($m[2])) {
+            $m[2] = '';
+        }
+
+        return '<?php '.$this->_parseInstruction($m[1], $m[2]).'?>';
     }
 
     /**
@@ -349,7 +417,7 @@ abstract class CompilerCore
      */
     protected function _parseVariable($expr)
     {
-        $tok = explode('|', $expr);
+        $tok = preg_split('/\s*\\|\s*/', $expr);
         $res = $this->_parseFinal(array_shift($tok), $this->_allowedInVar, $this->_excludedInVar);
 
         $hasEscHtmlModifier = false;
@@ -414,7 +482,7 @@ abstract class CompilerCore
      *
      * @return string the corresponding php instructions
      */
-    protected function _parseFunction($name, $args)
+    protected function _parseInstruction($name, $args)
     {
         $res = '';
         switch ($name) {
@@ -478,6 +546,10 @@ abstract class CompilerCore
             case '/for':
             case '/if':
             case '/while':
+            case 'endforeach':
+            case 'endfor':
+            case 'endif':
+            case 'endwhile':
                 $short = substr($name, 1);
                 if (end($this->_blockStack) != $short) {
                     $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
@@ -511,6 +583,8 @@ abstract class CompilerCore
 
             case '/literal':
             case '/verbatim':
+            case 'endliteral':
+            case 'endverbatim':
                 $this->doError1('errors.tpl.tag.block.begin.missing', substr($name, 1));
                 break;
 
@@ -542,6 +616,7 @@ abstract class CompilerCore
                 break;
 
             case '/meta_if':
+            case 'meta_endif':
                 $short = substr($name, 1);
                 if (end($this->_blockStack) != $short) {
                     $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
@@ -552,9 +627,10 @@ abstract class CompilerCore
                 break;
 
             default:
-                if (preg_match('!^/(\w+)$!', $name, $m)) {
-                    if (end($this->_blockStack) != $m[1]) {
-                        $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
+                if (preg_match('!^(?:end|/)(\w+)$!', $name, $m)) {
+                    $currentBlock = end($this->_blockStack);
+                    if ($currentBlock != $m[1]) {
+                        $this->doError1('errors.tpl.tag.block.end.missing', $currentBlock);
                     } else {
                         array_pop($this->_blockStack);
                         if (function_exists($fct = 'jtpl_block_'.$this->outputType.'_'.$m[1])) {
@@ -579,25 +655,34 @@ abstract class CompilerCore
                     $fct = $path[1];
                     $res = $fct($this, true, $argfct);
                     array_push($this->_blockStack, $name);
-                } elseif ($path = $this->_getPlugin('cfunction', $name)) {
-                    require_once $path[0];
-                    $argfct = $this->_parseFinal($args, $this->_allowedAssign, array(';'), true);
-                    $fct = $path[1];
-                    $res = $fct($this, $argfct);
-                } elseif ($path = $this->_getPlugin('function', $name)) {
-                    $argfct = $this->_parseFinal($args, $this->_allowedAssign);
-                    $res = $path[1].'( $t'.(trim($argfct) != '' ? ','.$argfct : '').');';
-                    $this->_pluginPath[$path[0]] = true;
-                } elseif (isset($this->_userFunctions[$name])) {
-                    $argfct = $this->_parseFinal($args, $this->_allowedAssign);
-                    $res = $this->_userFunctions[$name].'( $t'.(trim($argfct) != '' ? ','.$argfct : '').');';
                 } else {
-                    $this->doError1('errors.tpl.tag.function.unknown', $name);
+                    $res = $this->_parseFunction($name, $args);
                 }
         }
 
         return $res;
     }
+
+    protected function _parseFunction($name, $args)
+    {
+        if ($path = $this->_getPlugin('cfunction', $name)) {
+            require_once $path[0];
+            $argfct = $this->_parseFinal($args, $this->_allowedAssign, array(';'), true);
+            $fct = $path[1];
+            $res = $fct($this, $argfct);
+        } elseif ($path = $this->_getPlugin('function', $name)) {
+            $argfct = $this->_parseFinal($args, $this->_allowedAssign);
+            $res = $path[1].'( $t'.(trim($argfct) != '' ? ','.$argfct : '').');';
+            $this->_pluginPath[$path[0]] = true;
+        } elseif (isset($this->_userFunctions[$name])) {
+            $argfct = $this->_parseFinal($args, $this->_allowedAssign);
+            $res = $this->_userFunctions[$name].'( $t'.(trim($argfct) != '' ? ','.$argfct : '').');';
+        } else {
+            $this->doError1('errors.tpl.tag.function.unknown', $name);
+        }
+        return $res;
+    }
+
 
     /**
      * analyse a pragma tag : `{! !}`
@@ -648,6 +733,23 @@ abstract class CompilerCore
                     $this->trusted = true;
                 }
                 break;
+/*            case 'syntax':
+                if ($this->generatedContentStarted) {
+                    $this->doError1('errors.tpl.tag.pragma.too.late', '{'.$expr.'}');
+                }
+                if ($value !== null) {
+                    $value = intval($value);
+                    if ($value == 1 || $value == 2) {
+                        $this->_syntaxVersion = $value;
+                    }
+                    else {
+                        $this->doError1('errors.tpl.tag.pragma.bad.value', '{'.$expr.'}');
+                    }
+                }
+                else {
+                    $this->doError1('errors.tpl.tag.pragma.missing.value', '{'.$expr.'}');
+                }
+                break;*/
             default:
                 $this->doError1('errors.tpl.tag.pragma.unknown', '{'.$expr.'}');
         }

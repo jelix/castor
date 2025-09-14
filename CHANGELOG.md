@@ -8,6 +8,7 @@ next
 1.2.0
 -----
 
+- New syntax for templates instructions, which is available for templates files having the `.ctpl` extension.
 - New way to indicate the output type. You can indicate the output type directly into the template with a pragma
   instruction: `{! output-type = text !}`. It overrides the `$outputType` parameter given to Castor.
 - New way to indicate the level of trust: support of the pragma instruction `{! trusted = false !}` in templates.

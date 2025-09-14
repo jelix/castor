@@ -11,6 +11,7 @@ return array(
     'errors.tpl.tag.pragma.unknown' => 'In the template %2$s, unknown pragma instruction %1$s',
     'errors.tpl.tag.pragma.too.late' => 'In the template %2$s, pragma instruction %1$s must be at the beginning of the template',
     'errors.tpl.tag.pragma.missing.value' => 'In the template %2$s, value is missing into the pragma instruction %1$s',
+    'errors.tpl.tag.pragma.bad.value' => 'In the template %2$s, bad value into the pragma instruction %1$s',
     'errors.tpl.tag.modifier.invalid' => 'In the tag %s in the template %3$s, invalid syntax on the modifier %2$s',
     'errors.tpl.tag.modifier.unknown' => 'In the tag %s  in the template %3$s,  unknown modifier %2$s',
     'errors.tpl.tag.block.end.missing' => 'In the template %2$s, end of  bloc %1$s is missing',

@@ -55,7 +55,7 @@ class Compiler extends CompilerCore
             $prefixFileName = $outputType.($trusted ? '' : '_nt').'_';
         }
 
-        $cacheFile = $this->config->cachePath.dirname($tplName).'/'.$prefixFileName.basename($tplName);
+        $cacheFile = $this->config->cachePath.dirname($tplName).'/'.$prefixFileName.basename($tplName).'.php';
         $this->trusted = $trusted;
         $md5 = md5($prefixFileName.$tplFile);
 

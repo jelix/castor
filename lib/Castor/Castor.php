@@ -69,7 +69,7 @@ class Castor extends CastorCore
             $prefixFileName = $outputType.($trusted ? '' : '_nt').'_';
         }
 
-        $cachefile = $this->config->cachePath.$cachefile . $prefixFileName . basename($tpl);
+        $cachefile = $this->config->cachePath.$cachefile . $prefixFileName . basename($tpl).'.php';
 
         $mustCompile = $this->config->compilationForce || !file_exists($cachefile);
         if (!$mustCompile) {
@@ -80,6 +80,9 @@ class Castor extends CastorCore
 
         if ($mustCompile) {
             $compiler = $this->getCompiler();
+            if (preg_match('/\\.ctpl$/', $tpl)) {
+                $compiler->setSyntaxVersion(2);
+            }
             $compiler->compile($this->_templateName,
                                $tpl, $outputType, $trusted,
                                $this->userModifiers, $this->userFunctions);

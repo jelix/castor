@@ -4,8 +4,10 @@
     <testsuite name="Castor">
       <file>config.php</file>
       <file>compiler.php</file>
+      <file>compiler_syntax2.php</file>
       <file>expressions_parsing.php</file>
       <file>engine.php</file>
+      <file>engine_syntax2.php</file>
     </testsuite>
   </testsuites>
 </phpunit>
