@@ -61,6 +61,7 @@ class CorePluginsProvider extends GenericPluginsProvider
         'cycle_reset' => 'Jelix\Castor\Plugins\CyclePlugin',
         'const' => 'Jelix\Castor\Plugins\ConstPlugin',
         'include' => 'Jelix\Castor\Plugins\IncludePlugin',
+        'repeat_string' => 'Jelix\Castor\Plugins\RepeatStringPlugin',
     ];
 
 }
