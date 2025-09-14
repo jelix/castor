@@ -154,6 +154,15 @@ class StringModifiersPlugin implements ModifierPluginInterface
                 return  get_class($this) . '::truncateHTMLModifier('.
                     $compiledExpression.',\''.$compiler->getEncoding().'\','.
                     implode(',', $compiledModifierArgs) . ')';
+            /**
+             * convert \r\n, \r or \n to "<br/>"
+             *
+             * <pre>
+             *     {$text|nl2br}.
+             * </pre>
+             */
+            case 'nl2br':
+                return 'nl2br('.$compiledExpression.')';
         }
         return '';
     }

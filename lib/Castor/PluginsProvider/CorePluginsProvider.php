@@ -25,6 +25,9 @@ class CorePluginsProvider extends GenericPluginsProvider
         'wordwrap' => 'Jelix\Castor\Plugins\Modifiers\StringModifiersPlugin',
         'regex_replace' => 'Jelix\Castor\Plugins\Modifiers\StringModifiersPlugin',
         'truncatehtml' => 'Jelix\Castor\Plugins\Modifiers\StringModifiersPlugin',
+        'nl2br' => 'Jelix\Castor\Plugins\Modifiers\StringModifiersPlugin',
+        'implode' => 'Jelix\Castor\Plugins\Modifiers\ArrayModifiersPlugin',
+        'count_array' => 'Jelix\Castor\Plugins\Modifiers\ArrayModifiersPlugin',
     ];
 
     /** @var  array  key: plugin name, value : plugin class */
