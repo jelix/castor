@@ -36,7 +36,7 @@ And as said before, this directory should contain sub-directories corresponding 
 
 Plugins are stored in file whose name follows a specific syntax:
 `<plugin-type>.<plugin-name>.php`. And the PHP function implementing the plugin has this
-kind of name: `jtpl_<plugin-type>_<content-type>_<plugin-name>`.
+kind of name: `jtpl_<plugin-type>_<output-type>_<plugin-name>`.
 
 (jtpl was the previous name of Castor, and this name is still used for plugins to keep
 compatibilities with existing application).
@@ -107,10 +107,10 @@ function jtpl_cfunction_html_hello($compiler, $params=array())
 
 ## plugin type "modifier"
 
-A modifier plugin is a function. It shall be named `jtpl_modifier_<content-type>_<modifier-name>`
+A modifier plugin is a function. It shall be named `jtpl_modifier_<output-type>_<modifier-name>`
 and take at minimum a string as first parameter (there can other parameters specifying
 modifier options), and returns the string modified. Your modifier should be stored in a
-`<content-type>/modifier.<modifier-name>.php` file.
+`<output-type>/modifier.<modifier-name>.php` file.
 
 Example of count_characters :
 

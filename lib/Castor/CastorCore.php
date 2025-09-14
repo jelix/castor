@@ -173,10 +173,9 @@ abstract class CastorCore
      * process all meta instruction of a template.
      *
      * @param string $tpl        template selector
-     * @param string $outputType the type of output (html, text etc..) (deprecated)
      * @param bool   $trusted    says if the template file is trusted or not
      */
-    public function meta($tpl, $outputType = '', $trusted = true)
+    public function meta($tpl, $trusted = true)
     {
         if (in_array($tpl, $this->processedMeta)) {
             // we want to process meta only one time, when a template is included
@@ -185,7 +184,7 @@ abstract class CastorCore
             return $this->_meta;
         }
         $this->processedMeta[] = $tpl;
-        $md = $this->getTemplate($tpl, $outputType, $trusted);
+        $md = $this->getTemplate($tpl, $trusted);
 
         $fct = 'template_meta_'.$md;
         $fct($this);
@@ -197,15 +196,14 @@ abstract class CastorCore
      * display the generated content from the given template.
      *
      * @param string $tpl        template selector
-     * @param string $outputType the type of output (html, text etc..) (deprecated)
      * @param bool   $trusted    says if the template file is trusted or not
      */
-    public function display($tpl, $outputType = '', $trusted = true)
+    public function display($tpl, $trusted = true)
     {
         $previousTpl = $this->_templateName;
         $this->_templateName = $tpl;
         $this->recursiveTpl[] = $tpl;
-        $md = $this->getTemplate($tpl, $outputType, $trusted);
+        $md = $this->getTemplate($tpl, $trusted);
 
         $fct = 'template_'.$md;
         $fct($this);
@@ -237,24 +235,22 @@ abstract class CastorCore
      * include the compiled template file and call one of the generated function.
      *
      * @param string $tpl        template selector
-     * @param string $outputType the type of output (html, text etc..) (deprecated)
      * @param bool   $trusted    says if the template file is trusted or not
      *
      * @return string the suffix name of the function to call
      */
-    abstract protected function getTemplate($tpl, $outputType = '', $trusted = true);
+    abstract protected function getTemplate($tpl, $trusted = true);
 
     /**
      * return the generated content from the given template.
      *
      * @param string $tpl        template selector
-     * @param string $outputType the type of output (html, text etc..) (deprecated)
      * @param bool   $trusted    says if the template file is trusted or not
      * @param bool   $callMeta   false if meta should not be called
      *
      * @return string the generated content
      */
-    abstract public function fetch($tpl, $outputType = '', $trusted = true, $callMeta = true);
+    abstract public function fetch($tpl, $trusted = true, $callMeta = true);
 
     /**
      * @param string $tpl        the template name
@@ -265,7 +261,7 @@ abstract class CastorCore
      *
      * @return false|string
      */
-    protected function _fetch($tpl, $getTemplateArg, $outputtype = '', $trusted = true, $callMeta = true)
+    protected function _fetch($tpl, $getTemplateArg, $trusted = true, $callMeta = true)
     {
         ob_start();
         try {
@@ -280,7 +276,7 @@ abstract class CastorCore
             }
             $this->recursiveTpl[] = $tpl;
 
-            $md = $this->getTemplate($getTemplateArg, $outputtype, $trusted);
+            $md = $this->getTemplate($getTemplateArg, $trusted);
 
             if ($callMeta) {
                 $fct = 'template_meta_'.$md;

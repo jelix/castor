@@ -37,18 +37,14 @@ class Castor extends CastorCore
      * include the compiled template file and call one of the generated function.
      *
      * @param string $tpl        template selector
-     * @param string $outputType the type of output (html, text etc..) (deprecated)
      * @param bool   $trusted    says if the template file is trusted or not
      *
      * @return string the suffix name of the function to call
      * @throws Exception
      */
-    protected function getTemplate($tpl, $outputType = '', $trusted = true)
+    protected function getTemplate($tpl, $trusted = true)
     {
         $tpl = $this->config->templatePath.$tpl;
-        if ($outputType == '') {
-            $outputType = 'html';
-        }
 
         $cachefile = dirname($this->_templateName).'/';
         if ($cachefile == './') {
@@ -59,16 +55,7 @@ class Castor extends CastorCore
             throw new Exception('cache path is invalid ! its value is: "'.$this->config->cachePath.'".');
         }
 
-        if ($outputType == 'html') {
-            // no prefix for default outputType and trust level.
-            // outputType and trust level may be defined with pragma instruction
-            // so the prefix may not correspond to the real output / trust level
-            $prefixFileName = ($trusted ? '' : 'nt_');
-        }
-        else {
-            $prefixFileName = $outputType.($trusted ? '' : '_nt').'_';
-        }
-
+        $prefixFileName = ($trusted ? '' : '_nt') . '_';
         $cachefile = $this->config->cachePath.$cachefile . $prefixFileName . basename($tpl).'.php';
 
         $mustCompile = $this->config->compilationForce || !file_exists($cachefile);
@@ -84,7 +71,7 @@ class Castor extends CastorCore
                 $compiler->setSyntaxVersion(2);
             }
             $compiler->compile($this->_templateName,
-                               $tpl, $outputType, $trusted,
+                               $tpl, $trusted,
                                $this->userModifiers, $this->userFunctions);
         }
         require_once $cachefile;
@@ -94,15 +81,14 @@ class Castor extends CastorCore
 
     /**
      * @param string $tpl template selector
-     * @param string $outputType the type of output (html, text etc..) (deprecated)
      * @param bool $trusted says if the template file is trusted or not
      * @param bool $callMeta
      * @return false|string
      * @throws \Exception
      */
-    public function fetch($tpl, $outputType = '', $trusted = true, $callMeta = true)
+    public function fetch($tpl, $trusted = true, $callMeta = true)
     {
-        return $this->_fetch($tpl, $tpl, $outputType, $trusted, $callMeta);
+        return $this->_fetch($tpl, $tpl, $trusted, $callMeta);
     }
 
     protected function getCachePath()

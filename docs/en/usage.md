@@ -175,27 +175,15 @@ By default, Castor assumes that the template is an html template.
 It's important to indicate what type of content it is, so Castor can use plugins that target
 this content type specifically. Some plugins may be available only for some content type.
 
-If the content type is not 'html', indicates the type into the template with the pragma instruction `output-type`.
-
-Example in a template that generate simple text:
+You should indicate the content type into the template by setting the `output-type`
+pragma parameter:
 
 ```
-`{! output-type = text !}`
-
-here is a content.
+ {! output-type = text !}
 ```
 
-Another (deprecated) way is to give the content type to at second parameters to `fetch()`,
-`display()` or `fetchFromString()`.
-
-
-```php
-  $content = $tpl->fetch('mytemplate.tpl', 'text');
-```
-
-Note that you can create your own type. You just have to give your
-content type into the template or to `fetch()`, `display()` or `fetchFromString()`, and creating some plugins
-for this content (if "common" plugins are not enough).
+Note that you can create your own type. You just have to set this pragma parameter
+and to create some plugins for this content (if "common" plugins are not enough).
 
 
 ## Trusted and untrusted templates
@@ -212,7 +200,7 @@ To indicate to enforce the security in this case, give `false` as third paramete
 `fetch`, `display` or `fetchFromString`.
 
 ```php
-  $content = $tpl->fetch('mytemplate.tpl', '', false);
+  $content = $tpl->fetch('mytemplate.tpl', false);
 ```
 
 Among of thing you cannot do in trusted templates:

@@ -39,22 +39,11 @@ class Compiler extends CompilerCore
      * @return bool true if ok
      * @throws \Exception
      */
-    public function compile($tplName, $tplFile, $outputType, $trusted,
+    public function compile($tplName, $tplFile, $trusted,
                              $userModifiers = array(), $userFunctions = array())
     {
         $this->_sourceFile = $tplFile;
-        $this->outputType = $outputType;
-
-        if ($outputType == 'html') {
-            // no prefix for default outputType and trust level.
-            // outputType and trust level may be defined with pragma instruction
-            // so the prefix may not correspond to the real output / trust level
-            $prefixFileName = ($trusted ? '' : 'nt_');
-        }
-        else {
-            $prefixFileName = $outputType.($trusted ? '' : '_nt').'_';
-        }
-
+        $prefixFileName = ($trusted ? '' : '_nt').'_';
         $cacheFile = $this->config->cachePath.dirname($tplName).'/'.$prefixFileName.basename($tplName).'.php';
         $this->trusted = $trusted;
         $md5 = md5($prefixFileName.$tplFile);
