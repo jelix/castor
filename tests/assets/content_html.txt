@@ -1,3 +1,26 @@
 <h1>output type test</h1>
 
 <p>Hello world!</p>
+myconst
+
+<ul>
+    <li>1</li>
+
+    <li>2</li>
+
+    <li>3</li>
+
+    <li>4</li>
+</ul>
+
+<p>Included template with variable FOO</p>
+
+Counter 1 :  1 2 3 4 5
+Counter 2 :  a c e
+counter reset :  1 2
+Cycle simple :  a e i a e
+Cycle default :  c d f c d
+Cycle named :  g h i g h
+
+mystringmystringmystringmystring
+

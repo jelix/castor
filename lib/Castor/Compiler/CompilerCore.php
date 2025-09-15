@@ -13,6 +13,8 @@
  */
 namespace Jelix\Castor\Compiler;
 
+use Jelix\Castor\PluginsProvider\BlockPluginInterface;
+use Jelix\Castor\PluginsProvider\PluginsProviderInterface;
 use Jelix\Castor\RuntimeContainer;
 
 /**
@@ -20,6 +22,7 @@ use Jelix\Castor\RuntimeContainer;
  */
 abstract class CompilerCore
 {
+
     protected $_literals;
     protected $_verbatims;
 
@@ -141,11 +144,15 @@ abstract class CompilerCore
 
     protected $removeASPtags = true;
 
+
+    protected PluginsProviderInterface $pluginsProvider;
+
     /**
      * Initialize some properties.
      */
-    public function __construct($encoding = 'UTF-8')
+    public function __construct(PluginsProviderInterface $pluginsProvider, $encoding = 'UTF-8')
     {
+        $this->pluginsProvider = $pluginsProvider;
         $this->encoding = $encoding;
 
         if (defined('T_CHARACTER')) {
@@ -179,6 +186,15 @@ abstract class CompilerCore
         return $this->_autoescape;
     }
 
+    public function getEncoding()
+    {
+        return $this->encoding;
+    }
+
+    public function addPathToInclude($path)
+    {
+        $this->_pluginPath[$path] = true;
+    }
 
     public function compileString($templateContent, $userModifiers, $userFunctions, $md5, $header = '', $footer = '')
     {
@@ -192,10 +208,10 @@ abstract class CompilerCore
             $header .= ' require_once(\''.$path."');\n";
         }
         $header .= 'class template_'.$md5.' implements \\Jelix\\Castor\\ContentGeneratorInterface {'."\n";
-        $header .= ' public function meta(\\Jelix\\Castor\\RuntimeContainer $t) {';
+        $header .= ' public function meta(\\Jelix\\Castor\\CastorCore $engine, \\Jelix\\Castor\\RuntimeContainer $t) {';
         $header .= "\n".$this->_metaBody."\n}\n";
 
-        $header .= 'public function content(\\Jelix\\Castor\\RuntimeContainer $t) {'."\n?>";
+        $header .= 'public function content(\\Jelix\\Castor\\CastorCore $engine, \\Jelix\\Castor\\RuntimeContainer $t) {'."\n?>";
         return new CompilationResult(
             'template_'.$md5,
             $header.$result."<?php \n}\n}\n".$footer
@@ -242,8 +258,9 @@ abstract class CompilerCore
 
         $tplContent = preg_replace('/<\?php\\s+\?>/', '', $tplContent);
 
-        if (count($this->_blockStack)) {
-            $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
+        $currentBlock = $this->getCurrentBlockName();
+        if ($currentBlock) {
+            $this->doError1('errors.tpl.tag.block.end.missing', $currentBlock);
         }
 
         return $tplContent;
@@ -304,7 +321,7 @@ abstract class CompilerCore
     protected function _parseVariable($expr)
     {
         $tok = explode('|', $expr);
-        $res = $this->_parseFinal(array_shift($tok), $this->_allowedInVar, $this->_excludedInVar);
+        $res = $this->_compileArgs(array_shift($tok), $this->_allowedInVar, $this->_excludedInVar);
 
         $hasEscHtmlModifier = false;
         $hasNoEscModifier = false;
@@ -313,35 +330,29 @@ abstract class CompilerCore
                 $this->doError2('errors.tpl.tag.modifier.invalid', $this->_currentTag, $modifier);
             }
 
+            $modifierName = $m[1];
+
             if (isset($m[2])) {
-                $targs = $this->_parseFinal($m[2], $this->_allowedInVar, $this->_excludedInVar, true, ',', ':');
-                array_unshift($targs, $res);
+                $targs = $this->_compileArgs($m[2], $this->_allowedInVar, $this->_excludedInVar, true, ',', ':');
             } else {
-                $targs = array($res);
+                $targs = [];
             }
 
-            if ($path = $this->_getPlugin('cmodifier', $m[1])) {
-                require_once $path[0];
-                $fct = $path[1];
-                $res = $fct($this, $targs);
-            } elseif ($path = $this->_getPlugin('modifier2', $m[1])) {
-                $res = $path[1].'($t, '.implode(',', $targs).')';
-                $this->_pluginPath[$path[0]] = true;
-            } elseif ($path = $this->_getPlugin('modifier', $m[1])) {
-                $res = $path[1].'('.implode(',', $targs).')';
-                $this->_pluginPath[$path[0]] = true;
+            $plugin = $this->pluginsProvider->getModifierPlugin($this, $modifierName);
+            if ($plugin) {
+                $res = $plugin->compile($this, $modifierName, $targs, $res);
             } else {
-                if ($m[1] == 'noesc' || $m[1] == 'raw') {
+                if ($modifierName == 'noesc' || $modifierName == 'raw') {
                     $hasNoEscModifier = true;
                 }
-                elseif ($m[1] == 'eschtml' || $m[1] == 'escxml') {
+                elseif ($modifierName == 'eschtml' || $modifierName == 'escxml') {
                     $hasEscHtmlModifier = true;
                     $res = 'htmlspecialchars('.$res.', ENT_QUOTES | ENT_SUBSTITUTE, "'.$this->encoding.'")';
                 }
-                elseif (isset($this->_modifier[$m[1]])) {
-                    $res = $this->_modifier[$m[1]].'('.$res.')';
+                elseif (isset($this->_modifier[$modifierName])) {
+                    $res = $this->_modifier[$modifierName].'('.$res.')';
                 } else {
-                    $this->doError2('errors.tpl.tag.modifier.unknown', $this->_currentTag, $m[1]);
+                    $this->doError2('errors.tpl.tag.modifier.unknown', $this->_currentTag, $modifierName);
                 }
             }
         }
@@ -373,23 +384,27 @@ abstract class CompilerCore
         $res = '';
         switch ($name) {
             case 'if':
-                $res = 'if('.$this->_parseFinal($args, $this->_allowedInExpr).'):';
-                array_push($this->_blockStack, 'if');
+                $res = 'if('.$this->_compileArgs($args, $this->_allowedInExpr).'):';
+                $this->enterBlock('if');
                 break;
 
             case 'else':
-                if (substr(end($this->_blockStack), 0, 2) != 'if') {
-                    $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
+                $currentBlock = $this->getCurrentBlockName();
+                if (!$currentBlock || substr($currentBlock, 0, 2) != 'if') {
+                    $this->doError1('errors.tpl.tag.block.end.missing', $currentBlock);
+                } elseif (($plugin = $this->getCurrentBlockPlugin())) {
+                    $res = $plugin->compileElse($this);
                 } else {
                     $res = 'else:';
                 }
                 break;
 
             case 'elseif':
-                if (end($this->_blockStack) != 'if') {
-                    $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
+                $currentBlock = $this->getCurrentBlockName();
+                if (!$currentBlock ||$currentBlock != 'if') {
+                    $this->doError1('errors.tpl.tag.block.end.missing', $currentBlock);
                 } else {
-                    $res = 'elseif('.$this->_parseFinal($args, $this->_allowedInExpr).'):';
+                    $res = 'elseif('.$this->_compileArgs($args, $this->_allowedInExpr).'):';
                 }
                 break;
 
@@ -405,13 +420,13 @@ abstract class CompilerCore
                     $args = $m[1];
                 }
 
-                $res = 'foreach('.$this->_parseFinal($args, $this->_allowedInForeach, $notallowed).'):';
-                array_push($this->_blockStack, 'foreach');
+                $res = 'foreach('.$this->_compileArgs($args, $this->_allowedInForeach, $notallowed).'):';
+                $this->enterBlock('foreach');
                 break;
 
             case 'while':
-                $res = 'while('.$this->_parseFinal($args, $this->_allowedInExpr).'):';
-                array_push($this->_blockStack, 'while');
+                $res = 'while('.$this->_compileArgs($args, $this->_allowedInExpr).'):';
+                $this->enterBlock('while');
                 break;
 
             case 'for':
@@ -424,27 +439,29 @@ abstract class CompilerCore
                 if (preg_match("/^\s*\((.*)\)\s*$/", $args, $m)) {
                     $args = $m[1];
                 }
-                $res = 'for('.$this->_parseFinal($args, $this->_allowedInExpr, $notallowed).'):';
-                array_push($this->_blockStack, 'for');
+                $res = 'for('.$this->_compileArgs($args, $this->_allowedInExpr, $notallowed).'):';
+                $this->enterBlock('for');
                 break;
 
+            case 'break':
+                $res= ' break;';
+                break;
+            case 'continue':
+                $res= ' continue;';
+                break;
             case '/foreach':
             case '/for':
             case '/if':
             case '/while':
                 $short = substr($name, 1);
-                if (end($this->_blockStack) != $short) {
-                    $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
-                } else {
-                    array_pop($this->_blockStack);
-                    $res = 'end'.$short.';';
-                }
+                $this->leaveBlock($short);
+                $res = 'end'.$short.';';
                 break;
 
             case 'assign':
             case 'set':
             case 'eval':
-                $res = $this->_parseFinal($args, $this->_allowedAssign).';';
+                $res = $this->_compileArgs($args, $this->_allowedAssign).';';
                 break;
 
             case 'literal':
@@ -473,77 +490,70 @@ abstract class CompilerCore
                 break;
 
             case 'meta_if':
-                $metaIfArgs = $this->_parseFinal($args, $this->_allowedInExpr);
+                $metaIfArgs = $this->_compileArgs($args, $this->_allowedInExpr);
                 $this->_metaBody .= 'if('.$metaIfArgs.'):'."\n";
-                array_push($this->_blockStack, 'meta_if');
+                $this->enterBlock('meta_if');
                 break;
 
             case 'meta_else':
-                if (substr(end($this->_blockStack), 0, 7) != 'meta_if') {
-                    $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
+                $currentBlock = $this->getCurrentBlockName();
+                if (substr($currentBlock, 0, 7) != 'meta_if') {
+                    $this->doError1('errors.tpl.tag.block.end.missing', $currentBlock);
                 } else {
                     $this->_metaBody .= "else:\n";
                 }
                 break;
 
             case 'meta_elseif':
-                if (end($this->_blockStack) != 'meta_if') {
-                    $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
+                $currentBlock = $this->getCurrentBlockName();
+                if ($currentBlock != 'meta_if') {
+                    $this->doError1('errors.tpl.tag.block.end.missing', $currentBlock);
                 } else {
-                    $elseIfArgs = $this->_parseFinal($args, $this->_allowedInExpr);
+                    $elseIfArgs = $this->_compileArgs($args, $this->_allowedInExpr);
                     $this->_metaBody .= 'elseif('.$elseIfArgs."):\n";
                 }
                 break;
 
             case '/meta_if':
                 $short = substr($name, 1);
-                if (end($this->_blockStack) != $short) {
-                    $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
-                } else {
-                    array_pop($this->_blockStack);
-                    $this->_metaBody .= "endif;\n";
-                }
+                $this->leaveBlock($short);
+                $this->_metaBody .= "endif;\n";
                 break;
 
             default:
                 if (preg_match('!^/(\w+)$!', $name, $m)) {
-                    if (end($this->_blockStack) != $m[1]) {
-                        $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
-                    } else {
-                        array_pop($this->_blockStack);
-                        if (function_exists($fct = 'jtpl_block_'.$this->outputType.'_'.$m[1])) {
-                            $res = $fct($this, false, null);
-                        } elseif (function_exists($fct = 'jtpl_block_common_'.$m[1])) {
-                            $res = $fct($this, false, null);
-                        } else {
-                            $this->doError1('errors.tpl.tag.block.begin.missing', $m[1]);
-                        }
-                    }
+                    $res = $this->leaveBlock($m[1]);
                 } elseif (preg_match('/^meta_(\w+)$/', $name, $m)) {
-                    if ($path = $this->_getPlugin('meta', $m[1])) {
-                        $this->_parseMeta($args, $path[1]);
-                        $this->_pluginPath[$path[0]] = true;
+                    $metaName = $m[1];
+
+                    if ($plugin = $this->pluginsProvider->getMetaPlugin($this, $metaName)) {
+
+                        if (preg_match('/^(\w+)(\s+(.*))?$/', $args, $m)) {
+                            if (isset($m[3])) {
+                                $argfct = $this->_compileArgs($m[3], $this->_allowedInExpr);
+                            } else {
+                                $argfct = 'null';
+                            }
+
+                            $this->_metaBody .= $plugin->compileForMeta($this, $metaName, $m[1], $argfct);
+                        } else {
+                            $this->doError1('errors.tpl.tag.meta.invalid', $this->_currentTag);
+                        }
                     } else {
-                        $this->doError1('errors.tpl.tag.meta.unknown', $m[1]);
+                        $this->doError1('errors.tpl.tag.meta.unknown', $metaName);
                     }
                     $res = '';
-                } elseif ($path = $this->_getPlugin('block', $name)) {
-                    require_once $path[0];
-                    $argfct = $this->_parseFinal($args, $this->_allowedAssign, array(';'), true);
-                    $fct = $path[1];
-                    $res = $fct($this, true, $argfct);
-                    array_push($this->_blockStack, $name);
-                } elseif ($path = $this->_getPlugin('cfunction', $name)) {
-                    require_once $path[0];
-                    $argfct = $this->_parseFinal($args, $this->_allowedAssign, array(';'), true);
-                    $fct = $path[1];
-                    $res = $fct($this, $argfct);
-                } elseif ($path = $this->_getPlugin('function', $name)) {
-                    $argfct = $this->_parseFinal($args, $this->_allowedAssign);
-                    $res = $path[1].'( $t'.(trim($argfct) != '' ? ','.$argfct : '').');';
-                    $this->_pluginPath[$path[0]] = true;
+                } elseif ($plugin = $this->pluginsProvider->getBlockPlugin($this, $name)) {
+
+                    $res = $this->enterBlock($name, $plugin, $args);
+
+                } elseif ($plugin = $this->pluginsProvider->getFunctionPlugin($this, $name)) {
+
+                    $argfct = $this->_compileArgs($args, $this->_allowedAssign, array(';'), true);
+                    $res = $plugin->compile($this, $name, $argfct);
+
                 } elseif (isset($this->_userFunctions[$name])) {
-                    $argfct = $this->_parseFinal($args, $this->_allowedAssign);
+                    $argfct = $this->_compileArgs($args, $this->_allowedAssign);
                     $res = $this->_userFunctions[$name].'( $t'.(trim($argfct) != '' ? ','.$argfct : '').');';
                 } else {
                     $this->doError1('errors.tpl.tag.function.unknown', $name);
@@ -586,6 +596,23 @@ abstract class CompilerCore
         return '';
     }
 
+
+    protected function enterBlock($name, $plugin = null, $sourceTagArgs = null)
+    {
+        array_push($this->_blockStack, [$name, $plugin]);
+
+        if ($plugin) {
+            if ($sourceTagArgs) {
+                $args = $this->_compileArgs($sourceTagArgs, $this->_allowedAssign, array(';'), true);
+            }
+            else {
+                $args = '';
+            }
+            return $plugin->compileBegin($this, $name, $args);
+        }
+        return '';
+    }
+
     /**
      * for plugins, it says if the plugin is inside the given block.
      *
@@ -596,17 +623,53 @@ abstract class CompilerCore
      */
     public function isInsideBlock($blockName, $onlyUpper = false)
     {
+        if (count($this->_blockStack) === 0) {
+            return false;
+        }
+
         if ($onlyUpper) {
-            return (end($this->_blockStack) == $blockName);
+            return (end($this->_blockStack)[0] == $blockName);
         }
         for ($i = count($this->_blockStack) - 1; $i >= 0; --$i) {
-            if ($this->_blockStack[$i] == $blockName) {
+            if ($this->_blockStack[$i][0] == $blockName) {
                 return true;
             }
         }
 
         return false;
     }
+
+    public function getCurrentBlockName()
+    {
+        if (count($this->_blockStack)) {
+            return end($this->_blockStack)[0];
+        }
+        return null;
+    }
+
+    public function getCurrentBlockPlugin()
+    {
+        if (count($this->_blockStack)) {
+            return end($this->_blockStack)[1];
+        }
+        return null;
+    }
+
+    protected function leaveBlock($name)
+    {
+        $currentBlock = $this->getCurrentBlockName();
+        if ($currentBlock != $name) {
+            $this->doError1('errors.tpl.tag.block.end.missing', $currentBlock);
+        } else {
+            /** @var BlockPluginInterface $plugin */
+            list($bName, $plugin) = array_pop($this->_blockStack);
+            if ($plugin) {
+                return $plugin->compileEnd($this, $bName);
+            }
+        }
+        return '';
+    }
+
 
     /**
      * sub-function which analyse an expression.
@@ -620,7 +683,7 @@ abstract class CompilerCore
      *
      * @return array|string
      */
-    protected function _parseFinal($string, $allowed = array(), $exceptChar = array(';'),
+    protected function _compileArgs($string, $allowed = array(), $exceptChar = array(';'),
                                     $splitArgIntoArray = false, $sep1 = ',', $sep2 = ',')
     {
         $tokens = token_get_all('<?php '.$string.'?>');
@@ -744,7 +807,7 @@ abstract class CompilerCore
     {
         if (preg_match('/^(\w+)(\s+(.*))?$/', $args, $m)) {
             if (isset($m[3])) {
-                $argfct = $this->_parseFinal($m[3], $this->_allowedInExpr);
+                $argfct = $this->_compileArgs($m[3], $this->_allowedInExpr);
             } else {
                 $argfct = 'null';
             }
@@ -762,17 +825,6 @@ abstract class CompilerCore
     {
         $this->_metaBody .= $content."\n";
     }
-
-    /**
-     * Try to find a plugin.
-     *
-     * @param string $type type of plugin (function, modifier...)
-     * @param string $name the plugin name
-     *
-     * @return array|bool an array containing the path of the plugin
-     *                    and the name of the plugin function, or false if not found
-     */
-    abstract protected function _getPlugin($type, $name);
 
     /**
      * @param string $err the error message code

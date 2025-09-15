@@ -2,10 +2,10 @@
 <phpunit bootstrap="bootstrap.php" convertDeprecationsToExceptions="true">
   <testsuites>
     <testsuite name="Castor">
-      <file>config.php</file>
-      <file>compiler.php</file>
-      <file>expressions_parsing.php</file>
-      <file>engine.php</file>
+      <file>ConfigTest.php</file>
+      <file>CompilerTest.php</file>
+      <file>ExpressionParsingTest.php</file>
+      <file>EngineTest.php</file>
     </testsuite>
   </testsuites>
 </phpunit>

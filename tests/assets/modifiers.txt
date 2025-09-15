@@ -1,3 +1,54 @@
-Json value : bar value
+Json value: bar value
 
-datetime : Sun, 25 Aug 2024
+datetime: Sun, 25 Aug 2024
+
+nl2br: Lorem ipsum dolor sit amet,<br />
+consectetur adipiscing elit.
+
+cat: Lorem ipsum dolor sit ametok
+
+count_array: 3
+
+count_paragraphs: 2
+
+count_sentences: 1
+
+count_words: 8
+
+implode: abc,def,ghi
+
+indent:
+    Lorem ipsum dolor sit amet,
+    consectetur adipiscing elit.
+
+number_format: 123,5
+
+replace: Lorem ipsum bar sit amet
+
+spacify: L o r e m   i p s u m   d o l o r   s i t   a m e t
+
+sprintf: date is 2024-08-25
+
+strip: Lorem ipsum dolor sit amet
+
+truncathtml 200: <p>Lorem ipsum <strong>dolor&eacute; sit</strong> amet,<a href='#foo'>consectetur adipiscing</a> elit.</p>
+truncathtml 10: <p>Lorem ipsu</p>
+truncathtml 15: <p>Lorem ipsum <strong>dol</strong></p>
+truncathtml 18: <p>Lorem ipsum <strong>dolor&eacute;</strong></p>
+truncathtml 31: <p>Lorem ipsum <strong>dolor&eacute; sit</strong> amet,<a href='#foo'>con</a></p>
+
+truncathtml 12: Lorem <p> ipsum</p>
+
+
+wordwrap 30: Lorem ipsum dolor
+sit amet,
+consectetur
+adipiscing elit.
+
+truncate 35: Lorem ipsum dolor sit amet,...
+
+regex_replace: Lorem abc ipsum def sit amet
+
+count_characters with spaces: 11
+
+count_characters without spaces: 9

@@ -15,6 +15,10 @@ namespace Jelix\Castor;
 
 use Jelix\Castor\CacheManager\FileCacheManager;
 use Jelix\Castor\CacheManager\TemplateCacheManagerInterface;
+use Jelix\Castor\PluginsProvider\CorePluginsProvider;
+use Jelix\Castor\PluginsProvider\Legacy\LegacyPluginsProvider;
+use Jelix\Castor\PluginsProvider\PluginsProviderGroup;
+use Jelix\Castor\PluginsProvider\PluginsProviderInterface;
 
 class Config
 {
@@ -29,11 +33,6 @@ class Config
      * should be compiled at each call or not.
      */
     public $compilationForce = false;
-
-    /**
-     * the lang activated in the templates.
-     */
-    protected $lang = 'en';
 
     /**
      * the charset used in the templates.
@@ -53,12 +52,6 @@ class Config
     public $cachePath = '';
 
     /**
-     * the path of the directory which contains the localized error messages
-     * of the template engine. The path should have a / at the end.
-     */
-    protected $localizedMessagesPath = '';
-
-    /**
      * umask for directories created in the cache directory.
      */
     public $umask = 0000;
@@ -74,24 +67,25 @@ class Config
     public $chmodFile = 0644;
 
     /**
-     * @internal
-     * @var \Jelix\SimpleLocalization\Container[]
+     * @var string[]
      */
-    protected $localizedMessages = array();
+    protected $pluginsRepositories = array();
 
     /**
-     * @internal
+     * @var PluginsProviderInterface[]
      */
-    public $pluginPathList = array();
+    protected $pluginsProviders = array();
 
     public readonly TemplateCacheManagerInterface $cacheManager;
+
+    public readonly LocalizedMessagesInterface $messages;
 
     /**
      * @param string|TemplateCacheManagerInterface $cachePath
      * @param $tplPath
      * @throws \Exception
      */
-    public function __construct($cachePath, $tplPath = '')
+    public function __construct($cachePath, $tplPath = '', $localizedMessagesPath = '')
     {
 
         if (is_string($cachePath)) {
@@ -106,66 +100,45 @@ class Config
 
         $this->cachePath = $cachePath;
         $this->templatePath = $tplPath;
-        $this->addPluginsRepository(realpath(__DIR__.'/../plugins/'));
-        $this->localizedMessagesPath = realpath(__DIR__.'/locales/').'/%LANG%.php';
-        $this->setLang($this->lang);
-    }
+        $this->addPluginsProvider(new CorePluginsProvider());
 
-    public function setLang($lang)
-    {
-        $this->lang = $lang;
-        if (!isset($this->localizedMessages[$lang])) {
-            $this->localizedMessages[$lang] = new \Jelix\SimpleLocalization\Container($this->localizedMessagesPath, $lang);
+        if ($localizedMessagesPath == '') {
+            $localizedMessagesPath = realpath(__DIR__.'/locales/').'/%LANG%.php';
         }
+        $this->messages = new LocalizedMessages($localizedMessagesPath);
     }
 
-    public function getLang()
+    public function getPluginsProvider() : PluginsProviderInterface
     {
-        return $this->lang;
-    }
-
-    public function getMessage($key, $params = null)
-    {
-        if (isset($this->localizedMessages[$this->lang])) {
-            try {
-                $str = $this->localizedMessages[$this->lang]->get($key, $params);
-            } catch (\Jelix\SimpleLocalization\Exception $e) {
-                $str = $key;
-            }
-        } else {
-            $str = $key;
+        $list = $this->pluginsProviders;
+        if (count($this->pluginsRepositories)) {
+            $list[] = new LegacyPluginsProvider($this->pluginsRepositories);
         }
-
-        return $str;
+        if (count($list) == 1) {
+            return $list[0];
+        }
+        return new PluginsProviderGroup($list);
     }
 
-    public function setLocalizedMessagesPath($path)
-    {
-        $this->localizedMessagesPath = rtrim($path, '/').'/%LANG%.php';
-        $this->setLang($this->lang);
-    }
-
+    /**
+     * Register a Castor V1 plugins repository
+     *
+     * @param string $path the path to the repository
+     * @return void
+     * @deprecated
+     */
     public function addPluginsRepository($path)
     {
-        if (trim($path) == '') {
-            return;
+        if (is_array($path)) {
+            $this->pluginsRepositories = array_merge($this->pluginsRepositories, $path);
         }
+        else {
+            $this->pluginsRepositories[] = $path;
+        }
+    }
 
-        if (!file_exists($path)) {
-            throw new \Exception('The given path, '.$path.' doesn\'t exists');
-        }
-
-        if (substr($path, -1) != '/') {
-            $path .= '/';
-        }
-
-        if ($handle = opendir($path)) {
-            while (false !== ($f = readdir($handle))) {
-                if ($f[0] != '.' && is_dir($path.$f)) {
-                    $this->pluginPathList[$f][] = $path.$f.'/';
-                }
-            }
-            closedir($handle);
-        }
+    public function addPluginsProvider(PluginsProviderInterface $provider)
+    {
+        $this->pluginsProviders[] = $provider;
     }
 }

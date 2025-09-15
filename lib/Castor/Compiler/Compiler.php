@@ -13,6 +13,7 @@
 
 namespace Jelix\Castor\Compiler;
 use Jelix\Castor\Config;
+use Jelix\Castor\PluginsProvider\Legacy\LegacyPluginsProvider;
 use Jelix\Castor\TemplateContentInterface;
 
 class Compiler extends CompilerCore
@@ -27,16 +28,16 @@ class Compiler extends CompilerCore
      */
     public function __construct(Config $config)
     {
-        parent::__construct($config->charset);
+        parent::__construct($config->getPluginsProvider(), $config->charset);
         $this->config = $config;
     }
 
     /**
      * Launch the compilation of a template.
      *
-     * Store the result (a php content) into a cache file indicated by $tplFile
+     * returns the compiled template
      *
-     * @param  TemplateContentInterface $tplContent  the file name that contains the template
+     * @param  TemplateContentInterface $tplContent  information about the template content
      *
      * @return CompilationResult true if ok
      * @throws \Exception
@@ -62,41 +63,18 @@ class Compiler extends CompilerCore
         return '$t->getLocaleString(\''.$locale.'\')';
     }
 
-    protected function _getPlugin($type, $name)
-    {
-        if (isset($this->config->pluginPathList[$this->outputType])) {
-            foreach ($this->config->pluginPathList[$this->outputType] as $path) {
-                $foundPath = $path.$type.'.'.$name.'.php';
-
-                if (file_exists($foundPath)) {
-                    return array($foundPath, 'jtpl_'.$type.'_'.$this->outputType.'_'.$name);
-                }
-            }
-        }
-        if (isset($this->config->pluginPathList['common'])) {
-            foreach ($this->config->pluginPathList['common'] as $path) {
-                $foundPath = $path.$type.'.'.$name.'.php';
-                if (file_exists($foundPath)) {
-                    return array($foundPath, 'jtpl_'.$type.'_common_'.$name);
-                }
-            }
-        }
-
-        return false;
-    }
-
     public function doError0($err)
     {
-        throw new \Exception($this->config->getMessage($err, array($this->_sourceFile)));
+        throw new \Exception($this->config->messages->getMessage($err, array($this->_sourceFile)));
     }
 
     public function doError1($err, $arg)
     {
-        throw new \Exception($this->config->getMessage($err, array($arg, $this->_sourceFile)));
+        throw new \Exception($this->config->messages->getMessage($err, array($arg, $this->_sourceFile)));
     }
 
     public function doError2($err, $arg1, $arg2)
     {
-        throw new \Exception($this->config->getMessage($err, array($arg1, $arg2, $this->_sourceFile)));
+        throw new \Exception($this->config->messages->getMessage($err, array($arg1, $arg2, $this->_sourceFile)));
     }
 }

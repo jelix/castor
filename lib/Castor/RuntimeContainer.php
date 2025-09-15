@@ -59,18 +59,20 @@ class RuntimeContainer
      */
     public $_templateName;
 
+    public readonly LocalizedMessagesInterface $messages;
 
-    protected $charset;
+    public readonly string $charset;
 
-    public function __construct($charset = 'UTF-8')
+    public function __construct(LocalizedMessagesInterface $messages, $charset = 'UTF-8')
     {
         $this->charset = $charset;
+        $this->messages = $messages;
     }
 
     /**
      * @param string $macroName the macro name
      * @param array $parametersNames parameter names for the macro
-     * @param callable $func the macro itself, as a function accepting a CastorCore engine as a parameter.
+     * @param callable $func the macro itself, as a function accepting a CastorCore engine and a runtime container as a parameters.
      * @return void
      */
     public function declareMacro($macroName, array $parametersNames, callable $func)
@@ -91,10 +93,11 @@ class RuntimeContainer
      * after the call of the macro.
      *
      * @param string $macroName the macro name to call
-     * @param array $parameters parameters for the macro. This is an associative array, with variables names as keys.
+     * @param array $parameters parameters for the macro. Values should correspond to variable names given during
+     *                          the declaration of the macro, in the same order.
      * @return void
      */
-    public function callMacro($macroName, $parameters)
+    public function callMacro(CastorCore $engine, string $macroName, array $parameters)
     {
         if (!isset($this->_macros[$macroName])) {
             return;
@@ -110,7 +113,7 @@ class RuntimeContainer
             $this->_vars[$pName] = $parameters[$k];
         }
 
-        $func($this);
+        $func($engine, $this);
 
         // delete or restore parameters
         foreach ($paramNames as $k => $pName) {
@@ -121,5 +124,15 @@ class RuntimeContainer
                 unset($this->_vars[$pName]);
             }
         }
+    }
+
+    /**
+     * @return \Exception
+     */
+    public function getInternalException($messageKey, $parameters)
+    {
+        $msg = $this->messages->getMessage($messageKey, $parameters);
+
+        return new \Exception($msg);
     }
 }

@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 /**
  * @author      Laurent Jouanneau
  * @copyright   2025 Laurent Jouanneau
@@ -8,11 +7,15 @@ declare(strict_types=1);
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
  */
 
+
 namespace Jelix\Castor;
 
-interface ContentGeneratorInterface
+interface LocalizedMessagesInterface
 {
-    public function meta(CastorCore $engine, RuntimeContainer $t);
+    public function getMessage($key, $params = null) : string;
 
-    public function content(CastorCore $engine, RuntimeContainer $t);
+    public function setLang($lang) : void;
+
+    public function getLang() : string;
+
 }

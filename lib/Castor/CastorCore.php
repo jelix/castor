@@ -22,10 +22,13 @@ abstract class CastorCore
 
     protected RuntimeContainer $container;
 
-    public function __construct()
+    public function __construct(LocalizedMessagesInterface $messages)
     {
-        $this->container = new RuntimeContainer();
-        
+        if (!$this->container) {
+            // it may have been already instancied by a child class
+            $this->container = new RuntimeContainer($messages);
+        }
+
         $this->container->_vars['j_datenow'] = date('Y-m-d');
         $this->container->_vars['j_timenow'] = date('H:i:s');
     }
@@ -140,6 +143,16 @@ abstract class CastorCore
     }
 
     /**
+     * For plugins
+     * @internal
+     * @return RuntimeContainer
+     */
+    public function getRuntimeContainer() : RuntimeContainer
+    {
+        return $this->container;
+    }
+
+    /**
      * process all meta instruction of a template.
      *
      * @param TemplateContentInterface $tpl        template selector
@@ -156,7 +169,7 @@ abstract class CastorCore
         $this->processedMeta[] = $tplName;
         $contentGenerator = $this->getTemplate($tpl);
 
-        return $contentGenerator->meta($this->container);
+        return $contentGenerator->meta($this, $this->container);
     }
 
     /**
@@ -172,7 +185,7 @@ abstract class CastorCore
 
         $contentGenerator = $this->getTemplate($tpl);
 
-        $contentGenerator->content($this->container);
+        $contentGenerator->content($this, $this->container);
 
         array_pop($this->recursiveTpl);
         $this->container->_templateName = $previousTpl;
@@ -197,19 +210,7 @@ abstract class CastorCore
      *
      * @return ContentGeneratorInterface
      */
-    protected function getTemplate(TemplateContentInterface $tplLoader)
-    {
-        $compiler = $this->getCompiler();
-        $compiledContent = $compiler->compile($tplLoader, $this->userModifiers, $this->userFunctions);
-
-            $this->cacheManager->saveCompiledTemplate(
-                $tplLoader->getName(),
-                $compiledContent,
-                $tplLoader->cacheTag()
-            );
-
-        return $this->cacheManager->getTemplateContent($tplLoader->getName());
-    }
+    abstract protected function getTemplate(TemplateContentInterface $tplLoader);
 
     /**
      * @param TemplateContentInterface $tpl        the template name
@@ -236,9 +237,9 @@ abstract class CastorCore
         ob_start();
         try {
             if ($callMeta) {
-                $contentGenerator->meta($this->container);
+                $contentGenerator->meta($this, $this->container);
             }
-            $contentGenerator->content($this->container);
+            $contentGenerator->content($this, $this->container);
             array_pop($this->recursiveTpl);
             $this->container->_templateName = $previousTpl;
             $content = ob_get_clean();
@@ -294,15 +295,4 @@ abstract class CastorCore
     {
         return '';
     }
-
-    /**
-     * @return \Exception
-     */
-    public function getInternalException($messageKey, $parameters)
-    {
-        $msg = $this->config->getMessage($messageKey, $parameters);
-
-        return new \Exception($msg);
-    }
-
 }

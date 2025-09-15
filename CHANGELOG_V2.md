@@ -4,7 +4,7 @@ Changelog Version 2
 Summary
 -------
 
-- Minimum version of PHP : 8.2
+- Minimum version of PHP: 8.2
 - new way to indicate output type
 - Rework internals 
 - new component to implement compiled template cache. You can provide a new cache manager implementing the `Jelix\Castor\CacheManager\TemplateCacheManagerInterface` interface
@@ -13,6 +13,8 @@ Summary
 - new way to indicate untrusted templates: this information is given by the object implementing the `TemplateContentInterface`. 
 - `Config` has now a property `$cacheManager` for the `TemplateCacheManagerInterface` object
 - new methods `Castor::fetchFromString()`
+- Fix the truncatehtml modifier: it cuts the text at the exact given position.
+
 
 Breaking changes
 ----------------
@@ -23,6 +25,12 @@ Breaking changes
   these variables are not anymore into the `CastorCore` properties.
 - `meta()` and `display()` methods are moved from `CastorCore` to `Castor`
 - parameters of `Castor::fetch()` have changed
+- no more `Config::$pluginPathList` property
+- no more `CompilerCore::_getPlugin()` to override. This is replaced by the new plugin system
+  and components implementing `PluginsProviderInterface`.
+
+- remove plugins swf, swfbiscuit, ltx2pdf, date_format, mailto, gravatar
+
 
 Internal changes
 ----------------
