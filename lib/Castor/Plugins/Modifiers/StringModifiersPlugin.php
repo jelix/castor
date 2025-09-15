@@ -162,7 +162,7 @@ class StringModifiersPlugin implements ModifierPluginInterface
              * </pre>
              */
             case 'nl2br':
-                return 'nl2br('.$compiledExpression.')';
+                return  get_class($this) . '::nl2brModifier('.$compiledExpression.')';
 
             /**
              * format strings via sprintf.
@@ -320,4 +320,11 @@ class StringModifiersPlugin implements ModifierPluginInterface
         return $result.$suffix;
     }
 
+    public static function nl2brModifier($string)
+    {
+        if (is_null($string)) {
+            return '';
+        }
+        return nl2br($string);
+    }
 }
