@@ -36,21 +36,21 @@ class CastorTestSyntax2 extends \PHPUnit\Framework\TestCase {
         $tpl = new \Jelix\Castor\Castor(self::$castorConfig);
         $tpl->assign('countries', array());
         $tpl->assign('titre', 'This is a test !');
-        $result = $tpl->fetch('assets/countries.tpl');
-        $this->assertEquals(file_get_contents(__DIR__.'/assets/countries_empty.txt'), $result);
+        $result = $tpl->fetch('assets_syntax2/countries.ctpl');
+        $this->assertEquals(file_get_contents(__DIR__.'/assets_syntax2/countries_empty.txt'), $result);
 
         $countries = array('France', 'Italie', 'Espagne', 'Belgique');
         $tpl->assign('countries', $countries);
-        $result = $tpl->fetch('assets/countries.tpl');
-        $this->assertEquals(file_get_contents(__DIR__.'/assets/countries.txt'), $result);
+        $result = $tpl->fetch('assets_syntax2/countries.ctpl');
+        $this->assertEquals(file_get_contents(__DIR__.'/assets_syntax2/countries.txt'), $result);
     }
 
     function testMacro() {
         $tpl = new \Jelix\Castor\Castor(self::$castorConfig);
 
         $tpl->assign('existingVar', 'realValueOfExistingVar');
-        $result = $tpl->fetch('assets/macros.tpl');
-        $this->assertEquals(file_get_contents(__DIR__.'/assets/macros.txt'), $result);
+        $result = $tpl->fetch('assets_syntax2/macros.ctpl');
+        $this->assertEquals(file_get_contents(__DIR__.'/assets_syntax2/macros.txt'), $result);
 
     }
 
@@ -61,18 +61,18 @@ class CastorTestSyntax2 extends \PHPUnit\Framework\TestCase {
         $tpl->assign('myjson', $json);
         $tpl->assign('mydate', '2024-08-25');
 
-        $result = $tpl->fetch('assets/modifiers.tpl');
-        $this->assertEquals(file_get_contents(__DIR__.'/assets/modifiers.txt'), $result);
+        $result = $tpl->fetch('assets_syntax2/modifiers.ctpl');
+        $this->assertEquals(file_get_contents(__DIR__.'/assets_syntax2/modifiers.txt'), $result);
 
     }
 
     function testContentType() {
         $tpl = new \Jelix\Castor\Castor(self::$castorConfig);
 
-        $result = $tpl->fetch('assets/content_html.tpl');
-        $this->assertEquals(file_get_contents(__DIR__.'/assets/content_html.txt'), $result);
+        $result = $tpl->fetch('assets_syntax2/content_html.ctpl');
+        $this->assertEquals(file_get_contents(__DIR__.'/assets_syntax2/content_html.txt'), $result);
 
-        $result = $tpl->fetch('assets/content_text.tpl');
-        $this->assertEquals(file_get_contents(__DIR__.'/assets/content_text.txt'), $result);
+        $result = $tpl->fetch('assets_syntax2/content_text.ctpl');
+        $this->assertEquals(file_get_contents(__DIR__.'/assets_syntax2/content_text.txt'), $result);
     }
 }

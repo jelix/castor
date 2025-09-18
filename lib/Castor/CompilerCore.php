@@ -546,11 +546,20 @@ abstract class CompilerCore
             case '/for':
             case '/if':
             case '/while':
+                $short = substr($name, 1);
+                if (end($this->_blockStack) != $short) {
+                    $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
+                } else {
+                    array_pop($this->_blockStack);
+                    $res = 'end'.$short.';';
+                }
+                break;
+
             case 'endforeach':
             case 'endfor':
             case 'endif':
             case 'endwhile':
-                $short = substr($name, 1);
+                $short = substr($name, 3);
                 if (end($this->_blockStack) != $short) {
                     $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
                 } else {
@@ -616,9 +625,16 @@ abstract class CompilerCore
                 break;
 
             case '/meta_if':
-            case 'meta_endif':
                 $short = substr($name, 1);
                 if (end($this->_blockStack) != $short) {
+                    $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
+                } else {
+                    array_pop($this->_blockStack);
+                    $this->_metaBody .= "endif;\n";
+                }
+                break;
+            case 'meta_endif':
+                if (end($this->_blockStack) != 'meta_if') {
                     $this->doError1('errors.tpl.tag.block.end.missing', end($this->_blockStack));
                 } else {
                     array_pop($this->_blockStack);
