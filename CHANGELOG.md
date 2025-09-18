@@ -4,7 +4,6 @@ Changelog
 next
 -----
 
-
 1.2.0
 -----
 

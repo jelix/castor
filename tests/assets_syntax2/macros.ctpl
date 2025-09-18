@@ -1,5 +1,5 @@
 {% macro 'mytest', $arg1 %}
-    <p>This is my block {{$arg1}} {{$existingVar}</p>
+    <p>This is my block {{$arg1}} {{$existingVar}}</p>
 {% endmacro %}
 
 {% macro 'mytest2'%}

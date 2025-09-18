@@ -1,6 +1,8 @@
 <?php
 
-function jtpl_function_text_hello(\Jelix\Castor\CastorCore $tpl)
+
+
+function jtpl_function_text_hello(\Jelix\Castor\RuntimeContainer $tpl)
 {
     echo "Hello world!\n";
 }

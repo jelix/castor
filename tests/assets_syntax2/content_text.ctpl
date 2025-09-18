@@ -2,4 +2,4 @@
 
 # output type test
 
-{{hello}}
+{%hello%}
