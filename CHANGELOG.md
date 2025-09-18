@@ -1,8 +1,14 @@
 Changelog
 =========
 
-next
------
+Next 2.0
+---------
+
+See CHANGELOG_V2.md.
+
+
+Next 1.x
+---------
 
 1.2.0
 -----

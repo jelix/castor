@@ -8,21 +8,23 @@ Castor is a template engine for PHP, using syntax similar to PHP.
 - Efficient generator: template files are "compiled" to PHP files
 - A sandbox mode, to fetch untrusted templates (templates uploaded by a user in a CMS for example).
   This mode has less capabilities of course.
-- A plugin system, similar to Smarty plugins.
-- Plugins can be specific to a content type (HTML, XML, text…), so they produced right content.
+- A plugin system
+- Plugins can be specific to a content type (HTML, XML, text…), so they produce right contents.
 - a system of “meta”: allow the template to expose data to PHP code. For example, a "meta"
   can be an url of a stylesheet to use with the generated content.
 
-# History
+# Version
 
-Castor was formerly known as jTpl and was used in the [Jelix Framework](http://jelix.org)
-since 2006. There was a specific version, "jTpl standalone", existing for years to
-use jTpl without Jelix, but it was never released as a stable version.
+The master branch is the development branch. It has sources of the
+next major version 2.0.0.
 
-In 2015, jTpl was completely "extracted" from Jelix (starting to Jelix 1.7), and is now
-available as a standalone component under the name "Castor", with true stable releases. 
+There are many breaking changes on the API compared to the 1.x version. It has
+also a new plugin system. See  CHANGELOG_V2.md for more details. 
 
-# installation
+See the branch 1.x for the last stable version, used in the Jelix Framework 1.8.
+
+
+# Installation
 
 You can install it from Composer. In your project:
 
@@ -32,17 +34,17 @@ composer require "jelix/castor"
 
 # Usage
 
-A template file:
+A template file `test.ctpl`:
 
 ```
 {! autoescape !}
-<h1>{$titre|upper}</h1>
+<h1>{{ $titre|upper }}</h1>
 <ul>
-{foreach $users as $user}
-<li>{$user->name} ({$user->birthday|datetime:'d/m/Y'})
-    <div>{$user->biography|raw}</div>
+{% foreach $users as $user %}
+<li>{{$user->name}} ({{$user->birthday|datetime:'d/m/Y'}})
+    <div>{{$user->biography|raw}}</div>
 </li>
-{/foreach}
+{% endforeach %}
 </ul>
 ```
 
@@ -74,10 +76,19 @@ $tpl->assign('users', $users);
 $tpl->assign('titre', 'This is a test !');
 
 // content is generated from the given template file and returned
-$content = $tpl->fetch('test.tpl');
+$content = $tpl->fetch('test.ctpl');
 
 // or content is generated from the given template file and sent directly to the browser
-$tpl->display('test.tpl');
+$tpl->display('test.ctpl');
 ```
 
 To know more, see the docs/ directory.
+
+# History
+
+Castor was formerly known as jTpl and was used in the [Jelix Framework](http://jelix.org)
+since 2006. There was a specific version, "jTpl standalone", existing for years to
+use jTpl without Jelix, but it was never released as a stable version.
+
+In 2015, jTpl was completely "extracted" from Jelix (starting to Jelix 1.7), and is now
+available as a standalone component under the name "Castor", with true stable releases. 
