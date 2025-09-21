@@ -29,37 +29,44 @@ abstract class CompilerCore
     /**
      * tokens of variable type.
      */
-    protected $_vartype = array(T_CONSTANT_ENCAPSED_STRING, T_DNUMBER,
-            T_ENCAPSED_AND_WHITESPACE, T_LNUMBER, T_OBJECT_OPERATOR, T_STRING,
-            T_WHITESPACE, T_ARRAY, );
+    protected $_vartype = array(T_ARRAY, T_CONSTANT_ENCAPSED_STRING, T_DNUMBER,
+            T_ENCAPSED_AND_WHITESPACE, T_LNUMBER, T_OBJECT_OPERATOR,
+            T_NULLSAFE_OBJECT_OPERATOR, T_STRING, T_WHITESPACE,
+        );
 
     /**
      * tokens of operators for assignements.
      */
-    protected $_assignOp = array(T_AND_EQUAL, T_DIV_EQUAL, T_MINUS_EQUAL,
-            T_MOD_EQUAL, T_MUL_EQUAL, T_OR_EQUAL, T_PLUS_EQUAL,
-            T_SL_EQUAL, T_SR_EQUAL, T_XOR_EQUAL, );
+    protected $_assignOp = array(T_AND_EQUAL, T_COALESCE_EQUAL, T_CONCAT_EQUAL,
+            T_DIV_EQUAL, T_MINUS_EQUAL, T_MOD_EQUAL, T_MUL_EQUAL, T_OR_EQUAL,
+            T_PLUS_EQUAL, T_POW_EQUAL, T_SL_EQUAL, T_SR_EQUAL, T_XOR_EQUAL,
+        );
 
     /**
      * tokens of operators for tests.
      */
-    protected $_op = array(T_BOOLEAN_AND, T_BOOLEAN_OR, T_EMPTY, T_INC, T_DEC,
-            T_ISSET, T_IS_EQUAL, T_IS_GREATER_OR_EQUAL, T_IS_IDENTICAL,
-            T_IS_NOT_EQUAL, T_IS_NOT_IDENTICAL, T_IS_SMALLER_OR_EQUAL,
-            T_LOGICAL_AND, T_LOGICAL_OR, T_LOGICAL_XOR, T_SR, T_SL,
-            T_DOUBLE_ARROW, );
+    protected $_op = array(T_BOOLEAN_AND, T_BOOLEAN_OR, T_COALESCE, T_DEC, T_DOUBLE_ARROW,
+            T_EMPTY, T_INC, T_ISSET, T_IS_EQUAL, T_IS_GREATER_OR_EQUAL,
+            T_IS_IDENTICAL, T_IS_NOT_EQUAL, T_IS_NOT_IDENTICAL,
+            T_IS_SMALLER_OR_EQUAL, T_LOGICAL_AND, T_LOGICAL_OR, T_LOGICAL_XOR,
+            T_POW, T_SR, T_SL, T_DOUBLE_COLON, T_PAAMAYIM_NEKUDOTAYIM
+        );
 
     /**
      * tokens authorized into locale names.
      */
-    protected $_inLocaleOk = array(T_STRING, T_ABSTRACT, T_AS, T_BREAK, T_CASE,
-            T_CATCH, T_CLASS, T_CLONE, T_CONST, T_CONTINUE, T_DECLARE, T_DEFAULT,
-            T_DNUMBER, T_DO, T_ECHO, T_ELSE, T_ELSEIF, T_EMPTY, T_ENDIF, T_ENDFOR,
-            T_EVAL, T_EXIT, T_EXTENDS, T_FINAL, T_FOR, T_FOREACH, T_FUNCTION,
-            T_GLOBAL, T_GOTO, T_IF, T_IMPLEMENTS, T_INCLUDE, T_INSTANCEOF, T_INTERFACE,
-            T_LIST, T_LNUMBER, T_LOGICAL_AND, T_LOGICAL_OR, T_LOGICAL_XOR,
-            T_NAMESPACE, T_NEW, T_PRINT, T_PRIVATE, T_PUBLIC, T_PROTECTED, T_REQUIRE,
-            T_RETURN, T_STATIC, T_SWITCH, T_THROW, T_TRY, T_USE, T_VAR, T_WHILE, );
+    protected $_inLocaleOk = array(T_STRING, T_ABSTRACT, T_AS, T_BREAK, T_CALLABLE,
+            T_CASE, T_CATCH, T_CLASS, T_CLONE, T_CONST, T_CONTINUE, T_DECLARE,
+            T_DEFAULT, T_DNUMBER, T_DO, T_ECHO, T_ELSE, T_ELSEIF, T_EMPTY,
+            T_ENDDECLARE, T_ENDFOR, T_ENDFOREACH, T_ENDIF, T_ENDSWITCH,
+            T_ENDWHILE, T_ENUM, T_EVAL, T_EXIT, T_EXTENDS, T_FINAL, T_FINALLY,
+            T_FOR, T_FOREACH, T_FUNCTION, T_GLOBAL, T_GOTO, T_IF, T_IMPLEMENTS,
+            T_INCLUDE, T_INSTANCEOF, T_INTERFACE, T_LIST, T_LNUMBER, T_LOGICAL_AND,
+            T_LOGICAL_OR, T_LOGICAL_XOR, T_MATCH, T_NAMESPACE, T_NEW, T_PRINT,
+            T_PRIVATE, T_PUBLIC, T_PROTECTED, T_REQUIRE, T_READONLY, T_RETURN,
+            T_STATIC, T_SWITCH, T_THROW, T_TRAIT, T_TRY, T_USE, T_VAR, T_WHILE,
+            T_YIELD,
+        );
 
     /**
      * tokens allowed in output for variables.
@@ -164,10 +171,6 @@ abstract class CompilerCore
         }
         $this->_allowedInVar = array_merge($this->_vartype, array(T_INC, T_DEC, T_DOUBLE_ARROW));
 
-        if (defined('T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG')) {
-            $this->_allowedInVar[] = T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG;
-            $this->_op[] = T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG;
-        }
         $this->_allowedInExpr = array_merge($this->_vartype, $this->_op);
         $this->_allowedAssign = array_merge($this->_vartype, $this->_assignOp, $this->_op);
         $this->_allowedInForeach = array_merge($this->_vartype, array(T_AS, T_DOUBLE_ARROW));
