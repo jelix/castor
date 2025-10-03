@@ -21,11 +21,11 @@ You can write an instruction on several lines:
 
 ```html
 <div>
-{myfunction 
+{% myfunction 
     'foo~bar',
     array(
         'foo1'=>$foo1,
-        'foo2'=>$foo2)}
+        'foo2'=>$foo2) %}
 </div>
 ```
 
@@ -40,7 +40,7 @@ can use `{% literal %}`  or `{% verbatim %}`.
       for (i=0;i<max;i++) {
          if (foo){ ...}
       }
-   {% /literal %}
+   {% endliteral %}
   </script>
 ```
 
