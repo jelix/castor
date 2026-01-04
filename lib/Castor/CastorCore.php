@@ -4,7 +4,7 @@
  * @author      Laurent Jouanneau
  * @contributor Dominique Papin
  *
- * @copyright   2005-2025 Laurent Jouanneau, 2007 Dominique Papin
+ * @copyright   2005-2026 Laurent Jouanneau, 2007 Dominique Papin
  *
  * @link        http://www.jelix.org
  * @licence     GNU Lesser General Public Licence see LICENCE file or http://www.gnu.org/licenses/lgpl.html
@@ -187,10 +187,15 @@ abstract class CastorCore
         $this->processedMeta[] = $tpl;
         $md = $this->getTemplate($tpl, $outputType, $trusted);
 
-        $fct = 'template_meta_'.$md;
-        $fct($this);
+        $this->_callMeta($tpl, $md);
 
         return $this->_meta;
+    }
+
+    protected function _callMeta($tplInfo, $md)
+    {
+        $fct = 'template_meta_'.$md;
+        $fct($this);
     }
 
     /**
@@ -207,10 +212,16 @@ abstract class CastorCore
         $this->recursiveTpl[] = $tpl;
         $md = $this->getTemplate($tpl, $outputType, $trusted);
 
-        $fct = 'template_'.$md;
-        $fct($this);
+        $this->_callContent($tpl, $md);
+
         array_pop($this->recursiveTpl);
         $this->_templateName = $previousTpl;
+    }
+
+    protected function _callContent($tplInfo, $md)
+    {
+        $fct = 'template_'.$md;
+        $fct($this);
     }
 
     /**
@@ -236,7 +247,7 @@ abstract class CastorCore
     /**
      * include the compiled template file and call one of the generated function.
      *
-     * @param string $tpl        template selector
+     * @param mixed $tpl        template selector
      * @param string $outputType the type of output (html, text etc..) (deprecated)
      * @param bool   $trusted    says if the template file is trusted or not
      *
@@ -258,7 +269,7 @@ abstract class CastorCore
 
     /**
      * @param string $tpl        the template name
-     * @param string $getTemplateArg
+     * @param mixed $getTemplateArg
      * @param string $outputType the type of output (html, text etc..) (deprecated)
      * @param bool   $trusted    says if the template file is trusted or not
      * @param bool   $callMeta   false if meta should not be called
@@ -283,11 +294,9 @@ abstract class CastorCore
             $md = $this->getTemplate($getTemplateArg, $outputtype, $trusted);
 
             if ($callMeta) {
-                $fct = 'template_meta_'.$md;
-                $fct($this);
+                $this->_callMeta($getTemplateArg, $md);
             }
-            $fct = 'template_'.$md;
-            $fct($this);
+            $this->_callContent($getTemplateArg, $md);
             array_pop($this->recursiveTpl);
             $this->_templateName = $previousTpl;
             $content = ob_get_clean();
