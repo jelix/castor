@@ -2,7 +2,7 @@
     <p>This is my block {{$arg1}} {{$existingVar}}</p>
 {% endmacro %}
 
-{% macro 'mytest2'%}
+{% macro 'mytest2' %}
     <p>This is my block test 2 without parameters, and displaying existingVar={{$existingVar}} </p>
 {% endmacro %}
 
@@ -12,20 +12,20 @@
 {% endmacro %}
 
 <div class="box">
-    {%usemacro 'mytest', 'toto'%}
+    {% usemacro 'mytest', 'toto' %}
 
-    {%usemacro 'mytest2'%}
+    {% usemacro 'mytest2' %}
 
-    {%usemacro 'mytest3', 'tata'%}
+    {% usemacro 'mytest3', 'tata' %}
     Real existingVar={{$existingVar}}
 </div>
 
 <div class="box">
-{% ifdefinedmacro 'mytest'%}
+{% ifdefinedmacro 'mytest' %}
 mytest is defined
 {% endifdefinedmacro %}
 
-{% ifdefinedmacro 'unknown'%}
+{% ifdefinedmacro 'unknown' %}
 unknown is defined
 {% endifdefinedmacro %}
 
