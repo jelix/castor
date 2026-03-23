@@ -31,5 +31,3 @@ Cycle named : {for $i=0;$i<5;$i++} {cycle 'foo'}{/for}
 
 
 {repeat_string 'mystring',4}
-
-

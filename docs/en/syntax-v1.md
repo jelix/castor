@@ -177,11 +177,11 @@ functions:
 - stripslashes (stripslashes)
 - upperfirst (ucfirst)
 
-Many others are function defined in plugins for Castor. See the plugins directory.
+Many others are functions defined in plugins for Castor. See the plugins directory.
 
 ### Modifiers with parameters
 
-Some modifiers need some parameters. You should put this parameters after a ":" after the
+Some modifiers need some parameters. You should put these parameters after a ":" after the
 modifier name, and you should separate parameters with ",". Parameters are expressions.
 
 Example with the datetime modifier:
@@ -272,7 +272,7 @@ If you want to have some new functions or modifiers, you can develop some plugin
 See the documentation about it: plugins.md. This is pretty simple.
 
 An other solution is to declare the modifiers or the functions dynamically, by calling the
-Castor methods `registerModifier()` or `registerFunction()`. To this methods, you should
+Castor methods `registerModifier()` or `registerFunction()`. To these methods, you should
 indicate a name which will be used in the template, and a name of a php function which
 implements the modifier or the function. Warning: you should not pass a PHP `callable`,
 only a string containing the PHP function name. This name is inserted into the "compiled"

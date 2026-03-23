@@ -13,6 +13,8 @@ Castor is a template engine for PHP, using syntax similar to PHP.
 - a system of “meta”: allow the template to expose data to PHP code. For example, a "meta"
   can be an url of a stylesheet to use with the generated content.
 
+Compatible with PHP 7.4 to 8.5.
+
 # Version
 
 The master branch is the development branch. It has sources of the

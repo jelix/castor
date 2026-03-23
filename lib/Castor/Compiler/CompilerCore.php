@@ -49,8 +49,9 @@ abstract class CompilerCore
             T_EMPTY, T_INC, T_ISSET, T_IS_EQUAL, T_IS_GREATER_OR_EQUAL,
             T_IS_IDENTICAL, T_IS_NOT_EQUAL, T_IS_NOT_IDENTICAL,
             T_IS_SMALLER_OR_EQUAL, T_LOGICAL_AND, T_LOGICAL_OR, T_LOGICAL_XOR,
-            T_POW, T_SR, T_SL, T_DOUBLE_COLON, T_PAAMAYIM_NEKUDOTAYIM
-        );
+            T_POW, T_SR, T_SL, T_DOUBLE_COLON, T_PAAMAYIM_NEKUDOTAYIM,
+            T_LOGICAL_AND, T_LOGICAL_OR, T_LOGICAL_XOR
+    );
 
     /**
      * tokens authorized into locale names.

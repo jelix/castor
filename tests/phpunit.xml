@@ -8,6 +8,7 @@
       <file>ExpressionParsingTest.php</file>
       <file>EngineTest.php</file>
       <file>EngineSyntax2Test.php</file>
+      <file>syntaxConverterTest.php</file>
     </testsuite>
   </testsuites>
 </phpunit>

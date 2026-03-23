@@ -23,4 +23,3 @@ Cycle default :  c d f c d
 Cycle named :  g h i g h
 
 mystringmystringmystringmystring
-
